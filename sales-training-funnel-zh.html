@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Sales Training Funnel V2",
+  "schemaVersion": 1,
+  "description": "Sales新人培训用Lead转化全流程图：Lead → Engaged → MQL → SAL → SQL → Offering → Reservation → In Contract → Close，含完整决策树、Follow-up序列、CRM指标"
+}
+</script>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Lead Conversion Training Guide</title>
+<style>
+:root { color-scheme: light; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #2d3436; line-height: 1.65; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #0c1527 0%, #1a2744 100%); color: #fff; padding: 28px 24px 20px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.header p { font-size: 13px; color: #8395a7; }
+
+/* Navigation */
+.nav-bar { background: #fff; border-bottom: 1px solid #e8e8e8; padding: 0 16px; display: flex; gap: 0; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
+.nav-item { padding: 12px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border-bottom: 2.5px solid transparent; color: #636e72; transition: all 0.15s; }
+.nav-item:hover { color: #0c1527; }
+.nav-item.active { color: #0c1527; border-bottom-color: #0984e3; }
+.nav-item .stage-num { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: #dfe6e9; color: #636e72; font-size: 10px; line-height: 18px; text-align: center; margin-right: 4px; }
+.nav-item.active .stage-num { background: #0984e3; color: #fff; }
+
+/* Main */
+.main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+/* Funnel Overview */
+.funnel-section { margin-bottom: 32px; }
+.funnel-row { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; transition: transform 0.1s; }
+.funnel-row:hover { transform: translateX(4px); }
+.funnel-bar { height: 40px; border-radius: 5px; display: flex; align-items: center; padding: 0 14px; color: #fff; font-weight: 600; font-size: 12px; white-space: nowrap; min-width: 100px; }
+.funnel-label { margin-left: 12px; font-size: 12px; color: #636e72; }
+.funnel-label strong { color: #2d3436; }
+.funnel-conversion { display: flex; align-items: center; padding-left: 20px; margin: 2px 0; }
+.funnel-conversion .arrow { color: #b2bec3; font-size: 14px; margin-right: 8px; }
+.funnel-conversion .rate { font-size: 11px; color: #e17055; font-weight: 600; background: #ffeaa7; padding: 1px 8px; border-radius: 10px; }
+
+/* Stage Detail */
+.stage-panel { display: none; }
+.stage-panel.active { display: block; }
+
+.stage-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.stage-badge { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.stage-title { font-size: 20px; font-weight: 700; }
+.stage-def { font-size: 14px; color: #636e72; margin-top: 2px; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.card-title { font-size: 13px; font-weight: 700; color: #0984e3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.card-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Criteria boxes */
+.criteria-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.criteria-box { flex: 1; min-width: 260px; border-radius: 8px; padding: 16px; }
+.criteria-box.enter { background: #f0fff4; border: 1px solid #c6f6d5; }
+.criteria-box.exit { background: #fff5f5; border: 1px solid #fed7d7; }
+.criteria-box.value { background: #ebf8ff; border: 1px solid #bee3f8; }
+.criteria-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+.criteria-box.enter h4 { color: #276749; }
+.criteria-box.exit h4 { color: #c53030; }
+.criteria-box.value h4 { color: #2b6cb0; }
+.criteria-box ul { list-style: none; padding: 0; }
+.criteria-box li { font-size: 13px; padding: 3px 0; padding-left: 16px; position: relative; }
+.criteria-box li::before { content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%; }
+.criteria-box.enter li::before { background: #48bb78; }
+.criteria-box.exit li::before { background: #fc8181; }
+.criteria-box.value li::before { background: #63b3ed; }
+
+/* Action list */
+.action-list { list-style: none; padding: 0; counter-reset: action; }
+.action-list li { font-size: 13px; padding: 10px 0 10px 36px; border-bottom: 1px solid #f0f0f0; position: relative; }
+.action-list li:last-child { border-bottom: none; }
+.action-list li::before { counter-increment: action; content: counter(action); position: absolute; left: 0; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: #0984e3; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.action-list li strong { color: #2d3436; }
+
+/* Decision tree */
+.decision-tree { background: #fafafa; border-radius: 8px; padding: 16px; }
+.branch { margin-left: 20px; border-left: 2px solid #dfe6e9; padding-left: 16px; margin-top: 8px; }
+.branch-label { font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 6px; }
+.branch-label.yes { background: #d4edda; color: #155724; }
+.branch-label.no { background: #f8d7da; color: #721c24; }
+.branch-label.action { background: #cce5ff; color: #004085; }
+.branch-label.goal { background: #fff3cd; color: #856404; }
+.branch-content { font-size: 13px; color: #555; margin: 4px 0 12px; }
+
+/* Follow-up table */
+.followup-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.followup-table th { background: #f8f9fa; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #636e72; border-bottom: 2px solid #e8e8e8; }
+.followup-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
+.followup-table tr:last-child td { border-bottom: none; }
+.followup-table .day { font-weight: 700; color: #0984e3; white-space: nowrap; }
+
+/* Metrics */
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.metric-card { background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #eee; }
+.metric-card .label { font-size: 11px; color: #636e72; font-weight: 600; text-transform: uppercase; }
+.metric-card .formula { font-size: 12px; color: #0984e3; margin-top: 4px; font-weight: 500; }
+
+/* Output info */
+.output-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.output-tag { background: #e8e8e8; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 500; }
+
+/* Summary funnel at bottom */
+.summary-funnel { background: #fff; border-radius: 10px; padding: 20px; margin-top: 24px; }
+.summary-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+.summary-row .num { width: 22px; height: 22px; border-radius: 50%; background: #0984e3; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.summary-row .name { font-weight: 600; min-width: 120px; }
+.summary-row .desc { color: #636e72; }
+.summary-arrow { text-align: center; color: #b2bec3; font-size: 12px; padding: 2px 0; padding-left: 30px; }
+
+/* Tip box */
+.tip { background: #fff8e1; border-left: 3px solid #ffb300; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 12px; font-size: 13px; }
+.tip strong { color: #e65100; }
+
+.red-flag { background: #fff0f0; border-left: 3px solid #e53e3e; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 12px; font-size: 13px; }
+.red-flag strong { color: #c53030; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Sales Lead Conversion Training Guide</h1>
+  <p>CRM Pipeline Stages | 新人Sales培训手册 | 唯一目标：转化客户</p>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-item active" onclick="showStage('overview')"><span class="stage-num">*</span>Overview</div>
+  <div class="nav-item" onclick="showStage(0)"><span class="stage-num">1</span>Lead</div>
+  <div class="nav-item" onclick="showStage(1)"><span class="stage-num">2</span>Engaged</div>
+  <div class="nav-item" onclick="showStage(2)"><span class="stage-num">3</span>MQL</div>
+  <div class="nav-item" onclick="showStage(3)"><span class="stage-num">4</span>SAL</div>
+  <div class="nav-item" onclick="showStage(4)"><span class="stage-num">5</span>SQL</div>
+  <div class="nav-item" onclick="showStage(5)"><span class="stage-num">6</span>Offering</div>
+  <div class="nav-item" onclick="showStage(6)"><span class="stage-num">7</span>Reservation</div>
+  <div class="nav-item" onclick="showStage(7)"><span class="stage-num">8</span>In Contract</div>
+  <div class="nav-item" onclick="showStage(8)"><span class="stage-num">9</span>Close</div>
+  <div class="nav-item" onclick="showStage('call')"><span class="stage-num">C</span>Call流程</div>
+</div>
+
+<div class="main">
+
+<!-- ==================== OVERVIEW ==================== -->
+<div class="stage-panel active" id="panel-overview">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#0c1527">*</div>
+    <div>
+      <div class="stage-title">Pipeline Overview</div>
+      <div class="stage-def">某套房子产生了多少leads → 有多少人回复 → 有多少人qualified → 有多少人来看房 → 有多少人出价 → 有多少人reservation → 最终close</div>
+    </div>
+  </div>
+
+  <div class="funnel-section">
+    <div class="funnel-row" onclick="showStage(0)">
+      <div class="funnel-bar" style="width:100%;max-width:520px;background:linear-gradient(135deg,#636e72,#2d3436)">1. Lead (Marketing)</div>
+      <div class="funnel-label">所有潜在客户 | <strong>Marketing负责</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">有互动行为</span></div>
+
+    <div class="funnel-row" onclick="showStage(1)">
+      <div class="funnel-bar" style="width:90%;max-width:470px;background:linear-gradient(135deg,#a29bfe,#6c5ce7)">2. Engaged (Marketing)</div>
+      <div class="funnel-label">产生互动的客户 | <strong>留下了联系方式</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">有联系方式 + 表达基本需求</span></div>
+
+    <div class="funnel-row" onclick="showStage(2)">
+      <div class="funnel-bar" style="width:75%;max-width:400px;background:linear-gradient(135deg,#0984e3,#74b9ff)">3. MQL</div>
+      <div class="funnel-label">初步合格线索 | <strong>SDR 24h内验证联系方式+确认兴趣</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">联系方式有效 + 表达了兴趣</span></div>
+
+    <div class="funnel-row" onclick="showStage(3)">
+      <div class="funnel-bar" style="width:60%;max-width:330px;background:linear-gradient(135deg,#00b894,#55efc4)">4. SAL</div>
+      <div class="funnel-label">销售接手 | <strong>约meeting + 深度咨询 + 约in-person tour</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">到场看房</span></div>
+
+    <div class="funnel-row" onclick="showStage(4)">
+      <div class="funnel-bar" style="width:45%;max-width:260px;background:linear-gradient(135deg,#fdcb6e,#e17055)">5. SQL</div>
+      <div class="funnel-label">销售合格线索 | <strong>已到场看房</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">决定出价</span></div>
+
+    <div class="funnel-row" onclick="showStage(5)">
+      <div class="funnel-bar" style="width:35%;max-width:210px;background:linear-gradient(135deg,#e17055,#d63031)">6. Offering</div>
+      <div class="funnel-label">出价中 | <strong>Offer已提交</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">下定金</span></div>
+
+    <div class="funnel-row" onclick="showStage(6)">
+      <div class="funnel-bar" style="width:28%;max-width:170px;background:linear-gradient(135deg,#e84393,#fd79a8)">7. Make Reservation</div>
+      <div class="funnel-label">预售锁定 | <strong>Deposit已交</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">进入正式合同</span></div>
+
+    <div class="funnel-row" onclick="showStage(7)">
+      <div class="funnel-bar" style="width:22%;max-width:140px;background:linear-gradient(135deg,#6c5ce7,#a29bfe)">8. In Contract</div>
+      <div class="funnel-label">合同中 | <strong>Escrow + 贷款执行中</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">↓</span><span class="rate">资金到位 + 过户</span></div>
+
+    <div class="funnel-row" onclick="showStage(8)">
+      <div class="funnel-bar" style="width:16%;max-width:110px;background:linear-gradient(135deg,#00b894,#00cec9)">9. Close Won</div>
+      <div class="funnel-label"><strong>交易完成</strong></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>核心原则：Sales的唯一目标是转化</div>
+    <ol class="action-list">
+      <li><strong>每个stage都有明确的退出标准</strong> — 不达标不进入下一阶段，达标了必须推进</li>
+      <li><strong>Follow-up是系统化的，不是凭感觉的</strong> — 每个节点有规定的频率、次数和话术</li>
+      <li><strong>不能想跟就跟，不想跟就算了</strong> — CRM里的lead状态必须实时更新，每周review</li>
+      <li><strong>每次接触都要有目的</strong> — 每通电话、每条消息都要推动客户进入下一个stage</li>
+      <li><strong>被拒绝不是终点</strong> — 要问清楚原因，针对性解决，重新激活</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ==================== STAGE 0: Lead ==================== -->
+<div class="stage-panel" id="panel-0">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#2d3436">1</div>
+    <div>
+      <div class="stage-title">Lead (Marketing)</div>
+      <div class="stage-def">所有潜在客户。Marketing负责获取，Sales暂不介入。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>符合Buyer Profile的潜在客户</li>
+          <li>在湾区，有买房需求</li>
+          <li>通过任何渠道进入我们视野</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → Engaged)</h4>
+        <ul>
+          <li>客户对我们的公司或产品产生了认知(awareness)</li>
+          <li>产生了任何形式的互动行为</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>展示符合需求的房源选择</li>
+          <li>市场信息、投资知识内容</li>
+          <li>让客户知道"有这样一个专业团队存在"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Marketing执行动作</div>
+    <ol class="action-list">
+      <li>投放广告(PPC, Social Media Ads)</li>
+      <li>内容营销：YouTube频道、公众号、小红书、Facebook</li>
+      <li>线下活动：Open House、社区活动</li>
+      <li>社群运营：微信群持续输出内容</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">PPC成本</div><div class="formula">Cost per Lead</div></div>
+      <div class="metric-card"><div class="label">各渠道Lead数</div><div class="formula">按Source分类</div></div>
+      <div class="metric-card"><div class="label">广告曝光量</div><div class="formula">Impressions</div></div>
+      <div class="metric-card"><div class="label">内容触达量</div><div class="formula">Views / Reads</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 1: Engaged ==================== -->
+<div class="stage-panel" id="panel-1">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#6c5ce7">2</div>
+    <div>
+      <div class="stage-title">Engaged (Marketing)</div>
+      <div class="stage-def">客户与我们产生了第一次有意义的双向互动。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>客户产生了互动行为：点击、浏览、留言、任何形式的engagement</li>
+          <li>表达了兴趣</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → MQL)</h4>
+        <ul>
+          <li>表达了基本需求</li>
+          <li>留下了可联系的联系方式</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>完整的房源信息：地址、价格、照片、Floor Plan</li>
+          <li>3D Tour、Open House时间</li>
+          <li>房屋亮点、Disclosure是否ready</li>
+          <li>让客户获取充分信息后自主判断</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>执行动作</div>
+    <ol class="action-list">
+      <li><strong>准备Webform或其他收集联系方式的途径</strong> — 表单设计要简洁，只收集必要信息</li>
+      <li><strong>Listing页面信息完整度检查</strong> — 确保每套房的价格、照片、floor plan、3D tour、亮点都齐全</li>
+      <li><strong>设置自动回复</strong> — 客户留言后立即触发确认消息</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">联系方式(手机/微信/Email)</span>
+      <span class="output-tag">感兴趣的房源/项目</span>
+      <span class="output-tag">互动来源渠道</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">总Leads数</div><div class="formula">Total Engaged</div></div>
+      <div class="metric-card"><div class="label">按来源分类</div><div class="formula">Leads by Source</div></div>
+      <div class="metric-card"><div class="label">留资率</div><div class="formula">互动 → 留联系方式 %</div></div>
+      <div class="metric-card"><div class="label">响应速度</div><div class="formula">留资到首次联系时长</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 2: MQL ==================== -->
+<div class="stage-panel" id="panel-2">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#0984e3">3</div>
+    <div>
+      <div class="stage-title">MQL - Marketing Qualified Lead</div>
+      <div class="stage-def">通过初步筛选的合格线索：有联系方式，说出了感兴趣的项目。SDR介入外呼，验证联系方式，确认基本兴趣方向。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>有可联系的联系方式(手机/微信/Email)</li>
+          <li>说出了感兴趣的项目或产品</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → SAL)</h4>
+        <ul>
+          <li>联系方式已验证有效(接通/回复)</li>
+          <li>知道了客户感兴趣的项目/方向</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>一个快速连接到专业Sales团队的通道</li>
+          <li>通知客户的兴趣已被收到，会有consultant主动联系</li>
+          <li>回应客户的初步简单问题</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>SDR外呼 — 24小时内必须完成</div>
+    <p style="font-size:13px;margin-bottom:12px">MQL阶段的核心action是<strong>SDR打电话</strong>：验证联系方式有效、确认客户感兴趣的方向。约meeting是下一步SAL的工作。</p>
+    <ol class="action-list">
+      <li><strong>24小时内打出首次电话</strong> — MQL进来后最多24小时，不能拖</li>
+      <li><strong>确认客户身份和兴趣</strong> — "看到您对[项目/房源]感兴趣，想简单了解一下您的情况"</li>
+      <li><strong>收集基本信息</strong> — 对什么类型的房子感兴趣？大概在哪个区域？是自住还是投资？</li>
+      <li><strong>确认联系方式有效</strong> — 电话能接通 / 微信能回复，记录最佳联系方式和时段</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>未接电话 Follow-up 标准序列</div>
+    <table class="followup-table">
+      <thead>
+        <tr><th>时间点</th><th>方式</th><th>动作</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="day">Day 1 (当天)</td><td>电话 + 短信/微信</td><td>首次电话未接 → 立即发短信/微信："您好，我是SALA的[名字]，看到您对[项目/房源]感兴趣，方便时给您回个电话聊聊？"</td></tr>
+        <tr><td class="day">Day 2</td><td>电话</td><td>换个时间段再打一次(如首次上午打，这次下午打)</td></tr>
+        <tr><td class="day">Day 3</td><td>微信/短信</td><td>发一条有价值的信息(相关房源链接、市场更新)，附带约聊请求</td></tr>
+        <tr><td class="day">Day 5</td><td>电话</td><td>第三次电话尝试，不同时间段</td></tr>
+        <tr><td class="day">Day 7</td><td>微信/Email</td><td>发送项目详细资料或市场报告，softer approach："分享一些您可能感兴趣的信息"</td></tr>
+        <tr><td class="day">Day 14</td><td>电话</td><td>最后一次主动电话尝试</td></tr>
+        <tr><td class="day">Day 14+</td><td>自动Email</td><td>转入Marketing Nurture序列，每周自动推送市场内容。不再主动打电话，但保留在CRM中标记为"Unresponsive"</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>原则：</strong>14天内至少4次电话 + 3次文字触达。每次联系都带有价值(房源信息/市场数据)，不是单纯催促。所有联系记录必须录入CRM。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">感兴趣的项目/方向</span>
+      <span class="output-tag">联系状态(已接/未接/无响应)</span>
+      <span class="output-tag">最佳联系方式和时段</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">首次联系速度</div><div class="formula">MQL → 首通电话 时长</div></div>
+      <div class="metric-card"><div class="label">接通率</div><div class="formula">拨出 → 接通 %</div></div>
+      <div class="metric-card"><div class="label">兴趣确认率</div><div class="formula">接通 → 确认兴趣 %</div></div>
+      <div class="metric-card"><div class="label">跟进完成率</div><div class="formula">Follow-up序列执行 %</div></div>
+      <div class="metric-card"><div class="label">MQL→SAL转化率</div><div class="formula">进MQL → 进SAL %</div></div>
+    </div>
+    <div class="red-flag"><strong>红线：</strong>MQL进来超过24小时未打首次电话 = 管理失职。CRM必须有超时提醒。</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 3: SAL ==================== -->
+<div class="stage-panel" id="panel-3">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#00b894">4</div>
+    <div>
+      <div class="stage-title">SAL - Sales Accepted Lead</div>
+      <div class="stage-def">Sales正式接手：约Virtual Consultant或In-person meeting，了解客户意图，确认actively looking，掌握详细需求和财务状况。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>表达了对具体项目/产品的兴趣</li>
+          <li>联系方式已验证有效</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → SQL)</h4>
+        <ul>
+          <li>了解了详细需求(区域/户型/预算/时间线)</li>
+          <li>确认了财务状况(Verbal: 收入/负债/Pre-approval)</li>
+          <li>成功预约了In-person Tour</li>
+          <li>判定为High Intent to Buy</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>解答客户所有疑虑，减少顾虑(reduce concerns)</li>
+          <li>深入讲解房子细节(go through details)</li>
+          <li>帮客户理清自己的真实需求和优先级</li>
+          <li>初步财务可行性评估(不pull信用分)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>SAL阶段执行要点</div>
+    <ol class="action-list">
+      <li><strong>约Virtual Consultant或In-person Meeting</strong> — "我们有免费的30分钟1对1咨询，没有obligation，您看这周哪天方便？" → 发Calendly链接确认时间</li>
+      <li><strong>了解购买目的</strong> — 自住舒适为主？还是价值投资？交通学区需求？</li>
+      <li><strong>了解购买能力</strong> — 收入(W2/Base/Bonus/RSU)、信用分、现有负债/房租、Pre-approval状态</li>
+      <li><strong>了解购买阶段</strong> — 看了多久房？对哪些区域熟悉？有没有跟其他agent合作？</li>
+      <li><strong>明确房子要求</strong> — Must have vs Deal breaker，Budget范围</li>
+      <li><strong>介绍团队和服务模式</strong> — 团队制服务、不返佣金、需要exclusive合作</li>
+      <li><strong>推动下一步</strong> — 约In-person Tour的具体时间和房源</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>1v1中客户拒绝推进的处理</div>
+    <div class="decision-tree">
+      <div class="branch-label action">1v1进行中或结束后 → 客户不愿意约In-person Tour</div>
+      <div class="branch">
+        <div class="branch-label no">"没有需求了"</div>
+        <div class="branch-content">→ 问清楚为什么：市场变了？买到了？预算变了？→ 针对性回应，记录CRM，如确实无需求放入Nurture池</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"有需求但这个不合适"</div>
+        <div class="branch-content">→ 什么不合适？区域？价格？户型？→ 推荐其他匹配房源 → 重新约Tour</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"在跟别的agent"</div>
+        <div class="branch-content">→ 签了exclusive吗？→ 展示团队差异化优势(团队制服务、Off-market资源、投资背景) → 保持联系等待机会</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"想再考虑考虑"</div>
+        <div class="branch-content">→ 48h内跟进发匹配房源 → 3天后再次约Tour → 连续两次拒绝问清原因 → 降级Nurture但每周保持触达</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">详细需求记录</span>
+      <span class="output-tag">财务状况(Verbal)</span>
+      <span class="output-tag">In-person Tour预约时间</span>
+      <span class="output-tag">客户评级(0/0.5/1)</span>
+      <span class="output-tag">预算范围</span>
+      <span class="output-tag">目标区域</span>
+      <span class="output-tag">购房时间线</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">1v1完成率</div><div class="formula">预约 → 实际完成 %</div></div>
+      <div class="metric-card"><div class="label">In-person预约率</div><div class="formula">1v1完成 → 约Tour %</div></div>
+      <div class="metric-card"><div class="label">客户质量分布</div><div class="formula">0 / 0.5 / 1 比例</div></div>
+      <div class="metric-card"><div class="label">SAL→SQL转化率</div><div class="formula">进SAL → 进SQL %</div></div>
+      <div class="metric-card"><div class="label">平均预算</div><div class="formula">Avg Budget</div></div>
+    </div>
+    <div class="red-flag"><strong>红线：</strong>1v1结束后48小时内未做跟进 = 管理失职。1v1完成但未约上Tour的客户，不能放任不管，必须持续推进或明确记录原因。</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 4: SQL ==================== -->
+<div class="stage-panel" id="panel-4">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e17055">5</div>
+    <div>
+      <div class="stage-title">SQL - Sales Qualified Lead</div>
+      <div class="stage-def">客户已到场看房。这是Sales直接面对客户建立信任的关键阶段。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>In-person Tour已预约</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → Offering)</h4>
+        <ul>
+          <li>已完成至少一次In-person Tour</li>
+          <li>客户表达了对某套房的购买意愿</li>
+          <li>准备出offer或交deposit</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>面对面专业讲解：市场、产品、公司能力</li>
+          <li>实地体验，消除信息不对称</li>
+          <li>深度了解客户偏好，精准匹配</li>
+          <li>建立人与人之间的信任关系</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Tour执行动作</div>
+    <ol class="action-list">
+      <li><strong>Tour前准备</strong> — 整理好房源信息、CMA数据、客户之前的需求记录。第一次看房尤其重要。</li>
+      <li><strong>建立信任</strong> — 面对面交流，展示专业知识和团队资源。不只是"带看"，是"咨询+带看"。</li>
+      <li><strong>深入了解客户</strong> — 观察客户对不同房子的反应，了解真实偏好(口头说的 vs 实际反应)。</li>
+      <li><strong>记录Sales Notes</strong> — 客户对每套房的评价、关注点、顾虑，当天录入CRM。</li>
+      <li><strong>推动下一步</strong> — Tour结束当天问：约下次Tour，还是准备出offer？</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Tour后Follow-up决策树</div>
+    <div class="decision-tree">
+      <div class="branch-label action">Tour结束当天或次日 → Follow-up联系</div>
+      <div class="branch">
+        <div class="branch-label goal">问：对今天看的房子感觉如何？有什么concern？</div>
+        <div class="branch">
+          <div class="branch-label yes">满意，愿意出offer</div>
+          <div class="branch-content">→ 立即进入Offering流程，准备文件</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label yes">满意但想再看看</div>
+          <div class="branch-content">→ 约下一次Tour时间，推荐新房源 → 保持在SQL阶段</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">不满意</div>
+          <div class="branch-content">→ 问清不满意的具体点：</div>
+          <div class="branch">
+            <div class="branch-label no">价格/区域/户型不合适</div>
+            <div class="branch-content">→ 调整推荐策略，匹配新房源 → 约下次Tour</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label no">对市场/时机有顾虑</div>
+            <div class="branch-content">→ 用数据和案例做市场教育(参考话术Scripts) → 保持跟进</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label no">对团队/服务不满意</div>
+            <div class="branch-content">→ 正面回应，必要时升级到Team Leader处理</div>
+          </div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">没有回复Follow-up</div>
+          <div class="branch-content">→ Day 2再跟一次 → Day 5发匹配房源 → Day 7电话 → 14天无回应降回Nurture</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Sales Notes(每套房评价)</span>
+      <span class="output-tag">客户真实偏好</span>
+      <span class="output-tag">Tour次数累计</span>
+      <span class="output-tag">购买意愿评分更新</span>
+      <span class="output-tag">下一步Action</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Tour到场率</div><div class="formula">预约 → 到场 %</div></div>
+      <div class="metric-card"><div class="label">Avg Tour次数</div><div class="formula">到出Offer前平均看房次数</div></div>
+      <div class="metric-card"><div class="label">Tour→Offer率</div><div class="formula">看房 → 出Offer %</div></div>
+      <div class="metric-card"><div class="label">Follow-up响应率</div><div class="formula">Tour后跟进回复 %</div></div>
+      <div class="metric-card"><div class="label">SQL停留时长</div><div class="formula">进SQL → 出Offer 天数</div></div>
+    </div>
+    <div class="red-flag"><strong>红线：</strong>Tour后24小时内未做Follow-up = 管理失职。看过3次房以上还没出Offer的客户，必须在Weekly Meeting中单独review原因。</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 5: Offering ==================== -->
+<div class="stage-panel" id="panel-5">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#d63031">6</div>
+    <div>
+      <div class="stage-title">Offering</div>
+      <div class="stage-def">客户决定买这套房，开始准备和提交Offer。展示专业性的关键时刻。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>客户ready to buy这套房</li>
+          <li>确认了购买意愿</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → Reservation)</h4>
+        <ul>
+          <li>Offer已正式提交</li>
+          <li>所有文件齐全</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>专业的Disclosure解读(首次Zoom讲解)</li>
+          <li>CMA成交价分析支撑出价决策</li>
+          <li>完整Offer Package准备</li>
+          <li>与Lender协调确认贷款</li>
+          <li>帮客户避免over-pay</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Offering流程 — 展示专业性，帮助成单</div>
+    <ol class="action-list">
+      <li><strong>教育Buyer准备文件</strong> — 指导客户需要准备什么材料(POF/Preapproval/身份文件)</li>
+      <li><strong>下载并解读Disclosure</strong> — 分享给客户，第一次必须Zoom讲解(TDS/SPQ/NHD/Inspection/Prelim)</li>
+      <li><strong>CMA分析</strong> — 用MLS查附近成交价，给客户提供数据支撑的出价建议</li>
+      <li><strong>和Lender确认贷款</strong> — 特别是Non-contingency offer前必须确认</li>
+      <li><strong>准备Offer Package</strong> — RPA, Cover Letter, Disclosure Coversheet, Preapproval/POF</li>
+      <li><strong>提交Offer</strong> — 确认LA收到并回复</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Offer文件包</span>
+      <span class="output-tag">出价金额</span>
+      <span class="output-tag">Contingency条款</span>
+      <span class="output-tag">贷款确认状态</span>
+      <span class="output-tag">LA反馈</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Offer提交数/月</div><div class="formula">团队 + 个人</div></div>
+      <div class="metric-card"><div class="label">文件准备时长</div><div class="formula">决定出价 → 提交 天数</div></div>
+      <div class="metric-card"><div class="label">Offer接受率</div><div class="formula">提交 → Accepted %</div></div>
+      <div class="metric-card"><div class="label">出价精准度</div><div class="formula">Offer价 vs 最终成交价</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 6: Make Reservation ==================== -->
+<div class="stage-panel" id="panel-6">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e84393">7</div>
+    <div>
+      <div class="stage-title">Make Reservation</div>
+      <div class="stage-def">预售房：客户交付可全额退还的Deposit，锁定房源。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>Buyer已提交Offer</li>
+          <li>Offer被接受或预售房选定</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → In Contract)</h4>
+        <ul>
+          <li>Deposit已到位</li>
+          <li>Reservation文件签署完毕</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>房源已为客户锁定</li>
+          <li>Deposit可全额退还，降低客户风险感</li>
+          <li>协助完成定金流程</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>执行动作</div>
+    <ol class="action-list">
+      <li><strong>处理Deposit</strong> — 指导客户汇款流程，确认Escrow收到</li>
+      <li><strong>签署Reservation文件</strong> — 确保所有文件齐全</li>
+      <li><strong>通知相关方</strong> — LA确认、团队内部更新状态</li>
+      <li><strong>为In Contract阶段做准备</strong> — 对接Lender开始贷款流程</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Reservation文件</span>
+      <span class="output-tag">Deposit金额 & 到账确认</span>
+      <span class="output-tag">锁定房源信息</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Deposit到账速度</div><div class="formula">签字 → 到账 天数</div></div>
+      <div class="metric-card"><div class="label">Reservation取消率</div><div class="formula">预订 → 取消 %</div></div>
+      <div class="metric-card"><div class="label">Reservation→Contract率</div><div class="formula">预订 → 进合同 %</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 7: In Contract ==================== -->
+<div class="stage-panel" id="panel-7">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#6c5ce7">8</div>
+    <div>
+      <div class="stage-title">In Contract</div>
+      <div class="stage-def">正式合同阶段。房产ready to buy，执行贷款、过户等所有交易流程。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage定义 & 标准</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>进入标准 (Enter)</h4>
+        <ul>
+          <li>客户的Reserved Property进入正式交易</li>
+          <li>房产fully ready to buy</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>退出标准 (Exit → Close)</h4>
+        <ul>
+          <li>Escrow收到全部资金</li>
+          <li>贷款Final Approved & Funded</li>
+          <li>所有文件签署完毕</li>
+          <li>County Recording完成</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>为客户提供的价值</h4>
+        <ul>
+          <li>全程交易管理，客户省心</li>
+          <li>Timeline监控，不错过任何Deadline</li>
+          <li>协调Lender/Escrow/LA多方</li>
+          <li>帮客户处理保险、估值、维修等</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>交易管理流程</div>
+    <ol class="action-list">
+      <li><strong>签署所有Disclosures</strong></li>
+      <li><strong>Setup & Monitor Timeline</strong> — 所有节点时间表</li>
+      <li><strong>交EMD</strong> — 跟进Escrow Wire Instruction，确认到账</li>
+      <li><strong>确认贷款执行</strong> — 对接Lender，跟进Appraisal</li>
+      <li><strong>购买房屋保险</strong> — 绑定贷款</li>
+      <li><strong>处理Home Warranty</strong></li>
+      <li><strong>Inspection跟进</strong> — 如需维修，与卖家协商Credit</li>
+      <li><strong>Utility Transfer List</strong> — Close前2天发给客户</li>
+      <li><strong>Final Walkthrough</strong></li>
+      <li><strong>Notary Signature → Funding → Recording</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>输出信息(录入CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">所有交易文件</span>
+      <span class="output-tag">Timeline进度</span>
+      <span class="output-tag">贷款状态</span>
+      <span class="output-tag">Appraisal结果</span>
+      <span class="output-tag">Close日期</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM监控指标</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Close成功率</div><div class="formula">进合同 → Close %</div></div>
+      <div class="metric-card"><div class="label">Avg Close天数</div><div class="formula">合同 → COE 天数</div></div>
+      <div class="metric-card"><div class="label">Timeline偏差</div><div class="formula">预定 vs 实际 COE</div></div>
+      <div class="metric-card"><div class="label">Fall-through原因</div><div class="formula">贷款/估值/其他</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 8: Close ==================== -->
+<div class="stage-panel" id="panel-8">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#00b894">9</div>
+    <div>
+      <div class="stage-title">Close Won / Close Lost</div>
+      <div class="stage-def">交易完成。Won = 成功成交，Lost = 任何阶段的流失。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Close Won</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>完成标志</h4>
+        <ul>
+          <li>County Recording完成</li>
+          <li>Grant Deed已出</li>
+          <li>资金全部到位</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>After-Close动作</h4>
+        <ul>
+          <li>2个工作日内发Closing文件给客户</li>
+          <li>确认客户收到Closing Package</li>
+          <li>Ask for Google Review</li>
+          <li>Close Gift (自住房$200以内礼盒/GC)</li>
+          <li>给推荐人发感谢金</li>
+          <li>设Calendar: 11个月后周年维护</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Close Lost — 必须记录原因</div>
+    <p style="font-size:13px;margin-bottom:12px">每一个Close Lost都必须在CRM中记录流失阶段和原因，用于分析转化瓶颈：</p>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">流失阶段</div><div class="formula">哪个Stage Lost</div></div>
+      <div class="metric-card"><div class="label">流失原因</div><div class="formula">标准化原因标签</div></div>
+      <div class="metric-card"><div class="label">是否可挽回</div><div class="formula">Yes/No</div></div>
+      <div class="metric-card"><div class="label">竞争对手</div><div class="formula">被谁截走(如有)</div></div>
+    </div>
+    <div class="tip"><strong>Close Lost不是终点。</strong>除非客户明确表示不再买房，否则都应该放入Nurture池，保持定期触达。很多客户会在6-12个月后重新激活。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>全漏斗核心指标汇总</div>
+    <p style="font-size:13px;margin-bottom:12px">某套房/某个项目的完整转化链：</p>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Lead → Engaged</div><div class="formula">曝光 → 互动 %</div></div>
+      <div class="metric-card"><div class="label">Engaged → MQL</div><div class="formula">互动 → 留资 %</div></div>
+      <div class="metric-card"><div class="label">MQL → SAL</div><div class="formula">留资 → 约meeting %</div></div>
+      <div class="metric-card"><div class="label">SAL → SQL</div><div class="formula">约meeting → 看房 %</div></div>
+      <div class="metric-card"><div class="label">SQL → Offering</div><div class="formula">看房 → 出价 %</div></div>
+      <div class="metric-card"><div class="label">Offering → Reserve</div><div class="formula">出价 → 定金 %</div></div>
+      <div class="metric-card"><div class="label">Reserve → Contract</div><div class="formula">定金 → 合同 %</div></div>
+      <div class="metric-card"><div class="label">Contract → Close</div><div class="formula">合同 → 成交 %</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CALL PROCESS ==================== -->
+<div class="stage-panel" id="panel-call">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e17055">C</div>
+    <div>
+      <div class="stage-title">Sales Call Process 全流程决策树</div>
+      <div class="stage-def">从首次电话到成交的完整Call逻辑。每一步都有明确的目标和应对方案。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Step 1: SDR外呼 (MQL阶段，24h内)</div>
+    <div class="decision-tree">
+      <div class="branch-label action">MQL进来(有联系方式+表达了兴趣) → SDR 24小时内打电话</div>
+      <div class="branch-label goal">目标：验证联系方式有效、确认客户感兴趣的方向</div>
+      <div class="branch">
+        <div class="branch-label yes">接了 → 确认兴趣方向，收集基本信息 → 进入SAL(Step 2)</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">没接 → 执行Follow-up序列</div>
+        <div class="branch-content" style="padding:8px 0">
+          <table class="followup-table" style="font-size:12px">
+            <tr><td class="day">Day 1</td><td>电话 + 短信/微信</td></tr>
+            <tr><td class="day">Day 2</td><td>换时段再打</td></tr>
+            <tr><td class="day">Day 3</td><td>微信发有价值信息 + 约聊</td></tr>
+            <tr><td class="day">Day 5</td><td>第三次电话</td></tr>
+            <tr><td class="day">Day 7</td><td>发项目资料/市场报告</td></tr>
+            <tr><td class="day">Day 14</td><td>最后一次主动电话</td></tr>
+            <tr><td class="day">Day 14+</td><td>转入Nurture自动序列</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Step 2: 约Meeting + Online 1v1 Consultant (SAL阶段)</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">目标：约上meeting → 了解详细需求 + 确认购买力 + 约In-person Tour</div>
+      <div class="branch-content" style="margin:8px 0">先约Virtual Consultant或In-person Meeting → 执行1v1：了解购买目的、能力、阶段、房子要求 → 介绍团队 → 推Pre-qualification问卷</div>
+      <div class="branch">
+        <div class="branch-label yes">约上In-person → 进入SQL(Step 3)</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">拒绝推进 → 问为什么</div>
+        <div class="branch">
+          <div class="branch-label no">"没有需求了"</div>
+          <div class="branch-content">→ 问：为什么没有了？已买到？市场变化？预算变化？→ 记录原因 → 针对性回应或放入Nurture池</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"有需求但这个不合适"</div>
+          <div class="branch-content">→ 什么不合适？区域？价格？户型？→ 推荐其他匹配房源 → 重新约Tour</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"在跟别的agent"</div>
+          <div class="branch-content">→ 签了exclusive吗？→ 展示差异化 → 保持联系等待机会</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"想再考虑"</div>
+          <div class="branch-content">→ 48h内跟进发房源 → 3天后再约 → 两次拒绝问原因 → Nurture池</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#00b894"></span>Step 3: In-person Meeting / Tour</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">目标：建立信任 + 了解真实偏好 + 推动出offer或交deposit</div>
+      <div class="branch-content" style="margin:8px 0">执行：讲解公司能力和产品 → 专业带看 → 记录客户反应 → 推动决策</div>
+      <div class="branch">
+        <div class="branch-label yes">愿意出offer/交deposit → 进入Step 5</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label yes">想再看看 → 约更多Tour → 保持在Step 3循环</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">不满意 → 进入Step 4 Follow-up</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>Step 4: Tour后Follow-up</div>
+    <div class="decision-tree">
+      <div class="branch-label action">Tour后当天/次日联系：是否满意？有什么concern？</div>
+      <div class="branch">
+        <div class="branch-label no">没交定金 → 不满意的点是什么？</div>
+        <div class="branch">
+          <div class="branch-label action">针对性解决 → 重新推荐 → 约新Tour</div>
+        </div>
+      </div>
+      <div class="branch">
+        <div class="branch-label yes">交了定金 / 愿意出offer → 进入Step 5</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#6c5ce7"></span>Step 5: Offer流程 → Almost There</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">目标：展示专业性，帮助成单</div>
+      <div class="branch-content" style="margin:8px 0">
+        <ol style="padding-left:20px;font-size:13px;line-height:2">
+          <li>Disclosure解读 + CMA分析</li>
+          <li>Lender沟通确认贷款</li>
+          <li>准备完整Offer Package</li>
+          <li>提交Offer + 跟进LA</li>
+          <li>处理Deposit → Reservation</li>
+          <li>In Contract → 交易管理 → Close</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="red-flag" style="margin-top:20px"><strong>绝对红线 — Sales必须遵守：</strong><br>
+    1. MQL进来 24小时内必须首次联系，没有例外<br>
+    2. Tour后 24小时内必须Follow-up，没有例外<br>
+    3. 每次联系都必须录入CRM，没有例外<br>
+    4. 每个Lead都必须有下一步Action，不能"等客户联系我"<br>
+    5. Close Lost必须记录原因，不能标记为Lost就不管了
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+function showStage(id) {
+  document.querySelectorAll('.stage-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const panelId = id === 'overview' || id === 'call' ? 'panel-' + id : 'panel-' + id;
+  document.getElementById(panelId).classList.add('active');
+
+  const navItems = document.querySelectorAll('.nav-item');
+  if (id === 'overview') navItems[0].classList.add('active');
+  else if (id === 'call') navItems[navItems.length - 1].classList.add('active');
+  else navItems[parseInt(id) + 1].classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

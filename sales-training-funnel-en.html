@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Lead Conversion Training Guide</title>
+<style>
+:root { color-scheme: light; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #2d3436; line-height: 1.65; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #0c1527 0%, #1a2744 100%); color: #fff; padding: 28px 24px 20px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.header p { font-size: 13px; color: #8395a7; }
+
+/* Navigation */
+.nav-bar { background: #fff; border-bottom: 1px solid #e8e8e8; padding: 0 16px; display: flex; gap: 0; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
+.nav-item { padding: 12px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; border-bottom: 2.5px solid transparent; color: #636e72; transition: all 0.15s; }
+.nav-item:hover { color: #0c1527; }
+.nav-item.active { color: #0c1527; border-bottom-color: #0984e3; }
+.nav-item .stage-num { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: #dfe6e9; color: #636e72; font-size: 10px; line-height: 18px; text-align: center; margin-right: 4px; }
+.nav-item.active .stage-num { background: #0984e3; color: #fff; }
+
+/* Main */
+.main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+/* Funnel Overview */
+.funnel-section { margin-bottom: 32px; }
+.funnel-row { display: flex; align-items: center; margin-bottom: 6px; cursor: pointer; transition: transform 0.1s; }
+.funnel-row:hover { transform: translateX(4px); }
+.funnel-bar { height: 40px; border-radius: 5px; display: flex; align-items: center; padding: 0 14px; color: #fff; font-weight: 600; font-size: 12px; white-space: nowrap; min-width: 100px; }
+.funnel-label { margin-left: 12px; font-size: 12px; color: #636e72; }
+.funnel-label strong { color: #2d3436; }
+.funnel-conversion { display: flex; align-items: center; padding-left: 20px; margin: 2px 0; }
+.funnel-conversion .arrow { color: #b2bec3; font-size: 14px; margin-right: 8px; }
+.funnel-conversion .rate { font-size: 11px; color: #e17055; font-weight: 600; background: #ffeaa7; padding: 1px 8px; border-radius: 10px; }
+
+/* Stage Detail */
+.stage-panel { display: none; }
+.stage-panel.active { display: block; }
+
+.stage-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.stage-badge { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.stage-title { font-size: 20px; font-weight: 700; }
+.stage-def { font-size: 14px; color: #636e72; margin-top: 2px; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.card-title { font-size: 13px; font-weight: 700; color: #0984e3; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.card-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Criteria boxes */
+.criteria-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.criteria-box { flex: 1; min-width: 260px; border-radius: 8px; padding: 16px; }
+.criteria-box.enter { background: #f0fff4; border: 1px solid #c6f6d5; }
+.criteria-box.exit { background: #fff5f5; border: 1px solid #fed7d7; }
+.criteria-box.value { background: #ebf8ff; border: 1px solid #bee3f8; }
+.criteria-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+.criteria-box.enter h4 { color: #276749; }
+.criteria-box.exit h4 { color: #c53030; }
+.criteria-box.value h4 { color: #2b6cb0; }
+.criteria-box ul { list-style: none; padding: 0; }
+.criteria-box li { font-size: 13px; padding: 3px 0; padding-left: 16px; position: relative; }
+.criteria-box li::before { content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%; }
+.criteria-box.enter li::before { background: #48bb78; }
+.criteria-box.exit li::before { background: #fc8181; }
+.criteria-box.value li::before { background: #63b3ed; }
+
+/* Action list */
+.action-list { list-style: none; padding: 0; counter-reset: action; }
+.action-list li { font-size: 13px; padding: 10px 0 10px 36px; border-bottom: 1px solid #f0f0f0; position: relative; }
+.action-list li:last-child { border-bottom: none; }
+.action-list li::before { counter-increment: action; content: counter(action); position: absolute; left: 0; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: #0984e3; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.action-list li strong { color: #2d3436; }
+
+/* Decision tree */
+.decision-tree { background: #fafafa; border-radius: 8px; padding: 16px; }
+.branch { margin-left: 20px; border-left: 2px solid #dfe6e9; padding-left: 16px; margin-top: 8px; }
+.branch-label { font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 6px; }
+.branch-label.yes { background: #d4edda; color: #155724; }
+.branch-label.no { background: #f8d7da; color: #721c24; }
+.branch-label.action { background: #cce5ff; color: #004085; }
+.branch-label.goal { background: #fff3cd; color: #856404; }
+.branch-content { font-size: 13px; color: #555; margin: 4px 0 12px; }
+
+/* Follow-up table */
+.followup-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.followup-table th { background: #f8f9fa; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #636e72; border-bottom: 2px solid #e8e8e8; }
+.followup-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
+.followup-table tr:last-child td { border-bottom: none; }
+.followup-table .day { font-weight: 700; color: #0984e3; white-space: nowrap; }
+
+/* Metrics */
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.metric-card { background: #f8f9fa; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #eee; }
+.metric-card .label { font-size: 11px; color: #636e72; font-weight: 600; text-transform: uppercase; }
+.metric-card .formula { font-size: 12px; color: #0984e3; margin-top: 4px; font-weight: 500; }
+
+/* Output info */
+.output-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.output-tag { background: #e8e8e8; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 500; }
+
+/* Summary funnel at bottom */
+.summary-funnel { background: #fff; border-radius: 10px; padding: 20px; margin-top: 24px; }
+.summary-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+.summary-row .num { width: 22px; height: 22px; border-radius: 50%; background: #0984e3; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.summary-row .name { font-weight: 600; min-width: 120px; }
+.summary-row .desc { color: #636e72; }
+.summary-arrow { text-align: center; color: #b2bec3; font-size: 12px; padding: 2px 0; padding-left: 30px; }
+
+/* Tip box */
+.tip { background: #fff8e1; border-left: 3px solid #ffb300; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 12px; font-size: 13px; }
+.tip strong { color: #e65100; }
+
+.red-flag { background: #fff0f0; border-left: 3px solid #e53e3e; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-top: 12px; font-size: 13px; }
+.red-flag strong { color: #c53030; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Sales Lead Conversion Training Guide</h1>
+  <p>CRM Pipeline Stages | New Sales Rep Training Manual | One Goal: Convert Clients</p>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-item active" onclick="showStage('overview')"><span class="stage-num">*</span>Overview</div>
+  <div class="nav-item" onclick="showStage(0)"><span class="stage-num">1</span>Lead</div>
+  <div class="nav-item" onclick="showStage(1)"><span class="stage-num">2</span>Engaged</div>
+  <div class="nav-item" onclick="showStage(2)"><span class="stage-num">3</span>MQL</div>
+  <div class="nav-item" onclick="showStage(3)"><span class="stage-num">4</span>SAL</div>
+  <div class="nav-item" onclick="showStage(4)"><span class="stage-num">5</span>SQL</div>
+  <div class="nav-item" onclick="showStage(5)"><span class="stage-num">6</span>Offering</div>
+  <div class="nav-item" onclick="showStage(6)"><span class="stage-num">7</span>Reservation</div>
+  <div class="nav-item" onclick="showStage(7)"><span class="stage-num">8</span>In Contract</div>
+  <div class="nav-item" onclick="showStage(8)"><span class="stage-num">9</span>Close</div>
+  <div class="nav-item" onclick="showStage('call')"><span class="stage-num">C</span>Call Process</div>
+</div>
+
+<div class="main">
+
+<!-- ==================== OVERVIEW ==================== -->
+<div class="stage-panel active" id="panel-overview">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#0c1527">*</div>
+    <div>
+      <div class="stage-title">Pipeline Overview</div>
+      <div class="stage-def">How many leads does a listing generate &rarr; how many respond &rarr; how many are qualified &rarr; how many tour in person &rarr; how many make an offer &rarr; how many reserve &rarr; how many close</div>
+    </div>
+  </div>
+
+  <div class="funnel-section">
+    <div class="funnel-row" onclick="showStage(0)">
+      <div class="funnel-bar" style="width:100%;max-width:520px;background:linear-gradient(135deg,#636e72,#2d3436)">1. Lead (Marketing)</div>
+      <div class="funnel-label">All potential clients | <strong>Marketing-owned</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Shows engagement behavior</span></div>
+
+    <div class="funnel-row" onclick="showStage(1)">
+      <div class="funnel-bar" style="width:90%;max-width:470px;background:linear-gradient(135deg,#a29bfe,#6c5ce7)">2. Engaged (Marketing)</div>
+      <div class="funnel-label">Clients who engaged | <strong>Left contact info</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Has contact info + expressed basic interest</span></div>
+
+    <div class="funnel-row" onclick="showStage(2)">
+      <div class="funnel-bar" style="width:75%;max-width:400px;background:linear-gradient(135deg,#0984e3,#74b9ff)">3. MQL</div>
+      <div class="funnel-label">Initially qualified leads | <strong>SDR verifies contact info + confirms interest within 24h</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Contact info verified + interest confirmed</span></div>
+
+    <div class="funnel-row" onclick="showStage(3)">
+      <div class="funnel-bar" style="width:60%;max-width:330px;background:linear-gradient(135deg,#00b894,#55efc4)">4. SAL</div>
+      <div class="funnel-label">Sales takes over | <strong>Schedule meeting + in-depth consultation + book in-person tour</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Shows up for property tour</span></div>
+
+    <div class="funnel-row" onclick="showStage(4)">
+      <div class="funnel-bar" style="width:45%;max-width:260px;background:linear-gradient(135deg,#fdcb6e,#e17055)">5. SQL</div>
+      <div class="funnel-label">Sales qualified lead | <strong>Completed in-person tour</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Decides to make an offer</span></div>
+
+    <div class="funnel-row" onclick="showStage(5)">
+      <div class="funnel-bar" style="width:35%;max-width:210px;background:linear-gradient(135deg,#e17055,#d63031)">6. Offering</div>
+      <div class="funnel-label">Making an offer | <strong>Offer submitted</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Places deposit</span></div>
+
+    <div class="funnel-row" onclick="showStage(6)">
+      <div class="funnel-bar" style="width:28%;max-width:170px;background:linear-gradient(135deg,#e84393,#fd79a8)">7. Make Reservation</div>
+      <div class="funnel-label">Pre-sale lock-in | <strong>Deposit paid</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Enters formal contract</span></div>
+
+    <div class="funnel-row" onclick="showStage(7)">
+      <div class="funnel-bar" style="width:22%;max-width:140px;background:linear-gradient(135deg,#6c5ce7,#a29bfe)">8. In Contract</div>
+      <div class="funnel-label">Under contract | <strong>Escrow + loan in progress</strong></div>
+    </div>
+    <div class="funnel-conversion"><span class="arrow">&darr;</span><span class="rate">Funds cleared + title transfer</span></div>
+
+    <div class="funnel-row" onclick="showStage(8)">
+      <div class="funnel-bar" style="width:16%;max-width:110px;background:linear-gradient(135deg,#00b894,#00cec9)">9. Close Won</div>
+      <div class="funnel-label"><strong>Deal closed</strong></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>Core Principle: The Only Goal for Sales Is Conversion</div>
+    <ol class="action-list">
+      <li><strong>Every stage has clear exit criteria</strong> &mdash; If not met, do not advance to the next stage; if met, you must push forward</li>
+      <li><strong>Follow-up is systematic, not based on gut feeling</strong> &mdash; Every touchpoint has a defined frequency, number of attempts, and script</li>
+      <li><strong>No cherry-picking leads</strong> &mdash; CRM lead status must be updated in real time and reviewed weekly</li>
+      <li><strong>Every interaction must have a purpose</strong> &mdash; Every call, every message should move the client to the next stage</li>
+      <li><strong>Rejection is not the end</strong> &mdash; Ask why, address the concern, and reactivate</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ==================== STAGE 0: Lead ==================== -->
+<div class="stage-panel" id="panel-0">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#2d3436">1</div>
+    <div>
+      <div class="stage-title">Lead (Marketing)</div>
+      <div class="stage-def">All potential clients. Marketing is responsible for acquisition; Sales does not get involved yet.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Matches the Buyer Profile</li>
+          <li>Located in the Bay Area with home-buying intent</li>
+          <li>Entered our radar through any channel</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; Engaged)</h4>
+        <ul>
+          <li>Client has developed awareness of our company or product</li>
+          <li>Has taken any form of engagement action</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>Display property listings matching their needs</li>
+          <li>Market insights, investment knowledge content</li>
+          <li>Let the client know "a professional team like ours exists"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Marketing Actions</div>
+    <ol class="action-list">
+      <li>Run ads (PPC, Social Media Ads)</li>
+      <li>Content marketing: YouTube channel, WeChat Official Account, Xiaohongshu, Facebook</li>
+      <li>Offline events: Open House, community events</li>
+      <li>Community engagement: continuous content in WeChat groups</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">PPC Cost</div><div class="formula">Cost per Lead</div></div>
+      <div class="metric-card"><div class="label">Lead Count by Channel</div><div class="formula">By Source</div></div>
+      <div class="metric-card"><div class="label">Ad Impressions</div><div class="formula">Impressions</div></div>
+      <div class="metric-card"><div class="label">Content Reach</div><div class="formula">Views / Reads</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 1: Engaged ==================== -->
+<div class="stage-panel" id="panel-1">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#6c5ce7">2</div>
+    <div>
+      <div class="stage-title">Engaged (Marketing)</div>
+      <div class="stage-def">The client has had their first meaningful two-way interaction with us.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Client has shown engagement: clicks, browsing, comments, any form of interaction</li>
+          <li>Has expressed interest</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; MQL)</h4>
+        <ul>
+          <li>Has expressed a basic need</li>
+          <li>Has left reachable contact information</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>Complete listing info: address, price, photos, floor plan</li>
+          <li>3D Tour, Open House schedule</li>
+          <li>Property highlights, whether Disclosure is ready</li>
+          <li>Empower the client to make informed decisions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Actions</div>
+    <ol class="action-list">
+      <li><strong>Set up a web form or other contact-capture method</strong> &mdash; Keep forms simple; collect only essential information</li>
+      <li><strong>Check listing page completeness</strong> &mdash; Ensure every property has price, photos, floor plan, 3D tour, and highlights</li>
+      <li><strong>Set up auto-reply</strong> &mdash; Trigger a confirmation message immediately after a client inquiry</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Contact Info (Phone / WeChat / Email)</span>
+      <span class="output-tag">Property / Project of Interest</span>
+      <span class="output-tag">Engagement Source Channel</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Total Leads</div><div class="formula">Total Engaged</div></div>
+      <div class="metric-card"><div class="label">By Source</div><div class="formula">Leads by Source</div></div>
+      <div class="metric-card"><div class="label">Contact Capture Rate</div><div class="formula">Engagement &rarr; Left Contact Info %</div></div>
+      <div class="metric-card"><div class="label">Response Speed</div><div class="formula">Time from Contact Capture to First Outreach</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 2: MQL ==================== -->
+<div class="stage-panel" id="panel-2">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#0984e3">3</div>
+    <div>
+      <div class="stage-title">MQL - Marketing Qualified Lead</div>
+      <div class="stage-def">A lead that has passed initial screening: has contact info and has named a project of interest. SDR calls to verify contact info and confirm basic interest direction.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Has reachable contact info (phone / WeChat / email)</li>
+          <li>Has named a specific project or product of interest</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; SAL)</h4>
+        <ul>
+          <li>Contact info has been verified as valid (answered / replied)</li>
+          <li>Client's project or direction of interest is known</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>A fast channel to connect with a professional Sales team</li>
+          <li>Notification that their interest has been received and a consultant will reach out</li>
+          <li>Answers to initial simple questions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>SDR Outbound Call &mdash; Must Be Completed Within 24 Hours</div>
+    <p style="font-size:13px;margin-bottom:12px">The core action in the MQL stage is <strong>the SDR phone call</strong>: verify that the contact info works and confirm the client's interest direction. Booking a meeting is the next step in SAL.</p>
+    <ol class="action-list">
+      <li><strong>Make the first call within 24 hours</strong> &mdash; No more than 24 hours after MQL entry; no delays</li>
+      <li><strong>Confirm the client's identity and interest</strong> &mdash; "We noticed you're interested in [project/listing]; we'd like to learn a bit about your situation"</li>
+      <li><strong>Collect basic information</strong> &mdash; What type of home are they interested in? Which area? Owner-occupied or investment?</li>
+      <li><strong>Verify contact info is valid</strong> &mdash; Phone is reachable / WeChat responds; record the best contact method and time window</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>Unanswered Call Follow-Up Standard Sequence</div>
+    <table class="followup-table">
+      <thead>
+        <tr><th>Timing</th><th>Method</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="day">Day 1 (Same day)</td><td>Phone + Text / WeChat</td><td>First call unanswered &rarr; Immediately send text/WeChat: "Hi, this is [Name] from SALA. We noticed your interest in [project/listing] &mdash; happy to chat whenever it's convenient for you."</td></tr>
+        <tr><td class="day">Day 2</td><td>Phone</td><td>Try calling at a different time of day (e.g., if first call was morning, try afternoon)</td></tr>
+        <tr><td class="day">Day 3</td><td>WeChat / Text</td><td>Send a valuable piece of content (related listing link, market update) with a request to chat</td></tr>
+        <tr><td class="day">Day 5</td><td>Phone</td><td>Third phone attempt, different time slot</td></tr>
+        <tr><td class="day">Day 7</td><td>WeChat / Email</td><td>Send detailed project materials or a market report; softer approach: "Sharing some info you might find interesting"</td></tr>
+        <tr><td class="day">Day 14</td><td>Phone</td><td>Final proactive phone attempt</td></tr>
+        <tr><td class="day">Day 14+</td><td>Automated Email</td><td>Move to Marketing Nurture sequence with weekly automated market content. No more proactive calls, but keep them in CRM marked as "Unresponsive"</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><strong>Principle:</strong> At least 4 phone calls + 3 text-based touchpoints within 14 days. Every contact should deliver value (listing info / market data) &mdash; never just pressure. All contact records must be logged in CRM.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Project / Direction of Interest</span>
+      <span class="output-tag">Contact Status (Answered / Unanswered / No Response)</span>
+      <span class="output-tag">Best Contact Method and Time Window</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">First Contact Speed</div><div class="formula">MQL &rarr; First Call Duration</div></div>
+      <div class="metric-card"><div class="label">Connect Rate</div><div class="formula">Calls Made &rarr; Connected %</div></div>
+      <div class="metric-card"><div class="label">Interest Confirmation Rate</div><div class="formula">Connected &rarr; Confirmed Interest %</div></div>
+      <div class="metric-card"><div class="label">Follow-Up Completion Rate</div><div class="formula">Follow-Up Sequence Execution %</div></div>
+      <div class="metric-card"><div class="label">MQL &rarr; SAL Conversion</div><div class="formula">Entered MQL &rarr; Entered SAL %</div></div>
+    </div>
+    <div class="red-flag"><strong>Hard Rule:</strong> Failing to make the first call within 24 hours of MQL entry = management failure. CRM must have an overdue alert.</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 3: SAL ==================== -->
+<div class="stage-panel" id="panel-3">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#00b894">4</div>
+    <div>
+      <div class="stage-title">SAL - Sales Accepted Lead</div>
+      <div class="stage-def">Sales officially takes over: schedule a Virtual Consultation or In-person meeting, understand client intent, confirm they are actively looking, and gather detailed needs and financial situation.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Has expressed interest in a specific project or product</li>
+          <li>Contact info has been verified as valid</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; SQL)</h4>
+        <ul>
+          <li>Detailed needs gathered (area / layout / budget / timeline)</li>
+          <li>Financial situation confirmed (Verbal: income / debt / pre-approval)</li>
+          <li>In-person Tour successfully booked</li>
+          <li>Assessed as High Intent to Buy</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>Answer all client concerns, reduce worries</li>
+          <li>Walk through property details in depth</li>
+          <li>Help the client clarify their real needs and priorities</li>
+          <li>Preliminary financial feasibility assessment (no credit pull)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>SAL Stage Key Actions</div>
+    <ol class="action-list">
+      <li><strong>Book a Virtual Consultation or In-person Meeting</strong> &mdash; "We offer a free 30-minute 1-on-1 consultation with no obligation. What day this week works for you?" &rarr; Send Calendly link to confirm time</li>
+      <li><strong>Understand buying purpose</strong> &mdash; Primary residence for comfort? Value investment? Commute or school district needs?</li>
+      <li><strong>Understand buying capacity</strong> &mdash; Income (W2 / Base / Bonus / RSU), credit score, existing debt/rent, pre-approval status</li>
+      <li><strong>Understand buying stage</strong> &mdash; How long have they been looking? Which areas are they familiar with? Working with another agent?</li>
+      <li><strong>Define property requirements</strong> &mdash; Must-haves vs. deal breakers, budget range</li>
+      <li><strong>Introduce team and service model</strong> &mdash; Team-based service, no commission rebate, requires exclusive partnership</li>
+      <li><strong>Push to next step</strong> &mdash; Book a specific date and properties for an In-person Tour</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Handling Client Refusal to Advance During 1-on-1</div>
+    <div class="decision-tree">
+      <div class="branch-label action">During or after 1-on-1 &rarr; Client unwilling to book In-person Tour</div>
+      <div class="branch">
+        <div class="branch-label no">"No longer have a need"</div>
+        <div class="branch-content">&rarr; Ask why: Market changed? Already bought? Budget changed? &rarr; Respond accordingly, log in CRM; if truly no need, move to Nurture pool</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"Have a need but this one isn't a fit"</div>
+        <div class="branch-content">&rarr; What doesn't fit? Area? Price? Layout? &rarr; Recommend other matching listings &rarr; Rebook Tour</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"Working with another agent"</div>
+        <div class="branch-content">&rarr; Did they sign an exclusive? &rarr; Showcase team differentiators (team-based service, off-market inventory, investment expertise) &rarr; Stay in touch and wait for opportunity</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">"Want to think about it"</div>
+        <div class="branch-content">&rarr; Follow up within 48h with matching listings &rarr; Try booking a Tour again after 3 days &rarr; After two refusals, ask for the reason &rarr; Downgrade to Nurture but maintain weekly touchpoints</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Detailed Needs Record</span>
+      <span class="output-tag">Financial Situation (Verbal)</span>
+      <span class="output-tag">In-person Tour Appointment Time</span>
+      <span class="output-tag">Client Rating (0 / 0.5 / 1)</span>
+      <span class="output-tag">Budget Range</span>
+      <span class="output-tag">Target Area</span>
+      <span class="output-tag">Purchase Timeline</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">1-on-1 Completion Rate</div><div class="formula">Booked &rarr; Actually Completed %</div></div>
+      <div class="metric-card"><div class="label">In-person Booking Rate</div><div class="formula">1-on-1 Completed &rarr; Tour Booked %</div></div>
+      <div class="metric-card"><div class="label">Client Quality Distribution</div><div class="formula">0 / 0.5 / 1 Ratio</div></div>
+      <div class="metric-card"><div class="label">SAL &rarr; SQL Conversion</div><div class="formula">Entered SAL &rarr; Entered SQL %</div></div>
+      <div class="metric-card"><div class="label">Average Budget</div><div class="formula">Avg Budget</div></div>
+    </div>
+    <div class="red-flag"><strong>Hard Rule:</strong> Failing to follow up within 48 hours after a 1-on-1 = management failure. Clients who completed a 1-on-1 but haven't booked a Tour cannot be left unattended &mdash; must either keep pushing or clearly document the reason.</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 4: SQL ==================== -->
+<div class="stage-panel" id="panel-4">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e17055">5</div>
+    <div>
+      <div class="stage-title">SQL - Sales Qualified Lead</div>
+      <div class="stage-def">The client has toured a property in person. This is the critical stage where Sales builds trust face-to-face with the client.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>In-person Tour has been booked</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; Offering)</h4>
+        <ul>
+          <li>Has completed at least one In-person Tour</li>
+          <li>Client has expressed intent to purchase a specific property</li>
+          <li>Ready to submit an offer or place a deposit</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>Professional in-person walkthrough: market, product, company capabilities</li>
+          <li>On-site experience to eliminate information asymmetry</li>
+          <li>Deep understanding of client preferences for precise matching</li>
+          <li>Build personal trust and rapport</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Tour Actions</div>
+    <ol class="action-list">
+      <li><strong>Pre-tour preparation</strong> &mdash; Organize listing info, CMA data, and the client's previous requirements. The first tour is especially critical.</li>
+      <li><strong>Build trust</strong> &mdash; Face-to-face interaction; demonstrate expertise and team resources. It's not just "showing a house" &mdash; it's "consultation + showing."</li>
+      <li><strong>Deeply understand the client</strong> &mdash; Observe their reactions to different properties; identify true preferences (what they say vs. how they actually react).</li>
+      <li><strong>Record Sales Notes</strong> &mdash; Client's comments on each property, areas of interest, concerns &mdash; log in CRM the same day.</li>
+      <li><strong>Push to next step</strong> &mdash; On the day the Tour ends, ask: Book another Tour, or get ready to make an offer?</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Post-Tour Follow-Up Decision Tree</div>
+    <div class="decision-tree">
+      <div class="branch-label action">Same day or next day after Tour &rarr; Follow-up contact</div>
+      <div class="branch">
+        <div class="branch-label goal">Ask: How did you feel about today's properties? Any concerns?</div>
+        <div class="branch">
+          <div class="branch-label yes">Satisfied, willing to make an offer</div>
+          <div class="branch-content">&rarr; Immediately enter the Offering process; prepare documents</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label yes">Satisfied but wants to see more</div>
+          <div class="branch-content">&rarr; Book the next Tour date; recommend new listings &rarr; Stay in SQL stage</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">Not satisfied</div>
+          <div class="branch-content">&rarr; Ask specifically what they didn't like:</div>
+          <div class="branch">
+            <div class="branch-label no">Price / area / layout not a fit</div>
+            <div class="branch-content">&rarr; Adjust recommendation strategy; match new listings &rarr; Book next Tour</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label no">Concerns about the market or timing</div>
+            <div class="branch-content">&rarr; Use data and case studies for market education (refer to Scripts) &rarr; Maintain follow-up</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label no">Unhappy with the team or service</div>
+            <div class="branch-content">&rarr; Address directly; escalate to Team Leader if needed</div>
+          </div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">No response to follow-up</div>
+          <div class="branch-content">&rarr; Day 2: follow up again &rarr; Day 5: send matching listings &rarr; Day 7: phone call &rarr; 14 days with no response: downgrade back to Nurture</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Sales Notes (review of each property)</span>
+      <span class="output-tag">Client's True Preferences</span>
+      <span class="output-tag">Cumulative Tour Count</span>
+      <span class="output-tag">Updated Purchase Intent Score</span>
+      <span class="output-tag">Next Action Step</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Tour Show-Up Rate</div><div class="formula">Booked &rarr; Showed Up %</div></div>
+      <div class="metric-card"><div class="label">Avg Tour Count</div><div class="formula">Average tours before making an Offer</div></div>
+      <div class="metric-card"><div class="label">Tour &rarr; Offer Rate</div><div class="formula">Toured &rarr; Made Offer %</div></div>
+      <div class="metric-card"><div class="label">Follow-Up Response Rate</div><div class="formula">Post-Tour Follow-Up Reply %</div></div>
+      <div class="metric-card"><div class="label">SQL Dwell Time</div><div class="formula">Entered SQL &rarr; Made Offer (days)</div></div>
+    </div>
+    <div class="red-flag"><strong>Hard Rule:</strong> Failing to follow up within 24 hours after a Tour = management failure. Clients who have toured 3+ times without making an Offer must be individually reviewed in the Weekly Meeting with documented reasons.</div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 5: Offering ==================== -->
+<div class="stage-panel" id="panel-5">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#d63031">6</div>
+    <div>
+      <div class="stage-title">Offering</div>
+      <div class="stage-def">The client has decided to buy this property and begins preparing and submitting an Offer. This is the key moment to demonstrate professionalism.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Client is ready to buy this property</li>
+          <li>Purchase intent has been confirmed</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; Reservation)</h4>
+        <ul>
+          <li>Offer has been formally submitted</li>
+          <li>All documents are complete</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>Professional Disclosure review (first-time Zoom walkthrough)</li>
+          <li>CMA comparable sales analysis to support pricing decisions</li>
+          <li>Complete Offer Package preparation</li>
+          <li>Coordination with Lender to confirm financing</li>
+          <li>Help the client avoid overpaying</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Offering Process &mdash; Demonstrate Professionalism, Help Close the Deal</div>
+    <ol class="action-list">
+      <li><strong>Educate the Buyer on required documents</strong> &mdash; Guide the client on what materials to prepare (POF / Pre-approval / ID documents)</li>
+      <li><strong>Download and review Disclosures</strong> &mdash; Share with client; first time must be a Zoom walkthrough (TDS / SPQ / NHD / Inspection / Prelim)</li>
+      <li><strong>CMA Analysis</strong> &mdash; Use MLS to research nearby comparable sales; provide data-backed pricing recommendation</li>
+      <li><strong>Confirm financing with Lender</strong> &mdash; Especially critical before submitting a non-contingency offer</li>
+      <li><strong>Prepare Offer Package</strong> &mdash; RPA, Cover Letter, Disclosure Coversheet, Pre-approval / POF</li>
+      <li><strong>Submit Offer</strong> &mdash; Confirm Listing Agent (LA) received and acknowledged</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Offer Document Package</span>
+      <span class="output-tag">Offer Price</span>
+      <span class="output-tag">Contingency Terms</span>
+      <span class="output-tag">Loan Confirmation Status</span>
+      <span class="output-tag">Listing Agent Feedback</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Offers Submitted / Month</div><div class="formula">Team + Individual</div></div>
+      <div class="metric-card"><div class="label">Document Prep Time</div><div class="formula">Decision to Offer &rarr; Submitted (days)</div></div>
+      <div class="metric-card"><div class="label">Offer Acceptance Rate</div><div class="formula">Submitted &rarr; Accepted %</div></div>
+      <div class="metric-card"><div class="label">Pricing Accuracy</div><div class="formula">Offer Price vs. Final Sale Price</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 6: Make Reservation ==================== -->
+<div class="stage-panel" id="panel-6">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e84393">7</div>
+    <div>
+      <div class="stage-title">Make Reservation</div>
+      <div class="stage-def">Pre-sale property: the client places a fully refundable deposit to lock in the unit.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>Buyer has submitted an Offer</li>
+          <li>Offer was accepted or pre-sale unit was selected</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; In Contract)</h4>
+        <ul>
+          <li>Deposit has been received</li>
+          <li>Reservation documents have been signed</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>The property is locked in for the client</li>
+          <li>Deposit is fully refundable, reducing client's perceived risk</li>
+          <li>Assist with the deposit process</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Actions</div>
+    <ol class="action-list">
+      <li><strong>Process the Deposit</strong> &mdash; Guide the client through wire transfer; confirm Escrow has received funds</li>
+      <li><strong>Sign Reservation documents</strong> &mdash; Ensure all paperwork is complete</li>
+      <li><strong>Notify all parties</strong> &mdash; Confirm with Listing Agent; update status internally</li>
+      <li><strong>Prepare for In Contract stage</strong> &mdash; Connect with Lender to begin the loan process</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">Reservation Documents</span>
+      <span class="output-tag">Deposit Amount & Receipt Confirmation</span>
+      <span class="output-tag">Locked Property Details</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Deposit Receipt Speed</div><div class="formula">Signed &rarr; Funds Received (days)</div></div>
+      <div class="metric-card"><div class="label">Reservation Cancel Rate</div><div class="formula">Reserved &rarr; Cancelled %</div></div>
+      <div class="metric-card"><div class="label">Reservation &rarr; Contract Rate</div><div class="formula">Reserved &rarr; Entered Contract %</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 7: In Contract ==================== -->
+<div class="stage-panel" id="panel-7">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#6c5ce7">8</div>
+    <div>
+      <div class="stage-title">In Contract</div>
+      <div class="stage-def">Formal contract stage. The property is ready to buy; execute loan, title transfer, and all transaction processes.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Stage Definition & Criteria</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Entry Criteria</h4>
+        <ul>
+          <li>The client's reserved property enters formal transaction</li>
+          <li>Property is fully ready to buy</li>
+        </ul>
+      </div>
+      <div class="criteria-box exit">
+        <h4>Exit Criteria (Exit &rarr; Close)</h4>
+        <ul>
+          <li>Escrow has received all funds</li>
+          <li>Loan is Final Approved & Funded</li>
+          <li>All documents have been signed</li>
+          <li>County Recording is complete</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>Value Provided to Client</h4>
+        <ul>
+          <li>End-to-end transaction management so the client can relax</li>
+          <li>Timeline monitoring to never miss a deadline</li>
+          <li>Coordinate Lender / Escrow / Listing Agent across all parties</li>
+          <li>Handle insurance, appraisal, repairs, etc. for the client</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Transaction Management Process</div>
+    <ol class="action-list">
+      <li><strong>Sign all Disclosures</strong></li>
+      <li><strong>Set up & monitor Timeline</strong> &mdash; Schedule for all milestone dates</li>
+      <li><strong>Submit EMD (Earnest Money Deposit)</strong> &mdash; Follow up on Escrow Wire Instructions; confirm receipt</li>
+      <li><strong>Confirm loan execution</strong> &mdash; Coordinate with Lender; follow up on Appraisal</li>
+      <li><strong>Purchase homeowner's insurance</strong> &mdash; Bind to the loan</li>
+      <li><strong>Handle Home Warranty</strong></li>
+      <li><strong>Inspection follow-up</strong> &mdash; If repairs are needed, negotiate credit with the seller</li>
+      <li><strong>Utility Transfer List</strong> &mdash; Send to client 2 days before Close</li>
+      <li><strong>Final Walkthrough</strong></li>
+      <li><strong>Notary Signature &rarr; Funding &rarr; Recording</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e67e22"></span>Output Data (Log in CRM)</div>
+    <div class="output-list">
+      <span class="output-tag">All Transaction Documents</span>
+      <span class="output-tag">Timeline Progress</span>
+      <span class="output-tag">Loan Status</span>
+      <span class="output-tag">Appraisal Results</span>
+      <span class="output-tag">Close Date</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>CRM Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Close Success Rate</div><div class="formula">Entered Contract &rarr; Closed %</div></div>
+      <div class="metric-card"><div class="label">Avg Days to Close</div><div class="formula">Contract &rarr; COE (days)</div></div>
+      <div class="metric-card"><div class="label">Timeline Variance</div><div class="formula">Planned vs. Actual COE</div></div>
+      <div class="metric-card"><div class="label">Fall-Through Reason</div><div class="formula">Loan / Appraisal / Other</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STAGE 8: Close ==================== -->
+<div class="stage-panel" id="panel-8">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#00b894">9</div>
+    <div>
+      <div class="stage-title">Close Won / Close Lost</div>
+      <div class="stage-def">Transaction complete. Won = successfully closed. Lost = dropped out at any stage.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#48bb78"></span>Close Won</div>
+    <div class="criteria-row">
+      <div class="criteria-box enter">
+        <h4>Completion Indicators</h4>
+        <ul>
+          <li>County Recording is complete</li>
+          <li>Grant Deed has been issued</li>
+          <li>All funds have been disbursed</li>
+        </ul>
+      </div>
+      <div class="criteria-box value">
+        <h4>After-Close Actions</h4>
+        <ul>
+          <li>Send Closing documents to client within 2 business days</li>
+          <li>Confirm the client received the Closing Package</li>
+          <li>Ask for a Google Review</li>
+          <li>Close Gift (owner-occupied: gift box / gift card up to $200)</li>
+          <li>Send referral bonus to the referring party</li>
+          <li>Set a Calendar reminder: anniversary check-in at 11 months</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Close Lost &mdash; Reason Must Be Documented</div>
+    <p style="font-size:13px;margin-bottom:12px">Every Close Lost must have the drop-off stage and reason logged in CRM for conversion bottleneck analysis:</p>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Drop-Off Stage</div><div class="formula">Which Stage Lost</div></div>
+      <div class="metric-card"><div class="label">Drop-Off Reason</div><div class="formula">Standardized Reason Tag</div></div>
+      <div class="metric-card"><div class="label">Recoverable?</div><div class="formula">Yes / No</div></div>
+      <div class="metric-card"><div class="label">Competitor</div><div class="formula">Lost to Whom (if applicable)</div></div>
+    </div>
+    <div class="tip"><strong>Close Lost is not the end.</strong> Unless the client explicitly states they are no longer buying, they should be placed in the Nurture pool with regular touchpoints. Many clients reactivate within 6&ndash;12 months.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#9b59b6"></span>Full-Funnel Core Metrics Summary</div>
+    <p style="font-size:13px;margin-bottom:12px">Complete conversion chain for a given listing or project:</p>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="label">Lead &rarr; Engaged</div><div class="formula">Impressions &rarr; Engagement %</div></div>
+      <div class="metric-card"><div class="label">Engaged &rarr; MQL</div><div class="formula">Engagement &rarr; Contact Captured %</div></div>
+      <div class="metric-card"><div class="label">MQL &rarr; SAL</div><div class="formula">Contact Captured &rarr; Meeting Booked %</div></div>
+      <div class="metric-card"><div class="label">SAL &rarr; SQL</div><div class="formula">Meeting Booked &rarr; Toured %</div></div>
+      <div class="metric-card"><div class="label">SQL &rarr; Offering</div><div class="formula">Toured &rarr; Offered %</div></div>
+      <div class="metric-card"><div class="label">Offering &rarr; Reserve</div><div class="formula">Offered &rarr; Deposited %</div></div>
+      <div class="metric-card"><div class="label">Reserve &rarr; Contract</div><div class="formula">Deposited &rarr; Under Contract %</div></div>
+      <div class="metric-card"><div class="label">Contract &rarr; Close</div><div class="formula">Under Contract &rarr; Closed %</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CALL PROCESS ==================== -->
+<div class="stage-panel" id="panel-call">
+  <div class="stage-header">
+    <div class="stage-badge" style="background:#e17055">C</div>
+    <div>
+      <div class="stage-title">Sales Call Process &mdash; Full Decision Tree</div>
+      <div class="stage-def">The complete call logic from first outreach to close. Every step has a clear goal and contingency plan.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e53e3e"></span>Step 1: SDR Outbound Call (MQL Stage, Within 24h)</div>
+    <div class="decision-tree">
+      <div class="branch-label action">MQL enters (has contact info + expressed interest) &rarr; SDR calls within 24 hours</div>
+      <div class="branch-label goal">Goal: Verify contact info is valid; confirm the client's interest direction</div>
+      <div class="branch">
+        <div class="branch-label yes">Answered &rarr; Confirm interest direction, collect basic info &rarr; Move to SAL (Step 2)</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">No answer &rarr; Execute Follow-Up Sequence</div>
+        <div class="branch-content" style="padding:8px 0">
+          <table class="followup-table" style="font-size:12px">
+            <tr><td class="day">Day 1</td><td>Phone + Text / WeChat</td></tr>
+            <tr><td class="day">Day 2</td><td>Try calling at a different time</td></tr>
+            <tr><td class="day">Day 3</td><td>Send valuable content via WeChat + request to chat</td></tr>
+            <tr><td class="day">Day 5</td><td>Third phone attempt</td></tr>
+            <tr><td class="day">Day 7</td><td>Send project materials / market report</td></tr>
+            <tr><td class="day">Day 14</td><td>Final proactive call</td></tr>
+            <tr><td class="day">Day 14+</td><td>Move to automated Nurture sequence</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#0984e3"></span>Step 2: Book a Meeting + Online 1-on-1 Consultation (SAL Stage)</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">Goal: Book a meeting &rarr; Understand detailed needs + confirm buying capacity + book In-person Tour</div>
+      <div class="branch-content" style="margin:8px 0">First, book a Virtual Consultation or In-person Meeting &rarr; Conduct 1-on-1: understand buying purpose, capacity, stage, and property requirements &rarr; Introduce team &rarr; Push Pre-qualification questionnaire</div>
+      <div class="branch">
+        <div class="branch-label yes">In-person booked &rarr; Move to SQL (Step 3)</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">Refuses to advance &rarr; Ask why</div>
+        <div class="branch">
+          <div class="branch-label no">"No longer have a need"</div>
+          <div class="branch-content">&rarr; Ask: Why not? Already bought? Market change? Budget change? &rarr; Log reason &rarr; Address or move to Nurture pool</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"Have a need but this one isn't a fit"</div>
+          <div class="branch-content">&rarr; What doesn't fit? Area? Price? Layout? &rarr; Recommend other matching listings &rarr; Rebook Tour</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"Working with another agent"</div>
+          <div class="branch-content">&rarr; Signed exclusive? &rarr; Showcase differentiators &rarr; Stay in touch</div>
+        </div>
+        <div class="branch">
+          <div class="branch-label no">"Want to think about it"</div>
+          <div class="branch-content">&rarr; Follow up within 48h with listings &rarr; Try again after 3 days &rarr; After two refusals, ask why &rarr; Nurture pool</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#00b894"></span>Step 3: In-Person Meeting / Tour</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">Goal: Build trust + understand true preferences + push toward making an offer or placing a deposit</div>
+      <div class="branch-content" style="margin:8px 0">Execute: Present company capabilities and product &rarr; Professional property showing &rarr; Record client reactions &rarr; Drive decision-making</div>
+      <div class="branch">
+        <div class="branch-label yes">Willing to make an offer / place a deposit &rarr; Move to Step 5</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label yes">Wants to see more &rarr; Book additional Tours &rarr; Stay in Step 3 loop</div>
+      </div>
+      <div class="branch">
+        <div class="branch-label no">Not satisfied &rarr; Move to Step 4 Follow-Up</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#e17055"></span>Step 4: Post-Tour Follow-Up</div>
+    <div class="decision-tree">
+      <div class="branch-label action">Same day / next day after Tour: Were you satisfied? Any concerns?</div>
+      <div class="branch">
+        <div class="branch-label no">No deposit placed &rarr; What specifically didn't they like?</div>
+        <div class="branch">
+          <div class="branch-label action">Address the specific issue &rarr; Recommend new options &rarr; Book another Tour</div>
+        </div>
+      </div>
+      <div class="branch">
+        <div class="branch-label yes">Placed deposit / willing to make an offer &rarr; Move to Step 5</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#6c5ce7"></span>Step 5: Offer Process &rarr; Almost There</div>
+    <div class="decision-tree">
+      <div class="branch-label goal">Goal: Demonstrate professionalism, help close the deal</div>
+      <div class="branch-content" style="margin:8px 0">
+        <ol style="padding-left:20px;font-size:13px;line-height:2">
+          <li>Disclosure review + CMA analysis</li>
+          <li>Communicate with Lender to confirm financing</li>
+          <li>Prepare complete Offer Package</li>
+          <li>Submit Offer + follow up with Listing Agent</li>
+          <li>Process Deposit &rarr; Reservation</li>
+          <li>In Contract &rarr; Transaction Management &rarr; Close</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="red-flag" style="margin-top:20px"><strong>Absolute Hard Rules &mdash; Every Sales Rep Must Follow:</strong><br>
+    1. First contact must be made within 24 hours of MQL entry &mdash; no exceptions<br>
+    2. Follow-up must happen within 24 hours after a Tour &mdash; no exceptions<br>
+    3. Every contact must be logged in CRM &mdash; no exceptions<br>
+    4. Every lead must have a defined next action step &mdash; never "wait for the client to contact me"<br>
+    5. Close Lost must have a documented reason &mdash; never just mark it Lost and move on
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+function showStage(id) {
+  document.querySelectorAll('.stage-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const panelId = id === 'overview' || id === 'call' ? 'panel-' + id : 'panel-' + id;
+  document.getElementById(panelId).classList.add('active');
+
+  const navItems = document.querySelectorAll('.nav-item');
+  if (id === 'overview') navItems[0].classList.add('active');
+  else if (id === 'call') navItems[navItems.length - 1].classList.add('active');
+  else navItems[parseInt(id) + 1].classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
