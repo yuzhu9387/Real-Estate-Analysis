@@ -1,8 +1,8 @@
-# TJ Homes Dashboard Analysis
+# Real Estate Analysis
 
 ## Dashboard Display
 
-Welcome to the TJ Homes Dashboard Analysis. Below are the available dashboards and reports:
+Welcome to the Real Estate Analysis dashboards and reports. Below are the available resources:
 
 ### 📊 Main Dashboard
 - [**TJ Homes Dashboard v2**](https://yuzhu9387.github.io/Real-Estate-Analysis/TJ_Homes_Dashboard_v2.html) - Main real estate analysis dashboard
