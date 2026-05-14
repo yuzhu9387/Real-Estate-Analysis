@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildFlow — Project Orchestration for Builders</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f0f2f5;
+  --white: #ffffff;
+  --sidebar: #0f172a;
+  --sidebar-hover: #1e293b;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar { width: 240px; background: var(--sidebar); color: white; display: flex; flex-direction: column; flex-shrink: 0; }
+.logo { padding: 20px 18px; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.logo-icon { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.nav { padding: 12px 8px; flex: 1; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; color: rgba(255,255,255,0.6); transition: all 0.15s; margin-bottom: 2px; position: relative; }
+.nav-item:hover { background: var(--sidebar-hover); color: white; }
+.nav-item.active { background: var(--primary); color: white; }
+.nav-item .badge { position: absolute; right: 10px; background: var(--danger); color: white; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+.nav-icon { width: 20px; text-align: center; font-size: 16px; }
+.nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); padding: 18px 14px 6px; font-weight: 600; }
+.sidebar-footer { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+.sidebar-footer .name { font-size: 13px; font-weight: 600; }
+.sidebar-footer .role { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* Main */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { height: 56px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+.topbar h1 { font-size: 16px; font-weight: 700; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.btn { padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { background: #f8fafc; }
+.search-box { padding: 7px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: 13px; width: 220px; outline: none; }
+.search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* Page sections */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Cards */
+.card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 700; }
+
+/* KPI Row */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi { background: var(--white); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+.kpi .label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+.kpi .value { font-size: 28px; font-weight: 800; margin: 4px 0 2px; }
+.kpi .change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+.kpi .change.up { color: var(--success); }
+.kpi .change.down { color: var(--danger); }
+
+/* Status badges */
+.status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status-on-track { background: #d1fae5; color: #065f46; }
+.status-at-risk { background: #fef3c7; color: #92400e; }
+.status-delayed { background: #fee2e2; color: #991b1b; }
+.status-done { background: #e0e7ff; color: #3730a3; }
+.status-in-progress { background: #dbeafe; color: #1e40af; }
+.status-review { background: #f3e8ff; color: #6b21a8; }
+.status-blocked { background: #fecaca; color: #991b1b; }
+.status-ready { background: #e0f2fe; color: #075985; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); white-space: nowrap; }
+td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: middle; }
+tr:hover td { background: #f8fafc; }
+tr { cursor: pointer; }
+
+/* Gantt */
+.gantt-container { overflow-x: auto; padding: 10px 0; }
+.gantt-header { display: flex; margin-left: 260px; margin-bottom: 4px; }
+.gantt-month { flex: 1; min-width: 80px; font-size: 11px; color: var(--text-secondary); font-weight: 600; text-align: center; border-left: 1px solid #f1f5f9; padding: 4px 0; }
+.gantt-row { display: flex; align-items: center; height: 38px; border-bottom: 1px solid #f8fafc; }
+.gantt-label { width: 260px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding-right: 12px; }
+.gantt-label .task-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gantt-label .task-owner { font-size: 11px; color: var(--text-secondary); }
+.gantt-track { flex: 1; position: relative; height: 100%; display: flex; align-items: center; }
+.gantt-bar { position: absolute; height: 22px; border-radius: 4px; display: flex; align-items: center; padding: 0 6px; font-size: 10px; font-weight: 600; color: white; min-width: 20px; white-space: nowrap; transition: all 0.2s; }
+.gantt-bar:hover { transform: scaleY(1.2); z-index: 2; }
+.gantt-bar.baseline { height: 8px; border: 2px dashed #94a3b8; background: transparent; top: -14px; }
+.gantt-bar.done { background: var(--success); }
+.gantt-bar.in-progress { background: var(--primary); }
+.gantt-bar.review { background: #8b5cf6; }
+.gantt-bar.delayed { background: var(--danger); }
+.gantt-bar.ready { background: #38bdf8; }
+.gantt-bar.not-started { background: #cbd5e1; }
+.gantt-bar.blocked { background: var(--danger); opacity: 0.6; }
+.dep-line { position: absolute; border-left: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8; }
+.today-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); z-index: 1; }
+.today-label { position: absolute; top: -18px; font-size: 10px; color: var(--danger); font-weight: 600; white-space: nowrap; }
+
+/* Task cards for My Work */
+.task-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; position: relative; }
+.task-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.task-card.completing { animation: cardComplete 0.5s forwards; }
+@keyframes cardComplete {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.95); opacity: 0.5; background: #d1fae5; }
+  100% { transform: scale(0.9); opacity: 0; height: 0; padding: 0; margin: 0; overflow: hidden; }
+}
+.task-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.task-card .project-tag { font-size: 11px; color: var(--primary); font-weight: 600; }
+.task-card .task-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.task-card .task-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); }
+.task-card .task-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 10px 18px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* Charts */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.chart-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.chart-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.chart-box { position: relative; height: 220px; }
+
+/* Task Drawer */
+.drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 100; }
+.drawer-overlay.open { display: block; }
+.drawer { position: fixed; right: -480px; top: 0; bottom: 0; width: 480px; background: var(--white); z-index: 101; box-shadow: -4px 0 20px rgba(0,0,0,0.1); transition: right 0.3s ease; overflow-y: auto; }
+.drawer.open { right: 0; }
+.drawer-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+.drawer-close { width: 32px; height: 32px; border: none; background: #f1f5f9; border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.drawer-body { padding: 20px; }
+.drawer-section { margin-bottom: 20px; }
+.drawer-section h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 8px; }
+.field-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f8fafc; font-size: 13px; }
+.field-label { color: var(--text-secondary); }
+.timeline-item { display: flex; gap: 12px; padding: 8px 0; font-size: 13px; }
+.timeline-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.checklist-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+.checklist-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); }
+
+/* Progress bar */
+.progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+/* Notification toast */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--sidebar); color: white; padding: 14px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; z-index: 200; transform: translateY(80px); opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 10px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast .undo { color: var(--primary); cursor: pointer; font-weight: 700; margin-left: 8px; }
+
+/* Filter bar */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: white; transition: all 0.15s; }
+.filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+.filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 48px 20px; }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.empty-state p { color: var(--text-secondary); font-size: 14px; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: fadeIn 0.3s ease; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar { width: 60px; }
+  .logo span, .nav-item span, .nav-section, .sidebar-footer .info { display: none; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .chart-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="logo"><div class="logo-icon">B</div><span>BuildFlow</span></div>
+  <div class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" data-page="dashboard"><div class="nav-icon">📊</div><span>Dashboard</span></div>
+    <div class="nav-item" data-page="mywork"><div class="nav-icon">✅</div><span>My Work</span><div class="badge">7</div></div>
+    <div class="nav-item" data-page="calendar"><div class="nav-icon">📅</div><span>Calendar</span></div>
+
+    <div class="nav-section">Projects</div>
+    <div class="nav-item" data-page="project"><div class="nav-icon">🏗️</div><span>883 Rorke Way</span></div>
+    <div class="nav-item" data-page="project2"><div class="nav-icon">🏠</div><span>246 Farley St</span></div>
+    <div class="nav-item" data-page="project3"><div class="nav-icon">🏡</div><span>761 Pollard Rd</span></div>
+
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item" data-page="analytics"><div class="nav-icon">📈</div><span>Performance</span></div>
+    <div class="nav-item" data-page="team"><div class="nav-icon">👥</div><span>Team Load</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="avatar">LZ</div>
+    <div class="info"><div class="name">Leona Z.</div><div class="role">Admin</div></div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Management Dashboard</h1>
+    <div class="topbar-actions">
+      <input type="text" class="search-box" placeholder="Search projects, tasks, people...">
+      <button class="btn btn-outline" onclick="showToast('🔔 3 tasks overdue, 2 reviews pending')">🔔 <span style="background:var(--danger);color:white;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:700">5</span></button>
+      <button class="btn btn-primary" onclick="showToast('✨ New project wizard opened')">+ New Project</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ================ DASHBOARD PAGE ================ -->
+    <div class="page active" id="page-dashboard">
+      <div class="kpi-grid animate-in">
+        <div class="kpi">
+          <div class="label">Active Projects</div>
+          <div class="value">12</div>
+          <div class="change up">↑ 3 new this month</div>
+        </div>
+        <div class="kpi">
+          <div class="label">On Track</div>
+          <div class="value" style="color:var(--success)">7</div>
+          <div class="change up">58% of portfolio</div>
+        </div>
+        <div class="kpi">
+          <div class="label">At Risk / Delayed</div>
+          <div class="value" style="color:var(--danger)">5</div>
+          <div class="change down">↑ 2 from last week</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Review Backlog</div>
+          <div class="value" style="color:var(--warning)">18</div>
+          <div class="change down">Avg wait: 2.3 days</div>
+        </div>
+      </div>
+
+      <div class="card animate-in">
+        <div class="card-header">
+          <div class="card-title">Project Portfolio Status</div>
+          <div class="filter-bar" style="margin:0">
+            <div class="filter-chip active">All</div>
+            <div class="filter-chip">On Track</div>
+            <div class="filter-chip">At Risk</div>
+            <div class="filter-chip">Delayed</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Project</th><th>Phase</th><th>Health</th><th>Progress</th><th>Delayed Tasks</th><th>Review Queue</th><th>Forecast End</th><th>Variance</th></tr>
+            </thead>
+            <tbody>
+              <tr onclick="navigateTo('project')"><td><strong>883 Rorke Way, Palo Alto</strong><br><span style="font-size:11px;color:var(--text-secondary)">New Construction · PM: Sarah Chen</span></td><td>Construction</td><td><span class="status status-on-track">On Track</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:72%;background:var(--success)"></div></div><span style="font-size:11px;margin-left:6px">72%</span></td><td>0</td><td>1</td><td>Aug 2025</td><td style="color:var(--success)">+0 days</td></tr>
+              <tr onclick="navigateTo('project2')"><td><strong>246 Farley St, Mountain View</strong><br><span style="font-size:11px;color:var(--text-secondary)">New Construction · PM: Mike Wang</span></td><td>Permitting</td><td><span class="status status-at-risk">At Risk</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:38%;background:var(--warning)"></div></div><span style="font-size:11px;margin-left:6px">38%</span></td><td>3</td><td>4</td><td>Dec 2025</td><td style="color:var(--danger)">+22 days</td></tr>
+              <tr onclick="navigateTo('project3')"><td><strong>761 Pollard Rd, Los Gatos</strong><br><span style="font-size:11px;color:var(--text-secondary)">New Construction · PM: Sarah Chen</span></td><td>Design</td><td><span class="status status-delayed">Delayed</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:15%;background:var(--danger)"></div></div><span style="font-size:11px;margin-left:6px">15%</span></td><td>5</td><td>6</td><td>Mar 2026</td><td style="color:var(--danger)">+45 days</td></tr>
+              <tr><td><strong>1382 Holt Ave, Los Altos</strong><br><span style="font-size:11px;color:var(--text-secondary)">Wholesale · PM: David Liu</span></td><td>Closing</td><td><span class="status status-on-track">On Track</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:95%;background:var(--success)"></div></div><span style="font-size:11px;margin-left:6px">95%</span></td><td>0</td><td>0</td><td>Jun 2025</td><td style="color:var(--success)">-2 days</td></tr>
+              <tr><td><strong>1270 W Hacienda, Campbell</strong><br><span style="font-size:11px;color:var(--text-secondary)">New Construction · PM: Mike Wang</span></td><td>Permitting</td><td><span class="status status-on-track">On Track</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:45%;background:var(--success)"></div></div><span style="font-size:11px;margin-left:6px">45%</span></td><td>1</td><td>2</td><td>Jan 2026</td><td style="color:var(--warning)">+5 days</td></tr>
+              <tr><td><strong>1429 Westmont Ave, Campbell</strong><br><span style="font-size:11px;color:var(--text-secondary)">Large Dev (5 lots) · PM: Sarah Chen</span></td><td>Construction</td><td><span class="status status-at-risk">At Risk</span></td><td><div class="progress-bar" style="width:120px"><div class="progress-fill" style="width:60%;background:var(--warning)"></div></div><span style="font-size:11px;margin-left:6px">60%</span></td><td>4</td><td>5</td><td>Nov 2025</td><td style="color:var(--danger)">+18 days</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-grid animate-in">
+        <div class="chart-card">
+          <h3>Permit Stage Bottleneck</h3>
+          <div class="chart-box"><canvas id="chartPermit"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Department Workload</h3>
+          <div class="chart-box"><canvas id="chartDept"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================ PROJECT PAGE ================ -->
+    <div class="page" id="page-project">
+      <div class="card animate-in" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:12px;opacity:0.7;margin-bottom:4px">NEW CONSTRUCTION</div>
+            <h2 style="font-size:22px;font-weight:800">883 Rorke Way, Palo Alto, CA 94303</h2>
+            <div style="margin-top:8px;font-size:13px;opacity:0.8">Purchase: $2,850,000 · Est. Profit: $315,566 · PM: Sarah Chen</div>
+          </div>
+          <div style="text-align:right">
+            <span class="status" style="background:rgba(255,255,255,0.2);color:white">On Track</span>
+            <div style="margin-top:8px;font-size:13px;opacity:0.8">72% Complete</div>
+            <div class="progress-bar" style="width:140px;margin-top:6px;background:rgba(255,255,255,0.2)"><div class="progress-fill" style="width:72%;background:white"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:24px;margin-top:16px;font-size:13px">
+          <div><span style="opacity:0.6">Baseline End:</span> Jul 15, 2025</div>
+          <div><span style="opacity:0.6">Forecast End:</span> Aug 1, 2025</div>
+          <div><span style="opacity:0.6">Variance:</span> +17 days</div>
+          <div><span style="opacity:0.6">Active Permits:</span> 5</div>
+          <div><span style="opacity:0.6">Tasks:</span> 47 total · 34 done</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="gantt">Gantt Timeline</div>
+        <div class="tab" data-tab="tasks">Task List</div>
+        <div class="tab" data-tab="activity">Activity Log</div>
+      </div>
+
+      <!-- Gantt Chart -->
+      <div class="card animate-in" id="tab-gantt">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="filter-bar" style="margin:0">
+            <div class="filter-chip active">All Permits</div>
+            <div class="filter-chip">Demolition</div>
+            <div class="filter-chip">SB9</div>
+            <div class="filter-chip">Building</div>
+            <div class="filter-chip">ADU</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline" style="font-size:12px;padding:4px 10px">Week</button>
+            <button class="btn btn-primary" style="font-size:12px;padding:4px 10px">Month</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:10px;font-size:11px;color:var(--text-secondary)">
+          <span><span style="display:inline-block;width:14px;height:6px;background:var(--success);border-radius:2px;margin-right:4px"></span>Done</span>
+          <span><span style="display:inline-block;width:14px;height:6px;background:var(--primary);border-radius:2px;margin-right:4px"></span>In Progress</span>
+          <span><span style="display:inline-block;width:14px;height:6px;background:#8b5cf6;border-radius:2px;margin-right:4px"></span>In Review</span>
+          <span><span style="display:inline-block;width:14px;height:6px;background:#38bdf8;border-radius:2px;margin-right:4px"></span>Ready</span>
+          <span><span style="display:inline-block;width:14px;height:6px;background:var(--danger);border-radius:2px;margin-right:4px"></span>Delayed</span>
+          <span><span style="display:inline-block;width:14px;height:14px;border:2px dashed #94a3b8;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Baseline</span>
+        </div>
+        <div class="gantt-container">
+          <div class="gantt-header">
+            <div class="gantt-month">Oct 2023</div><div class="gantt-month">Nov</div><div class="gantt-month">Dec</div>
+            <div class="gantt-month">Jan 2024</div><div class="gantt-month">Feb</div><div class="gantt-month">Mar</div>
+            <div class="gantt-month">Apr</div><div class="gantt-month">May</div><div class="gantt-month">Jun</div>
+            <div class="gantt-month">Jul</div><div class="gantt-month">Aug</div><div class="gantt-month">Sep</div>
+            <div class="gantt-month">Oct</div><div class="gantt-month">Nov</div><div class="gantt-month">Dec</div>
+            <div class="gantt-month">Jan 2025</div><div class="gantt-month">Feb</div><div class="gantt-month">Mar</div>
+            <div class="gantt-month">Apr</div><div class="gantt-month">May</div>
+          </div>
+          <!-- Demolition Permit -->
+          <div style="font-size:12px;font-weight:700;color:var(--primary);padding:8px 0 4px;border-top:2px solid var(--primary)">DEMOLITION PERMIT</div>
+          <div class="gantt-row" onclick="openDrawer()"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px">JL</div><div><div class="task-name">Submit demo permit app</div><div class="task-owner">Jason Li</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:2%;width:8%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#8b5cf6">SC</div><div><div class="task-name">City review & approval</div><div class="task-owner">Sarah Chen</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:10%;width:12%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">Execute demolition</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:22%;width:6%">Done</div></div></div>
+
+          <!-- SB9 Permit -->
+          <div style="font-size:12px;font-weight:700;color:#8b5cf6;padding:12px 0 4px;border-top:2px solid #8b5cf6">SB9 LOT SPLIT PERMIT</div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#0891b2">AL</div><div><div class="task-name">Prepare SB9 application</div><div class="task-owner">Amy Lee</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:12%;width:10%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#0891b2">AL</div><div><div class="task-name">City SB9 review</div><div class="task-owner">Amy Lee</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:22%;width:18%">Done</div></div></div>
+
+          <!-- Building Permit -->
+          <div style="font-size:12px;font-weight:700;color:var(--success);padding:12px 0 4px;border-top:2px solid var(--success)">BUILDING PERMIT — MAIN HOUSE</div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#ec4899">TW</div><div><div class="task-name">Architectural drawings</div><div class="task-owner">Tom Wang</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:8%;width:14%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#ec4899">TW</div><div><div class="task-name">Structural engineering</div><div class="task-owner">Tom Wang</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:22%;width:10%">Done</div></div></div>
+          <div class="gantt-row" onclick="openDrawer()"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px">JL</div><div><div class="task-name">Submit building permit</div><div class="task-owner">Jason Li</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:32%;width:4%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#8b5cf6">SC</div><div><div class="task-name">Plan check round 1</div><div class="task-owner">Sarah Chen</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:36%;width:12%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#ec4899">TW</div><div><div class="task-name">Plan check corrections</div><div class="task-owner">Tom Wang</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:48%;width:6%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#8b5cf6">SC</div><div><div class="task-name">Permit issued</div><div class="task-owner">Sarah Chen</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:54%;width:3%">✓</div></div></div>
+
+          <!-- Construction -->
+          <div style="font-size:12px;font-weight:700;color:var(--warning);padding:12px 0 4px;border-top:2px solid var(--warning)">CONSTRUCTION</div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">Foundation & grading</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:57%;width:8%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">Framing</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar done" style="left:65%;width:8%">Done</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">MEP rough-in</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar in-progress" style="left:73%;width:7%">In Progress</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#8b5cf6">SC</div><div><div class="task-name">Rough inspection</div><div class="task-owner">Sarah Chen</div></div></div><div class="gantt-track"><div class="gantt-bar review" style="left:80%;width:3%">Review</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">Drywall & interior</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar ready" style="left:83%;width:8%">Ready</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:var(--warning)">RK</div><div><div class="task-name">Final finishes</div><div class="task-owner">Rob Kim</div></div></div><div class="gantt-track"><div class="gantt-bar not-started" style="left:91%;width:5%">Pending</div></div></div>
+          <div class="gantt-row"><div class="gantt-label"><div class="avatar" style="width:24px;height:24px;font-size:10px;background:#8b5cf6">SC</div><div><div class="task-name">Final inspection & CO</div><div class="task-owner">Sarah Chen</div></div></div><div class="gantt-track"><div class="gantt-bar not-started" style="left:96%;width:4%">Pending</div></div></div>
+        </div>
+      </div>
+
+      <!-- Task List (hidden by default) -->
+      <div class="card" id="tab-tasks" style="display:none">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Task</th><th>Permit</th><th>Owner</th><th>Reviewer</th><th>Status</th><th>Planned Due</th><th>Forecast Due</th><th>Actual End</th></tr></thead>
+            <tbody>
+              <tr onclick="openDrawer()"><td><strong>MEP rough-in</strong></td><td>Building</td><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--warning)">RK</div> Rob Kim</td><td>Sarah Chen</td><td><span class="status status-in-progress">In Progress</span></td><td>Apr 28</td><td>May 8</td><td>—</td></tr>
+              <tr><td><strong>Rough inspection</strong></td><td>Building</td><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:#8b5cf6">SC</div> Sarah Chen</td><td>City Inspector</td><td><span class="status status-review">Submitted for Review</span></td><td>May 5</td><td>May 12</td><td>—</td></tr>
+              <tr><td><strong>Drywall & interior</strong></td><td>Building</td><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--warning)">RK</div> Rob Kim</td><td>Sarah Chen</td><td><span class="status status-ready">Ready</span></td><td>May 12</td><td>May 18</td><td>—</td></tr>
+              <tr><td><strong>Final finishes</strong></td><td>Building</td><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--warning)">RK</div> Rob Kim</td><td>Sarah Chen</td><td><span class="status" style="background:#f1f5f9;color:#64748b">Not Started</span></td><td>Jun 8</td><td>Jun 20</td><td>—</td></tr>
+              <tr><td><strong>⚡ Unplanned: Fix HVAC routing</strong></td><td>Building</td><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--danger)">RK</div> Rob Kim</td><td>Tom Wang</td><td><span class="status status-delayed">Delayed +3d</span></td><td>—</td><td>May 10</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Activity Log (hidden by default) -->
+      <div class="card" id="tab-activity" style="display:none">
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--success)"></div><div><strong>Rob Kim</strong> completed <strong>Framing</strong> — approved by Sarah Chen<br><span style="font-size:11px;color:var(--text-secondary)">2 hours ago</span></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:#8b5cf6"></div><div><strong>Sarah Chen</strong> submitted <strong>Rough inspection</strong> for review<br><span style="font-size:11px;color:var(--text-secondary)">5 hours ago</span></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--danger)"></div><div><strong>System</strong> auto-flagged: <strong>Fix HVAC routing</strong> delayed +3 days → downstream tasks shifted<br><span style="font-size:11px;color:var(--text-secondary)">Yesterday</span></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--warning)"></div><div><strong>Mike Wang</strong> added unplanned task: <strong>Fix HVAC routing</strong> — Impact: project end +3 days<br><span style="font-size:11px;color:var(--text-secondary)">2 days ago</span></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:var(--primary)"></div><div><strong>Tom Wang</strong> rejected <strong>Plan check corrections</strong> — "Structural calcs on page 12 need revision"<br><span style="font-size:11px;color:var(--text-secondary)">5 days ago</span></div></div>
+      </div>
+    </div>
+
+    <!-- ================ MY WORK PAGE ================ -->
+    <div class="page" id="page-mywork">
+      <div class="tabs">
+        <div class="tab active">My Tasks <span style="background:var(--primary);color:white;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px">5</span></div>
+        <div class="tab">My Reviews <span style="background:#8b5cf6;color:white;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px">2</span></div>
+        <div class="tab">Completed</div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--danger)">⚡ Due Today</div>
+      <div class="task-card" id="task1">
+        <div class="task-card-header"><span class="status status-in-progress">In Progress</span><span class="status status-delayed">Critical Path</span></div>
+        <div class="project-tag">883 Rorke Way · Building Permit</div>
+        <div class="task-title">MEP rough-in inspection coordination</div>
+        <div class="task-meta"><span>📅 Due: Today</span><span>👤 Reviewer: Sarah Chen</span><span>⏱ 2 days in progress</span></div>
+        <div class="task-actions">
+          <button class="btn btn-primary" onclick="completeTask('task1')">✓ Submit for Review</button>
+          <button class="btn btn-outline" onclick="openDrawer()">Open Details</button>
+        </div>
+      </div>
+
+      <div class="task-card" id="task2">
+        <div class="task-card-header"><span class="status status-in-progress">In Progress</span></div>
+        <div class="project-tag">246 Farley St · SB9 Permit</div>
+        <div class="task-title">Prepare lot split survey documents</div>
+        <div class="task-meta"><span>📅 Due: Today</span><span>👤 Reviewer: Mike Wang</span><span>⏱ 5 days in progress</span></div>
+        <div class="task-actions">
+          <button class="btn btn-primary" onclick="completeTask('task2')">✓ Submit for Review</button>
+          <button class="btn btn-outline">Open Details</button>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;margin:20px 0 12px;color:var(--warning)">📋 This Week</div>
+      <div class="task-card" id="task3">
+        <div class="task-card-header"><span class="status status-ready">Ready</span></div>
+        <div class="project-tag">761 Pollard Rd · Building Permit</div>
+        <div class="task-title">Submit architectural plans to city</div>
+        <div class="task-meta"><span>📅 Due: May 16</span><span>👤 Reviewer: Amy Lee</span><span>🔓 Unlocked yesterday</span></div>
+        <div class="task-actions">
+          <button class="btn btn-outline" onclick="showToast('▶️ Task started — actual_start_at recorded')">▶ Start Task</button>
+          <button class="btn btn-outline">Open Details</button>
+        </div>
+      </div>
+
+      <div class="task-card" id="task4">
+        <div class="task-card-header"><span class="status status-blocked">Blocked</span></div>
+        <div class="project-tag">1270 W Hacienda · Demolition Permit</div>
+        <div class="task-title">Schedule demolition crew</div>
+        <div class="task-meta"><span>📅 Due: May 18</span><span>🚫 Blocked by: Demo permit approval (pending city)</span></div>
+        <div class="task-actions">
+          <button class="btn btn-outline" disabled style="opacity:0.5">Blocked — waiting on dependency</button>
+        </div>
+      </div>
+
+      <div class="task-card" id="task5">
+        <div class="task-card-header"><span class="status status-ready">Ready</span></div>
+        <div class="project-tag">883 Rorke Way · ADU Permit</div>
+        <div class="task-title">Review ADU utility connection plans</div>
+        <div class="task-meta"><span>📅 Due: May 19</span><span>👤 Reviewer: Tom Wang</span></div>
+        <div class="task-actions">
+          <button class="btn btn-outline">▶ Start Task</button>
+          <button class="btn btn-outline">Open Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================ ANALYTICS PAGE ================ -->
+    <div class="page" id="page-analytics">
+      <div class="kpi-grid animate-in">
+        <div class="kpi"><div class="label">Tasks Completed (May)</div><div class="value">142</div><div class="change up">↑ 18% vs April</div></div>
+        <div class="kpi"><div class="label">On-Time Rate</div><div class="value" style="color:var(--warning)">73%</div><div class="change down">Target: 85%</div></div>
+        <div class="kpi"><div class="label">Avg Review Turnaround</div><div class="value">1.8d</div><div class="change up">↓ from 2.6d</div></div>
+        <div class="kpi"><div class="label">Rework Rate</div><div class="value" style="color:var(--danger)">14%</div><div class="change down">Target: < 8%</div></div>
+      </div>
+
+      <div class="chart-grid animate-in">
+        <div class="chart-card">
+          <h3>Team On-Time Completion Rate</h3>
+          <div class="chart-box"><canvas id="chartOnTime"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Monthly Task Throughput</h3>
+          <div class="chart-box"><canvas id="chartThroughput"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card animate-in">
+        <div class="card-title" style="margin-bottom:14px">Individual Performance (May 2025)</div>
+        <table>
+          <thead><tr><th>Person</th><th>Dept</th><th class="num">Tasks Done</th><th class="num">On-Time %</th><th class="num">Review Turnaround</th><th class="num">Rework Rate</th><th>Trend</th></tr></thead>
+          <tbody>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:#8b5cf6">SC</div> <strong>Sarah Chen</strong></td><td>PM</td><td>28</td><td style="color:var(--success)">92%</td><td>0.8d</td><td>5%</td><td style="color:var(--success)">↑↑</td></tr>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--warning)">RK</div> <strong>Rob Kim</strong></td><td>Construction</td><td>35</td><td style="color:var(--warning)">71%</td><td>—</td><td>18%</td><td style="color:var(--danger)">↓</td></tr>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:#ec4899">TW</div> <strong>Tom Wang</strong></td><td>Design</td><td>22</td><td style="color:var(--success)">86%</td><td>1.2d</td><td>9%</td><td>→</td></tr>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:#0891b2">AL</div> <strong>Amy Lee</strong></td><td>Permitting</td><td>18</td><td style="color:var(--success)">89%</td><td>1.5d</td><td>6%</td><td style="color:var(--success)">↑</td></tr>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex">JL</div> <strong>Jason Li</strong></td><td>Permitting</td><td>15</td><td style="color:var(--danger)">60%</td><td>3.2d</td><td>22%</td><td style="color:var(--danger)">↓↓</td></tr>
+            <tr><td><div class="avatar" style="width:22px;height:22px;font-size:9px;display:inline-flex;background:var(--primary)">DL</div> <strong>David Liu</strong></td><td>Acquisitions</td><td>24</td><td style="color:var(--success)">88%</td><td>1.0d</td><td>4%</td><td style="color:var(--success)">↑</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================ CALENDAR PAGE ================ -->
+    <div class="page" id="page-calendar">
+      <div class="card animate-in">
+        <div class="card-header"><div class="card-title">May 2025</div><div style="display:flex;gap:8px"><button class="btn btn-outline">◀</button><button class="btn btn-outline">Today</button><button class="btn btn-outline">▶</button></div></div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Mon</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Tue</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Wed</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Thu</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Fri</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Sat</div>
+          <div style="background:#f8fafc;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--text-secondary)">Sun</div>
+          <!-- Week 1 -->
+          <div style="background:white;padding:6px;min-height:80px"></div>
+          <div style="background:white;padding:6px;min-height:80px"></div>
+          <div style="background:white;padding:6px;min-height:80px"></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">1</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">2</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">3</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">4</div></div>
+          <!-- Week 2 -->
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">5</div><div style="background:#fee2e2;color:#991b1b;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">MEP due</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">6</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">7</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">8</div><div style="background:#dbeafe;color:#1e40af;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">HVAC fix due</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">9</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">10</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">11</div></div>
+          <!-- Week 3 (today highlighted) -->
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">12</div><div style="background:#f3e8ff;color:#6b21a8;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">Review: rough insp.</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">13</div></div>
+          <div style="background:#eff6ff;padding:6px;min-height:80px;border:2px solid var(--primary)"><div style="font-size:12px;font-weight:700;color:var(--primary)">14 Today</div><div style="background:#fef3c7;color:#92400e;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">Survey docs due</div><div style="background:#fee2e2;color:#991b1b;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">MEP coord due</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">15</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">16</div><div style="background:#dbeafe;color:#1e40af;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">Submit arch plans</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">17</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">18</div></div>
+          <!-- Week 4 -->
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">19</div><div style="background:#dbeafe;color:#1e40af;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">ADU utility review</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">20</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">21</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">22</div><div style="background:#d1fae5;color:#065f46;font-size:10px;padding:2px 4px;border-radius:3px;margin-top:2px">Milestone: Holt close</div></div>
+          <div style="background:white;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">23</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">24</div></div>
+          <div style="background:#f8fafc;padding:6px;min-height:80px"><div style="font-size:12px;color:var(--text-secondary)">25</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================ TEAM PAGE ================ -->
+    <div class="page" id="page-team">
+      <div class="card animate-in">
+        <div class="card-title" style="margin-bottom:16px">Team Workload Distribution</div>
+        <div style="height:300px"><canvas id="chartTeamLoad"></canvas></div>
+      </div>
+      <div class="card animate-in">
+        <div class="card-title" style="margin-bottom:16px">Department Summary</div>
+        <table>
+          <thead><tr><th>Department</th><th class="num">Active Tasks</th><th class="num">Overdue</th><th class="num">Review Queue</th><th class="num">Avg Days to Close</th><th>Bottleneck Risk</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Design</strong></td><td>28</td><td style="color:var(--danger)">4</td><td>6</td><td>8.2</td><td><span class="status status-at-risk">Medium</span></td></tr>
+            <tr><td><strong>Permitting</strong></td><td>35</td><td style="color:var(--danger)">8</td><td>9</td><td>14.5</td><td><span class="status status-delayed">High</span></td></tr>
+            <tr><td><strong>Construction</strong></td><td>42</td><td style="color:var(--danger)">6</td><td>3</td><td>5.1</td><td><span class="status status-at-risk">Medium</span></td></tr>
+            <tr><td><strong>Acquisitions</strong></td><td>15</td><td>1</td><td>0</td><td>3.8</td><td><span class="status status-on-track">Low</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Stub pages -->
+    <div class="page" id="page-project2">
+      <div class="card" style="background:linear-gradient(135deg,#92400e,#f59e0b);color:white;padding:24px">
+        <div style="font-size:12px;opacity:0.7">NEW CONSTRUCTION · AT RISK</div>
+        <h2 style="font-size:22px;font-weight:800">246 Farley St, Mountain View, CA 94043</h2>
+        <div style="margin-top:8px;font-size:13px;opacity:0.8">Est. Profit: $338,963 · PM: Mike Wang · 38% Complete · Variance: +22 days</div>
+        <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.15);border-radius:8px;font-size:13px">⚠️ <strong>Risk Alert:</strong> Permitting delays on SB9 lot split — city requested additional environmental survey. 3 downstream construction tasks impacted. Forecast end shifted from Oct to Dec 2025.</div>
+      </div>
+    </div>
+    <div class="page" id="page-project3">
+      <div class="card" style="background:linear-gradient(135deg,#991b1b,#ef4444);color:white;padding:24px">
+        <div style="font-size:12px;opacity:0.7">NEW CONSTRUCTION · DELAYED</div>
+        <h2 style="font-size:22px;font-weight:800">761 Pollard Rd, Los Gatos, CA 95032</h2>
+        <div style="margin-top:8px;font-size:13px;opacity:0.8">Est. Profit: $700,000 · PM: Sarah Chen · 15% Complete · Variance: +45 days</div>
+        <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.15);border-radius:8px;font-size:13px">🚨 <strong>Critical:</strong> Design review rejected twice — structural engineer revision needed. 5 tasks blocked. Review backlog: 6 items. Baseline end was Dec 2025, forecast now Mar 2026. Estimated profit erosion: -$85K in additional carrying costs.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Task Detail Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div>
+      <span class="status status-in-progress" style="margin-bottom:6px">In Progress</span>
+      <h2 style="font-size:18px;font-weight:700;margin-top:6px">MEP Rough-in</h2>
+      <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">883 Rorke Way · Building Permit · Critical Path</div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-section">
+      <h4>Assignment</h4>
+      <div class="field-row"><span class="field-label">Owner</span><span><div class="avatar" style="width:20px;height:20px;font-size:9px;display:inline-flex;background:var(--warning);vertical-align:middle;margin-right:4px">RK</div>Rob Kim</span></div>
+      <div class="field-row"><span class="field-label">Reviewer</span><span><div class="avatar" style="width:20px;height:20px;font-size:9px;display:inline-flex;background:#8b5cf6;vertical-align:middle;margin-right:4px">SC</div>Sarah Chen</span></div>
+      <div class="field-row"><span class="field-label">Department</span><span>Construction</span></div>
+      <div class="field-row"><span class="field-label">Priority</span><span style="color:var(--danger);font-weight:600">High — Critical Path</span></div>
+      <div class="field-row"><span class="field-label">Task Source</span><span>Template</span></div>
+    </div>
+    <div class="drawer-section">
+      <h4>Timeline (Baseline vs Actual vs Forecast)</h4>
+      <div class="field-row"><span class="field-label">Planned Start</span><span>Apr 20, 2025</span></div>
+      <div class="field-row"><span class="field-label">Actual Start</span><span>Apr 23, 2025 <span style="color:var(--danger);font-size:11px">(+3 days late)</span></span></div>
+      <div class="field-row"><span class="field-label">Planned Due</span><span>Apr 28, 2025</span></div>
+      <div class="field-row"><span class="field-label">Forecast Due</span><span style="color:var(--warning);font-weight:600">May 8, 2025 (+10 days)</span></div>
+      <div class="field-row"><span class="field-label">Actual End</span><span>—</span></div>
+      <div class="field-row"><span class="field-label">Duration</span><span>Est: 8 days · Actual so far: 21 days</span></div>
+    </div>
+    <div class="drawer-section">
+      <h4>Dependencies</h4>
+      <div class="field-row"><span class="field-label">Blocked by</span><span><span class="status status-done" style="font-size:11px">✓ Framing complete</span></span></div>
+      <div class="field-row"><span class="field-label">Blocks</span><span><span class="status status-review" style="font-size:11px">Rough inspection</span> → <span style="font-size:11px;color:var(--text-secondary)">Drywall → Final finishes → CO</span></span></div>
+      <div style="background:#fef3c7;padding:8px 10px;border-radius:6px;margin-top:6px;font-size:12px;color:#92400e">⚠️ Delay on this task shifts 4 downstream tasks and project end by +10 days</div>
+    </div>
+    <div class="drawer-section">
+      <h4>Review Checklist</h4>
+      <div class="checklist-item"><input type="checkbox" checked><span>Electrical rough-in per approved plans</span></div>
+      <div class="checklist-item"><input type="checkbox" checked><span>Plumbing pressure test passed</span></div>
+      <div class="checklist-item"><input type="checkbox"><span>HVAC ductwork installed per mechanical plan</span></div>
+      <div class="checklist-item"><input type="checkbox"><span>Fire blocking and draft stopping complete</span></div>
+      <div class="checklist-item"><input type="checkbox"><span>Photo documentation uploaded</span></div>
+    </div>
+    <div class="drawer-section">
+      <h4>Activity</h4>
+      <div class="timeline-item"><div class="timeline-dot" style="background:var(--warning)"></div><div><strong>Rob Kim:</strong> "HVAC routing conflict with beam — rerouting ductwork. Need 3 extra days."<br><span style="font-size:11px;color:var(--text-secondary)">2 days ago</span></div></div>
+      <div class="timeline-item"><div class="timeline-dot" style="background:var(--danger)"></div><div><strong>System:</strong> Task overdue. Forecast due shifted to May 8.<br><span style="font-size:11px;color:var(--text-secondary)">3 days ago</span></div></div>
+      <div class="timeline-item"><div class="timeline-dot" style="background:var(--primary)"></div><div><strong>Rob Kim:</strong> Started task. Electrical rough-in complete.<br><span style="font-size:11px;color:var(--text-secondary)">Apr 23</span></div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" style="flex:1" onclick="closeDrawer();showToast('📤 Task submitted for review to Sarah Chen')">Submit for Review</button>
+      <button class="btn btn-outline">Add Comment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Navigation
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.page));
+});
+
+function navigateTo(page) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (navItem) navItem.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  const titles = {
+    dashboard: 'Management Dashboard',
+    mywork: 'My Work',
+    calendar: 'Calendar',
+    project: '883 Rorke Way, Palo Alto',
+    project2: '246 Farley St, Mountain View',
+    project3: '761 Pollard Rd, Los Gatos',
+    analytics: 'Performance Analytics',
+    team: 'Team Workload'
+  };
+  document.getElementById('pageTitle').textContent = titles[page] || 'BuildFlow';
+}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const parent = this.closest('.page');
+    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const tabName = this.dataset.tab;
+    if (tabName) {
+      parent.querySelectorAll('[id^="tab-"]').forEach(c => c.style.display = 'none');
+      const target = document.getElementById('tab-' + tabName);
+      if (target) target.style.display = 'block';
+    }
+  });
+});
+
+// Filter chips
+document.querySelectorAll('.filter-bar').forEach(bar => {
+  bar.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      bar.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+});
+
+// Task completion animation
+function completeTask(id) {
+  const card = document.getElementById(id);
+  card.classList.add('completing');
+  showToast('✅ Task submitted for review! <span class="undo">Undo</span>');
+  setTimeout(() => { card.style.display = 'none'; }, 600);
+}
+
+// Drawer
+function openDrawer() {
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+// Toast
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.innerHTML = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// Charts
+const C = { blue: '#3b82f6', green: '#10b981', red: '#ef4444', amber: '#f59e0b', purple: '#8b5cf6', cyan: '#06b6d4' };
+
+// Permit Bottleneck
+new Chart(document.getElementById('chartPermit'), {
+  type: 'bar',
+  data: {
+    labels: ['Building', 'SB9', 'Demolition', 'ADU', 'Grading', 'Fire'],
+    datasets: [
+      { label: 'Active', data: [18, 8, 5, 12, 6, 3], backgroundColor: C.blue, borderRadius: 4 },
+      { label: 'Delayed', data: [4, 3, 0, 2, 1, 0], backgroundColor: C.red, borderRadius: 4 },
+      { label: 'In Review', data: [6, 2, 1, 4, 2, 1], backgroundColor: C.purple, borderRadius: 4 }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 11 } } }, y: { stacked: true, ticks: { font: { size: 11 } } } } }
+});
+
+// Department Load
+new Chart(document.getElementById('chartDept'), {
+  type: 'bar',
+  data: {
+    labels: ['Design', 'Permitting', 'Construction', 'Acquisitions'],
+    datasets: [
+      { label: 'On Track', data: [20, 18, 30, 14], backgroundColor: C.green, borderRadius: 4 },
+      { label: 'At Risk', data: [4, 9, 6, 1], backgroundColor: C.amber, borderRadius: 4 },
+      { label: 'Overdue', data: [4, 8, 6, 0], backgroundColor: C.red, borderRadius: 4 }
+    ]
+  },
+  options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { font: { size: 11 } } } } }
+});
+
+// On-time rate chart (analytics page - render on tab switch)
+let chartsInitialized = false;
+const observer = new MutationObserver(() => {
+  if (document.getElementById('page-analytics').classList.contains('active') && !chartsInitialized) {
+    chartsInitialized = true;
+    new Chart(document.getElementById('chartOnTime'), {
+      type: 'bar',
+      data: {
+        labels: ['Sarah C.', 'Amy L.', 'David L.', 'Tom W.', 'Rob K.', 'Jason L.'],
+        datasets: [{ label: 'On-Time %', data: [92, 89, 88, 86, 71, 60], backgroundColor: [C.green, C.green, C.green, C.green, C.amber, C.red], borderRadius: 6 }]
+      },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { max: 100, ticks: { callback: v => v+'%', font: { size: 11 } } }, y: { ticks: { font: { size: 12 } } } } }
+    });
+    new Chart(document.getElementById('chartThroughput'), {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [
+          { label: 'Completed', data: [95, 108, 118, 120, 142], borderColor: C.green, backgroundColor: C.green + '20', fill: true, tension: 0.3 },
+          { label: 'Created', data: [110, 115, 125, 135, 138], borderColor: C.blue, borderDash: [5,5], tension: 0.3 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+    });
+  }
+  if (document.getElementById('page-team').classList.contains('active') && !document.getElementById('chartTeamLoad')._rendered) {
+    document.getElementById('chartTeamLoad')._rendered = true;
+    new Chart(document.getElementById('chartTeamLoad'), {
+      type: 'bar',
+      data: {
+        labels: ['Sarah C.', 'Rob K.', 'Tom W.', 'Amy L.', 'Jason L.', 'David L.', 'Kevin Z.', 'Lisa H.'],
+        datasets: [
+          { label: 'Active', data: [12, 18, 10, 8, 7, 9, 14, 6], backgroundColor: C.blue, borderRadius: 4 },
+          { label: 'In Review', data: [5, 1, 4, 3, 2, 0, 2, 1], backgroundColor: C.purple, borderRadius: 4 },
+          { label: 'Overdue', data: [0, 4, 1, 1, 3, 0, 2, 0], backgroundColor: C.red, borderRadius: 4 }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 11 } } }, y: { stacked: true } } }
+    });
+  }
+});
+observer.observe(document.querySelector('.content'), { childList: false, subtree: true, attributes: true, attributeFilter: ['class'] });
+</script>
+
+</body>
+</html>
