@@ -78,25 +78,24 @@
     --sidebar-border: 0 0% 14.9%;
     --sidebar-ring: 0 0% 83.1%;
   }
+  :root {
+    --permit-demo: 13 75% 62%;        /* #E76F51 */
+    --permit-tree: 173 58% 39%;       /* #2A9D8F */
+    --permit-planning: 244 76% 59%;   /* #4F46E5 */
+    --permit-public-hearing: 271 81% 56%;  /* #9333EA */
+    --permit-building: 217 91% 60%;   /* #2563EB */
+    --permit-utility: 32 95% 44%;     /* #D97706 */
+    --permit-grading: 27 81% 31%;     /* #92400E */
+    --permit-encroach: 192 92% 36%;   /* #0891B2 */
+    --permit-design: 333 79% 50%;     /* #DB2777 */
+    --permit-approval: 161 94% 30%;   /* #059669 */
+    --permit-post: 215 19% 35%;       /* #475569 */
+    --permit-issuance: 45 93% 41%;    /* #CA8A04 */
+  }
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
-
-:root {
-  --permit-demo: 13 75% 62%;        /* #E76F51 */
-  --permit-tree: 173 58% 39%;       /* #2A9D8F */
-  --permit-planning: 244 76% 59%;   /* #4F46E5 */
-  --permit-public-hearing: 271 81% 56%;  /* #9333EA */
-  --permit-building: 217 91% 60%;   /* #2563EB */
-  --permit-utility: 32 95% 44%;     /* #D97706 */
-  --permit-grading: 27 81% 31%;     /* #92400E */
-  --permit-encroach: 192 92% 36%;   /* #0891B2 */
-  --permit-design: 333 79% 50%;     /* #DB2777 */
-  --permit-approval: 161 94% 30%;   /* #059669 */
-  --permit-post: 215 19% 35%;       /* #475569 */
-  --permit-issuance: 45 93% 41%;    /* #CA8A04 */
 }
