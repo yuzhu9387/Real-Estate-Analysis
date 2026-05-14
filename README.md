@@ -13,3 +13,6 @@ Welcome to the Real Estate Analysis dashboards and reports. Below are the availa
 ### 🎯 Sales Training
 - [**Sales Training Funnel (English)**](https://yuzhu9387.github.io/Real-Estate-Analysis/sales-training-funnel-en.html) - Sales funnel training materials in English
 - [**Sales Training Funnel (中文)**](https://yuzhu9387.github.io/Real-Estate-Analysis/sales-training-funnel-zh.html) - Sales funnel training materials in Chinese
+
+### 🚀 Demos
+- [**BuildFlow Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/buildflow-demo.html) - BuildFlow demonstration
