@@ -13,9 +13,6 @@
 /.next/
 /out/
 
-# Build output committed only when publishing
-# /out
-
 # production
 /build
 
