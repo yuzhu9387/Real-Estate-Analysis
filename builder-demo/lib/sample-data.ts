@@ -1,4 +1,4 @@
-import type { Project, Task, User, UserId, DepartmentKey, TaskStatus, PermitKey } from './types';
+import type { Project, Task, User, UserId, DepartmentKey, TaskStatus } from './types';
 import { TEMPLATE_TASKS } from './aed-template';
 import { TODAY_DAY } from './dates';
 

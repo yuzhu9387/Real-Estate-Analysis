@@ -42,7 +42,7 @@ function pushActivity(state: DemoState, action: string, taskId?: TaskId, comment
 
 export const useDemoStore = create<DemoState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       currentUserId: JENNY_ID,
       tasks: initialTasksMap(),
       activity: [],
