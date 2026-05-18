@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Task, TaskId, UserId, ActivityEvent, TaskStatus } from './types';
-import { PROJECT, TASKS, USERS, JENNY_ID } from './sample-data';
+import { PROJECT, TASKS, USERS, JENNY_ID, SAMPLE_ACTIVITY } from './sample-data';
 import { today } from './dates';
 
 interface DemoState {
@@ -45,7 +45,7 @@ export const useDemoStore = create<DemoState>()(
     (set) => ({
       currentUserId: JENNY_ID,
       tasks: initialTasksMap(),
-      activity: [],
+      activity: [...SAMPLE_ACTIVITY],
 
       setCurrentUser: (id) => set({ currentUserId: id }),
 
@@ -108,7 +108,7 @@ export const useDemoStore = create<DemoState>()(
         set({
           currentUserId: JENNY_ID,
           tasks: initialTasksMap(),
-          activity: [],
+          activity: [...SAMPLE_ACTIVITY],
         }),
     }),
     {

@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PermitKey, TaskId, TaskStatus, UserId } from '@/lib/types';
 import { TaskDrawer } from '@/components/project/task-drawer';
 import { TaskTable } from '@/components/project/task-table';
+import { ActivityFeed } from '@/components/project/activity-feed';
+import { AddUnplannedTaskDialog } from '@/components/project/add-unplanned-task-dialog';
 
 function TimelineSection() {
   const [zoom, setZoom] = useState<'week'|'month'|'quarter'>('month');
@@ -53,8 +55,13 @@ export function ProjectPageClient() {
           </TabsList>
           <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
           <TabsContent value="timeline" className="mt-4"><TimelineSection /></TabsContent>
-          <TabsContent value="tasks" className="mt-4"><TaskTable /></TabsContent>
-          <TabsContent value="activity" className="mt-4">Activity — coming in Task 21.</TabsContent>
+          <TabsContent value="tasks" className="mt-4">
+            <div className="space-y-3">
+              <div className="flex justify-end"><AddUnplannedTaskDialog /></div>
+              <TaskTable />
+            </div>
+          </TabsContent>
+          <TabsContent value="activity" className="mt-4"><ActivityFeed /></TabsContent>
         </Tabs>
       </div>
     </AppShell>

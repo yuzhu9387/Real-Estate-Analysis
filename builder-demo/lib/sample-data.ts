@@ -1,4 +1,4 @@
-import type { Project, Task, User, UserId, DepartmentKey, TaskStatus } from './types';
+import type { Project, Task, User, UserId, DepartmentKey, TaskStatus, ActivityEvent } from './types';
 import { TEMPLATE_TASKS } from './aed-template';
 import { TODAY_DAY } from './dates';
 
@@ -161,3 +161,16 @@ export const TASKS: Task[] = (() => {
 
   return tasks;
 })();
+
+export const SAMPLE_ACTIVITY: ActivityEvent[] = [
+  { id: 'a1',  timestamp: '2026-05-09', actorId: SARAH_ID, action: 'rejected "Demo Permit Review" — missing asbestos clearance attachment', taskId: 'task-02', comment: 'Please attach asbestos cert and resubmit.' },
+  { id: 'a2',  timestamp: '2026-05-09', actorId: JENNY_ID, action: 'began revising "Demo Corrections / Resubmission"', taskId: 'task-03' },
+  { id: 'a3',  timestamp: '2026-05-08', actorId: DAVID_ID, action: 'flagged "Planning Corrections / Resubmission" at risk of slipping past Day 65', taskId: 'task-08' },
+  { id: 'a4',  timestamp: '2026-05-10', actorId: SARAH_ID, action: 'added unplanned task "Respond to neighbor zoning objection re: setback"', taskId: 'task-29' },
+  { id: 'a5',  timestamp: '2026-05-12', actorId: DAVID_ID, action: 'started "Respond to neighbor zoning objection re: setback"', taskId: 'task-29' },
+  { id: 'a6',  timestamp: '2026-05-13', actorId: SARAH_ID, action: 'updated project forecast end from 2026-09-01 to 2026-09-11 (+10d)' },
+  { id: 'a7',  timestamp: '2026-04-25', actorId: MIKE_ID,  action: 'closed "Tree Removal Permit"', taskId: 'task-06' },
+  { id: 'a8',  timestamp: '2026-04-21', actorId: MIKE_ID,  action: 'approved "Planning 1st Review"', taskId: 'task-07' },
+  { id: 'a9',  timestamp: '2026-04-18', actorId: DAVID_ID, action: 'submitted "Planning 1st Review" for review', taskId: 'task-07' },
+  { id: 'a10', timestamp: '2026-04-15', actorId: JENNY_ID, action: 'closed "Utility Cutoff + Asbestos + J Number"', taskId: 'task-01' },
+];
