@@ -6,7 +6,8 @@ import { OverviewTab } from '@/components/project/overview-tab';
 import { GanttChart } from '@/components/project/gantt-chart';
 import { GanttToolbar } from '@/components/project/gantt-toolbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { PermitKey, TaskStatus, UserId } from '@/lib/types';
+import type { PermitKey, TaskId, TaskStatus, UserId } from '@/lib/types';
+import { TaskDrawer } from '@/components/project/task-drawer';
 
 function TimelineSection() {
   const [zoom, setZoom] = useState<'week'|'month'|'quarter'>('month');
@@ -14,6 +15,7 @@ function TimelineSection() {
   const [filterStatus, setFilterStatus] = useState<TaskStatus | 'all'>('all');
   const [filterOwner, setFilterOwner] = useState<UserId | 'all'>('all');
   const [showDependencies, setShowDependencies] = useState(true);
+  const [openTaskId, setOpenTaskId] = useState<TaskId | null>(null);
   return (
     <>
       <GanttToolbar
@@ -29,7 +31,9 @@ function TimelineSection() {
         filterStatus={filterStatus}
         filterOwner={filterOwner}
         showDependencies={showDependencies}
+        onTaskClick={setOpenTaskId}
       />
+      <TaskDrawer taskId={openTaskId} onClose={() => setOpenTaskId(null)} />
     </>
   );
 }

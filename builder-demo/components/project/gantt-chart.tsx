@@ -4,7 +4,7 @@ import { groupByPhase } from './gantt-types';
 import { GanttBar } from './gantt-bar';
 import { getPermit } from '@/lib/permits';
 import { TODAY_DAY } from '@/lib/dates';
-import type { PermitKey, TaskStatus, UserId } from '@/lib/types';
+import type { PermitKey, TaskId, TaskStatus, UserId } from '@/lib/types';
 
 const ROW_H = 28;
 const HEADER_H = 32;
@@ -17,9 +17,10 @@ interface GanttChartProps {
   filterStatus: TaskStatus | 'all';
   filterOwner: UserId | 'all';
   showDependencies: boolean;
+  onTaskClick?: (id: TaskId) => void;
 }
 
-export function GanttChart({ zoom, filterPhase, filterStatus, filterOwner, showDependencies }: GanttChartProps) {
+export function GanttChart({ zoom, filterPhase, filterStatus, filterOwner, showDependencies, onTaskClick }: GanttChartProps) {
   const allTasks = useDemoStore((s) => Object.values(s.tasks));
   const DAY_W = zoom === 'week' ? 12 : zoom === 'month' ? 6 : 3;
   const dayToX = (day: number) => LABEL_W + day * DAY_W;
@@ -60,7 +61,7 @@ export function GanttChart({ zoom, filterPhase, filterStatus, filterOwner, showD
           const baseW = (task.plannedDueDay - task.plannedStartDay) * DAY_W;
           const foreW = (task.forecastDueDay - task.plannedStartDay) * DAY_W;
           return (
-            <g key={task.id}>
+            <g key={task.id} onClick={() => onTaskClick?.(task.id)} style={{ cursor: 'pointer' }}>
               <foreignObject x={0} y={y} width={LABEL_W - 8} height={ROW_H}>
                 <div className="h-full flex items-center pl-3 gap-2 text-xs">
                   <span className="size-1.5 rounded-full shrink-0" style={{ backgroundColor: p.hex }} />
