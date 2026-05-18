@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
 import { FocusBanner } from '@/components/my-tasks/focus-banner';
 import { TaskCard } from '@/components/my-tasks/task-card';
+import { ReviewCard } from '@/components/my-tasks/review-card';
+import { CalendarView } from '@/components/my-tasks/calendar-view';
+import { HistoryList } from '@/components/my-tasks/history-list';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDemoStore } from '@/lib/store';
 import { TaskDrawer } from '@/components/project/task-drawer';
@@ -16,6 +19,7 @@ export default function MyTasksPage() {
   const mine = tasks
     .filter(t => t.ownerId === currentUserId && t.status !== 'Done' && t.status !== 'Approved')
     .sort((a, b) => a.plannedDueDay - b.plannedDueDay);
+  const myReviews = tasks.filter(t => t.reviewerId === currentUserId && t.status === 'Submitted for Review');
 
   return (
     <AppShell title="My Tasks">
@@ -37,9 +41,13 @@ export default function MyTasksPage() {
                   </AnimatePresence>
                 </div>}
           </TabsContent>
-          <TabsContent value="reviews">Reviews — coming in Task 23.</TabsContent>
-          <TabsContent value="calendar">Calendar — coming in Task 23.</TabsContent>
-          <TabsContent value="history">History — coming in Task 23.</TabsContent>
+          <TabsContent value="reviews" className="mt-4">
+            {myReviews.length === 0
+              ? <div className="rounded-lg border border-border bg-card p-12 text-center text-muted-foreground">Inbox zero ✓</div>
+              : <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{myReviews.map(t => <ReviewCard key={t.id} task={t} />)}</div>}
+          </TabsContent>
+          <TabsContent value="calendar" className="mt-4"><CalendarView /></TabsContent>
+          <TabsContent value="history" className="mt-4"><HistoryList /></TabsContent>
         </Tabs>
       </div>
       <TaskDrawer taskId={openId} onClose={() => setOpenId(null)} />

@@ -162,6 +162,53 @@ export const TASKS: Task[] = (() => {
   return tasks;
 })();
 
+// Synthetic review-handoff entries (not part of template). They populate
+// the My Reviews tab for Jenny.
+export function buildReviewHandoffs(): Task[] {
+  return [
+    {
+      id: 'task-rh-1',
+      projectId: PROJECT.id,
+      title: 'Verify setback math for Planning Corrections',
+      phase: 'planning',
+      department: 'Permit',
+      ownerId: DAVID_ID,
+      reviewerId: JENNY_ID,
+      status: 'Submitted for Review',
+      priority: 'High',
+      source: 'unplanned',
+      plannedStartDay: 65,
+      plannedDueDay: 72,
+      forecastStartDay: 65,
+      forecastDueDay: 72,
+      actualStartDay: 65,
+      actualEndDay: null,
+      dependencyIds: [],
+      isCriticalPath: false,
+    },
+    {
+      id: 'task-rh-2',
+      projectId: PROJECT.id,
+      title: 'Tree Permit closeout — verify final docs',
+      phase: 'tree',
+      department: 'Permit',
+      ownerId: MIKE_ID,
+      reviewerId: JENNY_ID,
+      status: 'Submitted for Review',
+      priority: 'Medium',
+      source: 'unplanned',
+      plannedStartDay: 55,
+      plannedDueDay: 60,
+      forecastStartDay: 55,
+      forecastDueDay: 60,
+      actualStartDay: 55,
+      actualEndDay: null,
+      dependencyIds: [],
+      isCriticalPath: false,
+    },
+  ];
+}
+
 export const SAMPLE_ACTIVITY: ActivityEvent[] = [
   { id: 'a1',  timestamp: '2026-05-09', actorId: SARAH_ID, action: 'rejected "Demo Permit Review" — missing asbestos clearance attachment', taskId: 'task-02', comment: 'Please attach asbestos cert and resubmit.' },
   { id: 'a2',  timestamp: '2026-05-09', actorId: JENNY_ID, action: 'began revising "Demo Corrections / Resubmission"', taskId: 'task-03' },

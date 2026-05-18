@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Task, TaskId, UserId, ActivityEvent, TaskStatus } from './types';
-import { PROJECT, TASKS, USERS, JENNY_ID, SAMPLE_ACTIVITY } from './sample-data';
+import { PROJECT, TASKS, USERS, JENNY_ID, SAMPLE_ACTIVITY, buildReviewHandoffs } from './sample-data';
 import { today } from './dates';
 
 interface DemoState {
@@ -20,7 +20,7 @@ interface DemoState {
 }
 
 function initialTasksMap(): Record<TaskId, Task> {
-  return Object.fromEntries(TASKS.map(t => [t.id, { ...t }]));
+  return Object.fromEntries([...TASKS, ...buildReviewHandoffs()].map(t => [t.id, { ...t }]));
 }
 
 function pushActivity(state: DemoState, action: string, taskId?: TaskId, comment?: string): DemoState {
