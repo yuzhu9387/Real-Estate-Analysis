@@ -2,6 +2,7 @@
 import { AppShell } from '@/components/layout/app-shell';
 import { ProjectSummary } from '@/components/project/project-summary';
 import { OverviewTab } from '@/components/project/overview-tab';
+import { GanttChart } from '@/components/project/gantt-chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function ProjectPageClient() {
@@ -17,7 +18,7 @@ export function ProjectPageClient() {
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
-          <TabsContent value="timeline" className="mt-4">Timeline — coming in Task 17.</TabsContent>
+          <TabsContent value="timeline" className="mt-4"><GanttChart /></TabsContent>
           <TabsContent value="tasks" className="mt-4">Tasks — coming in Task 20.</TabsContent>
           <TabsContent value="activity" className="mt-4">Activity — coming in Task 21.</TabsContent>
         </Tabs>
