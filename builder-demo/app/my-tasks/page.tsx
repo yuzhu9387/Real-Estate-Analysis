@@ -14,7 +14,7 @@ import { AnimatePresence } from 'framer-motion';
 
 export default function MyTasksPage() {
   const currentUserId = useDemoStore((s) => s.currentUserId);
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const [openId, setOpenId] = useState<TaskId | null>(null);
   const mine = tasks
     .filter(t => t.ownerId === currentUserId && t.status !== 'Done' && t.status !== 'Approved')

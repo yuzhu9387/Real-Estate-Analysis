@@ -11,7 +11,7 @@ import { TaskDrawer } from './task-drawer';
 import type { TaskId } from '@/lib/types';
 
 export function TaskTable() {
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const userById = new Map(USERS.map(u => [u.id, u]));
   const [openId, setOpenId] = useState<TaskId | null>(null);
 

@@ -21,7 +21,7 @@ interface GanttChartProps {
 }
 
 export function GanttChart({ zoom, filterPhase, filterStatus, filterOwner, showDependencies, onTaskClick }: GanttChartProps) {
-  const allTasks = useDemoStore((s) => Object.values(s.tasks));
+  const allTasks = Object.values(useDemoStore((s) => s.tasks));
   const DAY_W = zoom === 'week' ? 12 : zoom === 'month' ? 6 : 3;
   const dayToX = (day: number) => LABEL_W + day * DAY_W;
 

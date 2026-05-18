@@ -6,7 +6,7 @@ import { PermitChip } from '@/components/shared/permit-chip';
 import { Avatar } from '@/components/shared/avatar';
 
 export function UpcomingDeadlines() {
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const userById = new Map(USERS.map(u => [u.id, u]));
   const upcoming = tasks
     .filter(t => t.plannedDueDay >= TODAY_DAY && t.plannedDueDay <= TODAY_DAY + 14 && t.status !== 'Done')

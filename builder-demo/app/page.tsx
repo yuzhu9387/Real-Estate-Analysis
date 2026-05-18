@@ -11,7 +11,7 @@ import { PROJECT } from '@/lib/sample-data';
 import type { PermitKey } from '@/lib/types';
 
 export default function DashboardPage() {
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const kpi = computeKpis(tasks);
   const completedPhases = new Set<PermitKey>(['tree']);
   return (

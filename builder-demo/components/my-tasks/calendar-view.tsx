@@ -6,7 +6,7 @@ import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameDa
 
 export function CalendarView() {
   const currentUserId = useDemoStore((s) => s.currentUserId);
-  const tasks = useDemoStore((s) => Object.values(s.tasks)).filter(t => t.ownerId === currentUserId);
+  const tasks = Object.values(useDemoStore((s) => s.tasks)).filter(t => t.ownerId === currentUserId);
   const today = parseISO(dayToDate(TODAY_DAY));
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);

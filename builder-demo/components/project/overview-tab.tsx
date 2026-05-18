@@ -5,7 +5,7 @@ import { computeKpis } from '@/lib/dashboard-kpis';
 import { KpiCard } from '@/components/dashboard/kpi-card';
 
 export function OverviewTab() {
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const kpi = computeKpis(tasks);
   const done = tasks.filter(t => t.status === 'Done').length;
   const pct = Math.round((done / tasks.length) * 100);

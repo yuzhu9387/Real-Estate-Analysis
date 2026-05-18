@@ -3,7 +3,7 @@ import { useDemoStore } from '@/lib/store';
 
 export function FocusBanner() {
   const currentUserId = useDemoStore((s) => s.currentUserId);
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const mine = tasks.filter(t => t.ownerId === currentUserId);
   const active = mine.filter(t => t.status !== 'Done' && t.status !== 'Approved').length;
   const revision = mine.filter(t => t.status === 'Needs Revision').length;

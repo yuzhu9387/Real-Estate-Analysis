@@ -5,7 +5,7 @@ import { Avatar } from '@/components/shared/avatar';
 import { TODAY_DAY } from '@/lib/dates';
 
 export function TeamWorkload() {
-  const tasks = useDemoStore((s) => Object.values(s.tasks));
+  const tasks = Object.values(useDemoStore((s) => s.tasks));
   const rows = USERS.map(u => {
     const owned = tasks.filter(t => t.ownerId === u.id && t.status !== 'Done' && t.status !== 'Approved');
     const overdue = owned.filter(t => t.plannedDueDay < TODAY_DAY).length;
