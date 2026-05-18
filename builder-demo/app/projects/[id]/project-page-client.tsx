@@ -8,6 +8,7 @@ import { GanttToolbar } from '@/components/project/gantt-toolbar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { PermitKey, TaskId, TaskStatus, UserId } from '@/lib/types';
 import { TaskDrawer } from '@/components/project/task-drawer';
+import { TaskTable } from '@/components/project/task-table';
 
 function TimelineSection() {
   const [zoom, setZoom] = useState<'week'|'month'|'quarter'>('month');
@@ -52,7 +53,7 @@ export function ProjectPageClient() {
           </TabsList>
           <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
           <TabsContent value="timeline" className="mt-4"><TimelineSection /></TabsContent>
-          <TabsContent value="tasks" className="mt-4">Tasks — coming in Task 20.</TabsContent>
+          <TabsContent value="tasks" className="mt-4"><TaskTable /></TabsContent>
           <TabsContent value="activity" className="mt-4">Activity — coming in Task 21.</TabsContent>
         </Tabs>
       </div>
