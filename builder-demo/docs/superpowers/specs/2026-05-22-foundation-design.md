@@ -224,7 +224,7 @@ Each project has exactly one **Project Manager** (`projects.pm_id`, FK to `users
 | Mark Project Complete | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Add `unplanned` task (post-kick-off) | ✅ | ✅ | ❌ | ❌ | ❌ |
 | Edit task planned fields (duration, owner, reviewer, deps) — `draft` only | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Set task status (`started`, etc.) | ✅ | ✅ | ❌ | ✅ (task owner) | ❌ |
+| Set task status (`started`, …, `complete`, `wont_do`) | ✅ | ✅ | ❌ | ✅ (task owner) | ❌ |
 | Submit task for review | ✅ | ✅ | ❌ | ✅ (task owner) | ❌ |
 | Approve / request revision | ✅ | ✅ | ❌ | ✅ (reviewer) | ❌ |
 | Mark task complete | ✅ | ✅ | ❌ | ✅ (task owner) | ❌ |
@@ -304,9 +304,9 @@ A phase contains zero or more workflow snapshots (e.g., the Permitting phase may
 
 ### Status semantics
 
-- **Task status** (5 values): `not_started`, `started`, `pending_review`, `approved`, `complete`. Set by users via specific actions.
-- **Task `is_blocked`** (derived boolean): `true` iff any upstream-dependency task has `status !== 'complete'`. Recomputed automatically on any upstream status change or dep change. Orthogonal to `status` — a task can be `not_started` and `blocked` (waiting on deps) or `not_started` and not blocked (ready to begin).
-- **Workflow status** (derived): `pending` until any of its tasks moves out of `not_started`; `in_progress` while any task is non-`complete`; `complete` when all its tasks are `complete`. **Auto-computed by the service layer on every task status change.**
+- **Task status** (6 values): `not_started`, `started`, `pending_review`, `approved`, `complete`, `wont_do`. Set by users via specific actions. `wont_do` is a terminal state meaning the task was decided not to be executed (distinct from `delete`, which removes the task entirely). Any task may transition to `wont_do` from any other status; reverting from `wont_do` returns it to `not_started`. Permitted setters follow the standard "Set task status" matrix row — task owner (including IC), PM (managing), and owner can all set or revert `wont_do` on the relevant tasks.
+- **Task `is_blocked`** (derived boolean): `true` iff any upstream-dependency task has `status NOT IN ('complete', 'wont_do')`. `wont_do` tasks satisfy downstream dependencies the same way `complete` tasks do. Recomputed automatically on any upstream status change or dep change. Orthogonal to `status` — a task can be `not_started` and `blocked` (waiting on deps) or `not_started` and not blocked (ready to begin).
+- **Workflow status** (derived): `pending` until any of its tasks moves out of `not_started`; `in_progress` while any task is in a non-terminal status; `complete` when every task is in a terminal status (`complete` or `wont_do`). **Auto-computed by the service layer on every task status change.** Workflows themselves do not have a `wont_do` status — only tasks do.
 - **Phase status** (PM-controlled): `pending` until PM clicks Kick Off; `in_progress` after kick-off; `complete` after PM clicks Mark Phase Complete. The transition to `complete` does **not** require all workflows in the phase to be complete — UI shows a confirmation modal if any are incomplete, but PM may proceed.
 - **Project status**: `draft` → `in_progress` → `complete` → `archived`. See state machine below.
 
@@ -423,6 +423,11 @@ export function recomputeSchedule(input: {
 - When PM edits task duration / dependency / structure in `draft`
 - When an `unplanned` task is added in `in_progress` and has dependencies — downstream tasks' `planned_start_day` / `planned_end_day` are pushed accordingly
 - **Not** triggered by `actual_start_day` / `actual_end_day` updates (those are observed reality, not planned schedule)
+- Triggered when any task transitions in or out of `wont_do` status (downstream schedule may shorten or recover)
+
+### Handling of `wont_do` tasks
+
+Tasks with `status='wont_do'` are excluded from the schedule input. For the forward pass, their outbound dependency edges are treated as satisfied (downstream tasks may proceed as if the `wont_do` task had completed at day 0). For the backward pass, they are skipped. Their `planned_start_day` / `planned_end_day` / `is_on_critical_path` values are preserved at their last-computed pre-`wont_do` values for display, but they do not constrain other tasks.
 
 ### Days vs absolute dates
 
@@ -577,7 +582,7 @@ Exactly 3 rows per project, inserted at project creation. `name` is hardcoded by
   planned_end_day: integer,
   actual_start_day: integer,
   actual_end_day: integer,
-  status: text not null check (status in ('not_started','started','pending_review','approved','complete')) default 'not_started',
+  status: text not null check (status in ('not_started','started','pending_review','approved','complete','wont_do')) default 'not_started',
   is_blocked: boolean not null default false,
   is_unplanned: boolean not null default false,
   is_on_critical_path: boolean not null default false,
@@ -667,7 +672,7 @@ import { taskService } from '@/lib/services/task-service'
 
 const SetStatusInput = z.object({
   taskId: z.string().uuid(),
-  status: z.enum(['not_started','started','pending_review','approved','complete']),
+  status: z.enum(['not_started','started','pending_review','approved','complete','wont_do']),
 })
 
 export async function setTaskStatus(rawInput: unknown) {
