@@ -1,2 +1,3 @@
-// Tables are declared in db/schema/*.ts and re-exported here.
-export {}
+export * from './schema/users'
+export * from './schema/sessions'
+export * from './schema/system_bootstrap'
