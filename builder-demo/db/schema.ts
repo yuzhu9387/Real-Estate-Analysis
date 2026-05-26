@@ -1,3 +1,5 @@
 export * from './schema/users'
 export * from './schema/sessions'
 export * from './schema/system_bootstrap'
+export * from './schema/projects'
+export * from './schema/project_phases'
