@@ -11,6 +11,9 @@ export default defineConfig({
       ['components/**', 'jsdom'],
       ['app/**', 'jsdom'],
     ],
+    // DB tests share a single Postgres instance; run files serially to avoid
+    // cross-file truncateAll races.
+    fileParallelism: false,
   },
   resolve: {
     alias: { '@': path.resolve(__dirname, '.') },
