@@ -1,6 +1,6 @@
 import { eq, ne, and, inArray, or, sql } from 'drizzle-orm'
 import type { DB } from '@/db/client'
-import { projects, projectPhases, tasks, users, type Project, type ProjectPhase } from '@/db/schema'
+import { projects, projectPhases, tasks, users, type Project, type ProjectPhase, type TaskStatus } from '@/db/schema'
 import { evaluateAtRisk } from '@/lib/dashboard/at-risk'
 
 export type DashboardProject = Project & {
@@ -84,12 +84,12 @@ export async function listActiveProjectsForTeam(
   if (teamUsers.length === 0) return []
   const teamUserIds = teamUsers.map(u => u.id)
 
-  const NON_TERMINAL = ['not_started', 'started', 'pending_review', 'approved'] as const
+  const NON_TERMINAL: TaskStatus[] = ['not_started', 'started', 'pending_review', 'approved']
   const candidateTasks = await db.select({ projectId: tasks.projectId })
     .from(tasks)
     .where(and(
       inArray(tasks.ownerId, teamUserIds),
-      inArray(tasks.status, NON_TERMINAL as unknown as string[]),
+      inArray(tasks.status, NON_TERMINAL),
     ))
   const projectIds = Array.from(new Set(candidateTasks.map(t => t.projectId)))
   if (projectIds.length === 0) return []
