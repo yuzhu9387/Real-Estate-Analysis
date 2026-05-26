@@ -106,6 +106,53 @@ export const projectService = {
       .where(eq(projects.id, input.projectId))
   },
 
+  async updateMetadata(input: {
+    projectId: string
+    actorId: string
+    patch: {
+      name?: string
+      brand?: 'al_homes' | 'alera' | 'apex'
+      address?: string | null
+      city?: string | null
+      state?: string | null
+      zip?: string | null
+      pmId?: string
+      titleHolder?: string | null
+      projectStrategy?: string | null
+      purchaseDate?: string | null
+      purchasePrice?: string | null
+      targetExitQuarter?: string | null
+      targetProjectDurationDays?: number | null
+      targetPermitDate?: string | null
+      targetConstructionEndDate?: string | null
+    }
+  }, db: DB) {
+    const { ProjectLockedError } = await import('@/lib/server/errors')
+
+    const existing = (await db.select().from(projects).where(eq(projects.id, input.projectId)))[0]
+    if (!existing) throw new NotFoundError('Project')
+    if (existing.status === 'complete' || existing.status === 'archived') {
+      throw new ProjectLockedError(existing.status)
+    }
+
+    const DRAFT_ONLY_KEYS = [
+      'titleHolder', 'projectStrategy', 'purchaseDate', 'purchasePrice',
+      'targetExitQuarter', 'targetProjectDurationDays', 'targetPermitDate', 'targetConstructionEndDate',
+    ] as const
+
+    if (existing.status !== 'draft') {
+      for (const k of DRAFT_ONLY_KEYS) {
+        if (input.patch[k] !== undefined) throw new ProjectLockedError(existing.status)
+      }
+    }
+
+    const setObj: Record<string, unknown> = { updatedAt: new Date() }
+    for (const [k, v] of Object.entries(input.patch)) {
+      if (v !== undefined) setObj[k] = v
+    }
+    await db.update(projects).set(setObj).where(eq(projects.id, input.projectId))
+  },
+
   async unlockToDraft(input: { projectId: string; actorId: string; reason: string }, db: DB) {
     if (!input.reason?.trim()) {
       throw new ValidationError('Reason is required for unlock')

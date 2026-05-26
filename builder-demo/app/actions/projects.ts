@@ -76,6 +76,39 @@ export async function archiveProject(raw: unknown) {
   return { ok: true }
 }
 
+export async function updateProjectMetadata(raw: unknown) {
+  const PatchSchema = z.object({
+    name: z.string().min(1).optional(),
+    brand: z.enum(['al_homes', 'alera', 'apex']).optional(),
+    address: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    state: z.string().optional().nullable(),
+    zip: z.string().optional().nullable(),
+    pmId: z.string().uuid().optional(),
+    titleHolder: z.string().optional().nullable(),
+    projectStrategy: z.string().optional().nullable(),
+    purchaseDate: z.string().optional().nullable(),
+    purchasePrice: z.string().optional().nullable(),
+    targetExitQuarter: z.string().regex(/^\d{4}-Q[1-4]$/).optional().nullable(),
+    targetProjectDurationDays: z.number().int().optional().nullable(),
+    targetPermitDate: z.string().optional().nullable(),
+    targetConstructionEndDate: z.string().optional().nullable(),
+  })
+  const input = z.object({
+    projectId: z.string().uuid(),
+    patch: PatchSchema,
+  }).parse(raw)
+  const project = await projectService.getById(input.projectId, db)
+  if (!project) throw new NotFoundError('Project')
+  const user = await requirePermission({
+    type: 'project.update_meta',
+    project: { pmId: project.pmId, status: project.status },
+  })
+  await projectService.updateMetadata({ ...input, actorId: user.id }, db)
+  revalidatePath(`/projects/${input.projectId}`)
+  return { ok: true }
+}
+
 export async function unlockProjectToDraft(raw: unknown) {
   const input = z.object({ projectId: z.string().uuid(), reason: z.string().min(1) }).parse(raw)
   const user = await requirePermission({ type: 'project.unlock_to_draft' })
