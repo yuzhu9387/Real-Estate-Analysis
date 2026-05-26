@@ -6,7 +6,17 @@ const config: Config = {
     './components/**/*.{ts,tsx}',
     './lib/**/*.{ts,tsx}',
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {
+      colors: {
+        surface: { DEFAULT: '#ffffff', muted: '#fafafa' },
+        body: { DEFAULT: '#18181b', muted: '#71717a' },
+      },
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%)',
+      },
+    },
+  },
   plugins: [],
 }
 export default config
