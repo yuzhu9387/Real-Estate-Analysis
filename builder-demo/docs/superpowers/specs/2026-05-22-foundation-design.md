@@ -298,6 +298,18 @@ Project
 
 Every project has exactly three phases, named **Permitting**, **Construction**, **Sale**, in that order. Names are hardcoded; not customizable per project.
 
+### Phase ↔ team mapping (informational)
+
+Each phase has a conventional owning team. This mapping powers default views in the dashboard but **does not constrain task assignment** — a PM may assign any task to any user regardless of team.
+
+| Phase | Owning team (default) |
+|---|---|
+| Permitting | `design` |
+| Construction | `construction` |
+| Sale | `sales` |
+
+A future `development` team is planned, parallel to `design` (handling larger-scale projects with the same Permitting-phase responsibilities). When introduced, the mapping for Permitting may become `design` OR `development` depending on the project — selectable at project creation. Out of scope for the foundation; see the dashboard spec for current team-view design.
+
 ### Workflows within a phase
 
 A phase contains zero or more workflow snapshots (e.g., the Permitting phase may have 5 workflows: Survey, Zoning Application, Design Review, Building Permit, Conservation Permit). PMs assign workflows to phases when assembling the project in `draft`.
@@ -450,11 +462,14 @@ All Drizzle tables defined in `db/schema.ts`. UUIDs are server-generated unless 
   name: text not null,
   avatar_url: text,
   role: text not null check (role in ('owner','pm','ic')),
+  team: text check (team in ('design','construction','sales')),  -- nullable; owner role may omit
   is_active: boolean not null default true,
   created_at: timestamptz not null default now(),
   last_login_at: timestamptz,
 }
 ```
+
+The `team` field is an organizational label, not a permission gate — task assignment is **not** restricted by team (a Construction team member can be assigned a task in the Permitting phase). It exists to power the Team and Performance Review dashboards (see `2026-05-25-dashboard-design.md`). The enum is intentionally small; a future `'development'` value is planned (parallel to `'design'`, handling larger projects) and will be added by adjusting the CHECK constraint via migration when introduced.
 
 ### `sessions` (managed by `better-auth`)
 
@@ -476,9 +491,44 @@ One-shot guard for `BOOTSTRAP_OWNER_LARK_OPEN_ID`.
 ```ts
 {
   id: uuid primary key,
+
+  -- identification
   name: text not null,
+  brand: text not null check (brand in ('al_homes','alera','apex')),
+
+  -- location
   address: text,
+  city: text,
+  state: text,                                   -- 2-letter abbreviation (e.g., 'MA')
+  zip: text,
+
+  -- ownership / commercial context
   pm_id: uuid not null references users(id),
+  title_holder: text,
+  project_strategy: text,                        -- free-form label, e.g., 'spec build', 'flip', 'buy-and-hold'
+
+  -- acquisition
+  purchase_date: date,
+  purchase_price: numeric(14,2),                 -- USD with cents
+
+  -- targets (set in draft; frozen by service layer once project leaves draft)
+  target_exit_quarter: text,                     -- format 'YYYY-Qn', e.g., '2026-Q3'
+  target_project_duration_days: integer,
+  target_permit_date: date,
+  target_construction_end_date: date,
+
+  -- actuals (filled in as project progresses)
+  actual_permit_date: date,
+  actual_construction_end_date: date,
+  actual_duration_days: integer,                 -- denormalized; computed by service when listing_date or sold_at is set
+  presale_phase1_date: date,
+  presale_phase2_date: date,
+  presale_phase3_date: date,
+  listing_date: date,
+  sold: boolean not null default false,
+  sold_price: numeric(14,2),
+
+  -- lifecycle
   status: text not null check (status in ('draft','in_progress','complete','archived')) default 'draft',
   created_by_id: uuid not null references users(id),
   kicked_off_at: timestamptz,
@@ -488,6 +538,14 @@ One-shot guard for `BOOTSTRAP_OWNER_LARK_OPEN_ID`.
   updated_at: timestamptz not null default now(),
 }
 ```
+
+Field notes:
+
+- **`brand`** is hardcoded as a 3-value enum. Adding a brand requires a migration. No `brands` table.
+- **`target_*` fields** are part of the immutable plan and follow the same lock rule as task structure: editable in `draft`, frozen once the project transitions to `in_progress`. Enforced at the service layer; UI hides edit controls accordingly.
+- **`presale_phase1_date`, `presale_phase2_date`, `presale_phase3_date`, `listing_date`, `sold`, `sold_price`** are project-level milestones, **not** modeled as separate phases. The project's three-phase model (Permitting / Construction / Sale) is unchanged; these are dates recorded against the project as the Sale phase progresses.
+- **`actual_duration_days`** is a denormalized integer (days between `purchase_date` and `listing_date` or `sold` date, depending on definition — TBD in the dashboard spec). Stored rather than computed at query time to avoid joins in dashboard list views.
+- **`target_exit_quarter`** uses a `'YYYY-Qn'` text format. A CHECK regex constraint may be added; for now the validation lives in zod at the action layer.
 
 ### `project_phases`
 
@@ -794,12 +852,12 @@ GitHub Actions on every PR:
 
 The foundation enables but does not deliver:
 
+- **Dashboard / Team / Performance Review views**: covered in `2026-05-25-dashboard-design.md` (drafted alongside this update; consumes the schema defined here)
 - **Project page UI**: Overview / Gantt / Task List sections, layout, interactions
 - **My Tasks page UI**: tabs (My Tasks, Pending Review, Complete), LLM-based daily ranking, daily reminders
 - **Workflow template editor UI**: dependency-graph editor for owner
 - **Notifications**: Lark group / DM delivery, in-app toast/badge system
 - **Pipeline meeting view**: aggregated cross-project dashboard
-- **Reporting / analytics**: project velocity, on-time delivery metrics
 - **Mobile / external API**: deferred; B-track allows adding Route Handlers later
 
 Each of these is a separate spec building on this foundation.
