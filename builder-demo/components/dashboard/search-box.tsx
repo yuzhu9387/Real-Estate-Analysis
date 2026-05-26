@@ -22,7 +22,7 @@ export function SearchBox() {
       value={v}
       onChange={(e) => setV(e.target.value)}
       placeholder="Search projects…"
-      className="w-64 rounded border border-slate-300 bg-white px-3 py-1 text-sm"
+      className="w-64 rounded border border-zinc-300 bg-white px-3 py-1 text-sm"
     />
   )
 }

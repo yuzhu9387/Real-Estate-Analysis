@@ -39,7 +39,7 @@ export default async function PerformancePage({
         <Card title="Revision rate" value={pct(metrics.revisionRate)} />
       </div>
 
-      <p className="text-sm text-slate-600">Won't-do count: {metrics.wontDoCount}</p>
+      <p className="text-sm text-zinc-600">Won&apos;t-do count: {metrics.wontDoCount}</p>
 
       <h3 className="text-md font-medium pt-4">Per-person breakdown</h3>
       <table className="w-full text-sm">
@@ -66,12 +66,12 @@ export default async function PerformancePage({
 
 function Tabs({ current }: { current: Team }) {
   return (
-    <div className="flex gap-2 border-b border-slate-200">
+    <div className="flex gap-2 border-b border-zinc-200">
       {TEAMS.map(t => (
         <Link key={t} href={`/performance/${t}`}
           className={[
             'px-3 py-2 text-sm',
-            t === current ? 'border-b-2 border-blue-500 font-medium' : 'text-slate-600',
+            t === current ? 'border-b-2 border-blue-500 font-medium' : 'text-zinc-600',
           ].join(' ')}>
           {LABELS[t]}
         </Link>
@@ -84,7 +84,7 @@ function Card({ title, value }: { title: string; value: string }) {
   return (
     <div className="rounded border bg-white p-3">
       <div className="text-2xl font-semibold">{value}</div>
-      <div className="text-xs text-slate-600">{title}</div>
+      <div className="text-xs text-zinc-600">{title}</div>
     </div>
   )
 }
@@ -96,7 +96,7 @@ function RangePicker({ current, team }: { current: string; team: Team }) {
         <Link key={k} href={`/performance/${team}?range=${k}`}
           className={[
             'rounded px-2 py-1',
-            k === current ? 'bg-slate-200' : 'text-slate-600 hover:bg-slate-100',
+            k === current ? 'bg-zinc-200' : 'text-zinc-600 hover:bg-zinc-100',
           ].join(' ')}>
           Last {k} days
         </Link>

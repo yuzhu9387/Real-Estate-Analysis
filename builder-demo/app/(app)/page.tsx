@@ -26,13 +26,13 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
     const matches = await searchProjects(db, q)
     return (
       <div className="space-y-4">
-        <Header brand={brand} />
-        <p className="text-sm text-slate-600">Search results for "{q}" — {matches.length} found</p>
+        <Header />
+        <p className="text-sm text-zinc-600">Search results for &ldquo;{q}&rdquo; — {matches.length} found</p>
         <ul className="space-y-2">
           {matches.map(p => (
             <li key={p.id} className="rounded border bg-white p-3">
               <Link href={`/projects/${p.id}`}>{p.name}</Link>
-              <span className="ml-2 text-xs text-slate-500">{p.brand} · {p.status}</span>
+              <span className="ml-2 text-xs text-zinc-500">{p.brand} · {p.status}</span>
             </li>
           ))}
         </ul>
@@ -94,7 +94,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
 
   return (
     <div className="space-y-6">
-      <Header brand={brand} />
+      <Header />
       <div className="grid grid-cols-4 gap-3">
         <CounterChip filter="active" label="Active" count={counts.active} />
         <CounterChip filter="at_risk" label="At Risk" count={counts.atRisk} accent="red" />
@@ -109,7 +109,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
           <section key={key}>
             <h2 className="mb-2 text-lg font-medium">
               {formatQuarterLabel(key === '__none' ? null : key)} — Target Exit
-              <span className="ml-2 text-sm text-slate-500">
+              <span className="ml-2 text-sm text-zinc-500">
                 ({list.length} project{list.length === 1 ? '' : 's'}{atRiskInGroup > 0 ? `, ${atRiskInGroup} at risk` : ''})
               </span>
             </h2>
@@ -119,12 +119,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
                   <Link href={`/projects/${p.id}`} className="flex items-center gap-3">
                     <span>{p.risk.atRisk ? '🔴' : '⚪'}</span>
                     <span className="font-medium">{p.name}</span>
-                    <span className="text-xs text-slate-500">{p.city ?? '—'}{p.state ? `, ${p.state}` : ''}</span>
-                    <span className="text-xs text-slate-600">{p.currentState}</span>
+                    <span className="text-xs text-zinc-500">{p.city ?? '—'}{p.state ? `, ${p.state}` : ''}</span>
+                    <span className="text-xs text-zinc-600">{p.currentState}</span>
                     {p.risk.atRisk && (
                       <span className="ml-auto text-xs text-red-600">{p.risk.daysBehind}d behind</span>
                     )}
-                    <span className="rounded bg-slate-100 px-2 py-0.5 text-xs">{p.brand}</span>
+                    <span className="rounded bg-zinc-100 px-2 py-0.5 text-xs">{p.brand}</span>
                   </Link>
                 </li>
               ))}
@@ -136,7 +136,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Se
   )
 }
 
-function Header({ brand }: { brand?: string }) {
+function Header() {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">

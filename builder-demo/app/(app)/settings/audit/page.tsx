@@ -15,8 +15,8 @@ export default async function AuditPage() {
         {list.map(a => (
           <li key={a.id} className="rounded border bg-white p-3">
             <div className="font-medium">{a.action}</div>
-            <div className="text-xs text-slate-500">target: {a.targetType}/{a.targetId} — reason: {a.reason}</div>
-            <div className="text-xs text-slate-500">{a.createdAt.toString()}</div>
+            <div className="text-xs text-zinc-500">target: {a.targetType}/{a.targetId} — reason: {a.reason}</div>
+            <div className="text-xs text-zinc-500">{a.createdAt.toString()}</div>
           </li>
         ))}
       </ul>

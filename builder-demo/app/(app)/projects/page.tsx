@@ -6,7 +6,7 @@ export default async function ProjectsPage() {
   return (
     <div>
       <h1 className="mb-4 text-2xl font-semibold">Projects</h1>
-      <p className="mb-4 text-sm text-slate-600">
+      <p className="mb-4 text-sm text-zinc-600">
         Full project page UI is in a follow-up spec.
       </p>
       <ul className="space-y-2">

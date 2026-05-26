@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { truncateAll, testDb } from '@/tests/db'
-import { users, systemBootstrap } from '@/db/schema'
+import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { applyBootstrapOwner } from './bootstrap'
 

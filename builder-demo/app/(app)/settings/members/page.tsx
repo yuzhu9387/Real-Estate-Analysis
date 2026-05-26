@@ -20,7 +20,7 @@ export default async function MembersPage() {
           ))}
         </tbody>
       </table>
-      <p className="mt-4 text-sm text-slate-600">Edit UI follows in a follow-up plan; for now use server actions in <code>app/actions/users.ts</code>.</p>
+      <p className="mt-4 text-sm text-zinc-600">Edit UI follows in a follow-up plan; for now use server actions in <code>app/actions/users.ts</code>.</p>
     </div>
   )
 }

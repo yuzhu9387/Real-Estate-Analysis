@@ -41,8 +41,8 @@ export default async function TeamPage({ params }: { params: { team: string } })
             <li key={p.id} className="rounded border bg-white p-3">
               <Link href={`/projects/${p.id}`} className="flex items-center gap-3">
                 <span className="font-medium">{p.name}</span>
-                <span className="text-xs text-slate-500">{p.city ?? '—'}</span>
-                <span className="text-xs text-slate-600">{state}</span>
+                <span className="text-xs text-zinc-500">{p.city ?? '—'}</span>
+                <span className="text-xs text-zinc-600">{state}</span>
                 <span className="ml-auto text-xs">{activeCount} active task{activeCount === 1 ? '' : 's'}{blockedCount > 0 ? `, ${blockedCount} blocked` : ''}</span>
               </Link>
             </li>
@@ -55,12 +55,12 @@ export default async function TeamPage({ params }: { params: { team: string } })
 
 function Tabs({ current }: { current: Team }) {
   return (
-    <div className="flex gap-2 border-b border-slate-200">
+    <div className="flex gap-2 border-b border-zinc-200">
       {TEAMS.map(t => (
         <Link key={t} href={`/team/${t}`}
           className={[
             'px-3 py-2 text-sm',
-            t === current ? 'border-b-2 border-blue-500 font-medium' : 'text-slate-600',
+            t === current ? 'border-b-2 border-blue-500 font-medium' : 'text-zinc-600',
           ].join(' ')}>
           {LABELS[t]}
         </Link>

@@ -17,11 +17,11 @@ export function CounterChip({
       href={`?${next.toString()}`}
       className={[
         'flex flex-col rounded-xl border px-4 py-3',
-        isActive ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white',
+        isActive ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-white',
       ].join(' ')}
     >
       <span className={['text-2xl font-semibold', accent === 'red' ? 'text-red-600' : ''].join(' ')}>{count}</span>
-      <span className="text-xs text-slate-600">{label}</span>
+      <span className="text-xs text-zinc-600">{label}</span>
     </Link>
   )
 }

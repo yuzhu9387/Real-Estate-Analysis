@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { testDb, truncateAll } from '@/tests/db'
-import { projects, projectPhases, tasks } from '@/db/schema'
+import { projectPhases, tasks } from '@/db/schema'
 import { seedOwner, seedPm } from '@/tests/fixtures/users'
 import { seedTemplate } from '@/tests/fixtures/workflow-templates'
 import { projectService } from './project-service'

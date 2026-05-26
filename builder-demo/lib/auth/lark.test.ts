@@ -17,16 +17,16 @@ describe('buildLarkAuthorizeUrl', () => {
 
 describe('exchangeLarkCode', () => {
   it('posts the right body and returns parsed token', async () => {
-    const fetcher = async (url: string | URL, init?: RequestInit) => {
+    const fetcher: typeof fetch = async (url, init) => {
       expect(String(url)).toContain('/oauth/token')
-      expect(init?.method).toBe('POST')
-      const body = JSON.parse(String(init?.body))
+      expect((init as RequestInit)?.method).toBe('POST')
+      const body = JSON.parse(String((init as RequestInit)?.body))
       expect(body).toMatchObject({ grant_type: 'authorization_code', code: 'CODE_X' })
       return new Response(JSON.stringify({ access_token: 'tok', expires_in: 7200, token_type: 'Bearer' }), { status: 200 })
     }
     const out = await exchangeLarkCode({
       clientId: 'cli', clientSecret: 'sec', code: 'CODE_X',
-      redirectUri: 'https://x/cb', fetcher: fetcher as any,
+      redirectUri: 'https://x/cb', fetcher,
     })
     expect(out.access_token).toBe('tok')
   })
@@ -34,9 +34,9 @@ describe('exchangeLarkCode', () => {
 
 describe('fetchLarkUserInfo', () => {
   it('unwraps data envelope', async () => {
-    const fetcher = async () =>
+    const fetcher: typeof fetch = async () =>
       new Response(JSON.stringify({ data: { open_id: 'ou_x', tenant_key: 't1', name: 'Yu', email: 'y@x.com' } }), { status: 200 })
-    const out = await fetchLarkUserInfo({ accessToken: 'tok', fetcher: fetcher as any })
+    const out = await fetchLarkUserInfo({ accessToken: 'tok', fetcher })
     expect(out.open_id).toBe('ou_x')
     expect(out.tenant_key).toBe('t1')
   })

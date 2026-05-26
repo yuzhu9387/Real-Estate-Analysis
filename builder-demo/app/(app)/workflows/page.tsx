@@ -10,7 +10,7 @@ export default async function WorkflowsPage() {
         {list.map(w => (
           <li key={w.id} className="rounded border bg-white p-3">
             <a href={`/workflows/${w.id}`}>{w.name}</a>
-            {w.isArchived && <span className="ml-2 text-xs text-slate-500">archived</span>}
+            {w.isArchived && <span className="ml-2 text-xs text-zinc-500">archived</span>}
           </li>
         ))}
       </ul>

@@ -22,7 +22,7 @@ export function BrandSwitcher() {
         else next.delete('brand')
         router.push(`?${next.toString()}`)
       }}
-      className="rounded border border-slate-300 bg-white px-3 py-1 text-sm"
+      className="rounded border border-zinc-300 bg-white px-3 py-1 text-sm"
     >
       {OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
     </select>
