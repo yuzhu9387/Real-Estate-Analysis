@@ -12,7 +12,7 @@ export function DrawerStatusStepper({
   status, hasReviewer,
 }: { status: TaskStatus; hasReviewer: boolean }) {
   if (status === 'wont_do') {
-    return <div className="rounded bg-zinc-100 text-zinc-700 text-xs px-2 py-1 text-center">Won't do</div>
+    return <div className="rounded bg-zinc-100 text-zinc-700 text-xs px-2 py-1 text-center">Won&apos;t do</div>
   }
 
   const visibleStages = hasReviewer
