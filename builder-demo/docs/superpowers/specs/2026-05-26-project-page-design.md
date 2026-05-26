@@ -514,7 +514,81 @@ Deferred. Add when stable enough to justify.
 
 ---
 
-## 15. Out of scope
+## 15. Visual design language
+
+### Theme palette: Off-white + Electric Blue
+
+Light off-white background, white surface cards, gradient cyan→blue accents on primary actions and brand-aware elements.
+
+**Base:**
+- Page background: `bg-zinc-50` (#fafafa)
+- Card / surface: `bg-white`
+- Border: `border-zinc-200`
+- Body text: `text-zinc-900`
+- Muted text: `text-zinc-500`
+
+**Primary accent (Electric Blue gradient):**
+- From: `cyan-500` (#06b6d4)
+- To: `blue-500` (#3b82f6)
+- Applied as `bg-gradient-to-r from-cyan-500 to-blue-500` on primary buttons and brand chips
+- Solid alternative: `bg-blue-600` (#2563eb) for dense places where a gradient is visually heavy (small inline buttons, secondary spots)
+
+**Secondary buttons:**
+- `bg-white text-zinc-700 border border-zinc-300 hover:bg-zinc-50`
+
+**Status colors (consistent across the app, do not vary by brand or theme):**
+- Green (`text-emerald-600`, `bg-emerald-50`) — on track / complete
+- Amber (`text-amber-600`, `bg-amber-50`) — at risk / blocked
+- Red (`text-red-600`, `bg-red-50`) — delay / critical path emphasis / errors
+- Blue (`text-blue-600`, `bg-blue-50`) — in progress / pending review
+
+**Brand chips:**
+- All three brands (`al_homes`, `alera`, `apex`) share the same gradient chip in v1: `bg-gradient-to-r from-cyan-500 to-blue-500 text-white`
+- Per-brand distinct palettes are deferred to a polish iteration; can be added by mapping `project.brand` → palette config when distinct branding is needed
+
+**Implication for already-shipped pages:** the dashboard, team, and performance pages currently use slate / solid blue (Theme A-ish). The implementation plan for this spec must include a tailwind config update plus a sweep of buttons / chips / cards on those pages to align with Theme B.
+
+### Default avatars
+
+When a user has no `avatarUrl` (before Lark sync, or backfill cases), they receive a deterministic SVG fallback. The same `user.id` always maps to the same shape, so visual identity is consistent across sessions.
+
+**Avatar set (6 shapes, saved to `public/avatars/avatar-1.svg` through `avatar-6.svg`):**
+
+1. **Solid circle** — cyan→blue gradient on cyan-50 background
+2. **Triangle up** — purple→pink gradient on purple-50 background
+3. **Diamond (rotated square)** — emerald→cyan gradient on green-50 background
+4. **Two dots** — amber→orange gradient on amber-50 background
+5. **Triangle down** — indigo→violet gradient on indigo-50 background
+6. **Ring (hollow circle)** — rose→orange gradient stroke on red-50 background
+
+All 40×40 SVG viewBox. The wrapping `<img>` / `<svg>` element applies `border-radius:50%` for circular crop.
+
+**Selection algorithm** (pure function, lives in `lib/avatar/default-avatar.ts`):
+
+```ts
+export function pickDefaultAvatar(userId: string): number {
+  let hash = 0
+  for (const ch of userId) hash = (hash * 31 + ch.charCodeAt(0)) & 0x7fffffff
+  return (hash % 6) + 1   // returns 1..6
+}
+```
+
+**Avatar component** (`components/shared/avatar.tsx`):
+
+- Accepts `user: { id: string; avatarUrl: string | null; name: string }` and `size: 'xs' | 'sm' | 'md' | 'lg'`
+- Renders an `<img>` with `user.avatarUrl` when available; on load error or null URL, falls back to `<img src="/avatars/avatar-N.svg">` where N = `pickDefaultAvatar(user.id)`
+- `name` is used for `alt=` and `title=` attributes only — never shown as initials
+- Size mapping: xs=16, sm=24, md=40, lg=64 (pixels)
+
+**Where each size is used:**
+- xs: dense lists (activity feed inline mentions)
+- sm: row avatars, status stepper actor labels, drawer breadcrumb
+- md: drawer's Owner/Reviewer block
+- lg: project page header (PM), settings/members table
+
+---
+
+## 16. Out of scope
 
 - Full task detail page (`/projects/[id]/tasks/[taskId]`) — stub only in this spec, real page is a follow-up
 - My Tasks page (cross-project ranked task list) — separate spec
@@ -526,8 +600,9 @@ Deferred. Add when stable enough to justify.
 
 ---
 
-## 16. Open implementation questions
+## 17. Open implementation questions
 
-1. **Avatar source**: spec assumes initials in colored circles. If `users.avatarUrl` is set (filled in from Lark login), should we render the image instead? Default behavior in implementation: use `avatarUrl` when present, otherwise initials.
-2. **Brand chip colors**: the spec uses one chip color for now. If you want each brand to have a distinct color (Al Homes / Alera / Apex), specify the palette during implementation. Default: blue background for all.
-3. **Today day-offset before kick-off**: when `kicked_off_at` is null (draft), "today" maps to day 0. Status colors degenerate (everything is "on track"). This is the intended behavior — no tasks should be delayed before the project even starts. Confirm.
+1. **Today day-offset before kick-off**: when `kicked_off_at` is null (draft), "today" maps to day 0. Status colors degenerate (everything is "on track"). This is the intended behavior — no tasks should be delayed before the project even starts. Confirm.
+2. **Per-brand distinct palettes**: v1 ships all three brands using the same cyan→blue gradient chip. If you later want Al Homes / Alera / Apex to each have a distinct accent color, that's a small mapping config to add — flag during implementation if you want it now instead of deferred.
+
+(Resolved during brainstorming: avatar source — see §15.)
