@@ -178,6 +178,58 @@ export const taskService = {
     })
   },
 
+  async addPlannedTask(input: {
+    projectId: string
+    projectWorkflowId: string
+    name: string
+    description?: string | null
+    plannedDurationDays: number
+    ownerId: string
+    reviewerId?: string | null
+    actorId: string
+    upstreamTaskIds?: string[]
+    sortOrder?: number
+  }, db: DB) {
+    const { projects } = await import('@/db/schema')
+    const { ProjectLockedError } = await import('@/lib/server/errors')
+    const proj = (await db.select().from(projects).where(eq(projects.id, input.projectId)))[0]
+    if (!proj) throw new NotFoundError('Project')
+    if (proj.status !== 'draft') throw new ProjectLockedError(proj.status)
+
+    return db.transaction(async (tx) => {
+      const siblings = await tx.select().from(tasks).where(eq(tasks.projectWorkflowId, input.projectWorkflowId))
+      const sortOrder = input.sortOrder ?? (siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder)) + 1)
+
+      const [inserted] = await tx.insert(tasks).values({
+        projectId: input.projectId,
+        projectWorkflowId: input.projectWorkflowId,
+        name: input.name,
+        description: input.description ?? null,
+        ownerId: input.ownerId,
+        reviewerId: input.reviewerId ?? null,
+        plannedDurationDays: input.plannedDurationDays,
+        isUnplanned: false,
+        sortOrder,
+      }).returning()
+
+      for (const upstreamId of input.upstreamTaskIds ?? []) {
+        await tx.insert(taskDeps).values({
+          projectId: input.projectId,
+          fromTaskId: upstreamId,
+          toTaskId: inserted.id,
+          lagDays: 0,
+        })
+      }
+
+      await tx.insert(activities).values({
+        projectId: input.projectId, actorId: input.actorId,
+        type: 'task.added_planned', payload: { taskId: inserted.id, name: input.name },
+      })
+
+      return inserted
+    })
+  },
+
   async addSubtask(input: {
     parentTaskId: string
     name: string
