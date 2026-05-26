@@ -1,11 +1,8 @@
-export default function PerformancePage() {
-  return (
-    <div>
-      <h1 className="mb-4 text-2xl font-semibold">Performance Review</h1>
-      <p className="text-sm text-slate-600">
-        Implemented in the dashboard spec follow-up plan. This is an empty placeholder
-        so the route resolves.
-      </p>
-    </div>
-  )
+import { redirect } from 'next/navigation'
+import { requireUser } from '@/lib/server/get-current-user'
+
+export default async function PerformanceIndexPage() {
+  const me = await requireUser()
+  const teamRoute = me.team ?? 'design'
+  redirect(`/performance/${teamRoute}`)
 }
