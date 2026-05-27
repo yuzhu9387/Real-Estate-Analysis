@@ -167,4 +167,20 @@ describe('can()', () => {
       expect(can(icCarol, a)).toBe(false)
     })
   })
+
+  describe('task.set_priority', () => {
+    it('task owner, managing PM, owner can; unrelated IC cannot', () => {
+      const a = { type: 'task.set_priority' as const, project: liveProject, task: taskOwnedByCarol }
+      expect(can(owner, a)).toBe(true)
+      expect(can(pmAlice, a)).toBe(true)
+      expect(can(pmBob, a)).toBe(false)
+      expect(can(icCarol, a)).toBe(true)
+      expect(can(icDave, a)).toBe(false)
+    })
+    it('blocked on archived', () => {
+      const a = { type: 'task.set_priority' as const, project: archived, task: taskOwnedByCarol }
+      expect(can(owner, a)).toBe(false)
+      expect(can(icCarol, a)).toBe(false)
+    })
+  })
 })

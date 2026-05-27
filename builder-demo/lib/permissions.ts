@@ -25,6 +25,7 @@ export type Action =
   | { type: 'task.add_unplanned'; project: ProjectContext }
   | { type: 'task.update_structure'; project: ProjectContext }
   | { type: 'task.update_notes'; project: ProjectContext; task: TaskContext }
+  | { type: 'task.set_priority'; project: ProjectContext; task: TaskContext }
   | { type: 'task.set_status'; project: ProjectContext; task: TaskContext }
   | { type: 'task.submit_review'; project: ProjectContext; task: TaskContext }
   | { type: 'task.review_decision'; project: ProjectContext; task: TaskContext }
@@ -90,6 +91,9 @@ export function can(user: User, action: Action): boolean {
       return managesProject(action.project) && projectIsDraft(action.project)
 
     case 'task.update_notes':
+      return projectMutable(action.project) && (managesProject(action.project) || taskOwner(action.task))
+
+    case 'task.set_priority':
       return projectMutable(action.project) && (managesProject(action.project) || taskOwner(action.task))
 
     case 'task.set_status':
