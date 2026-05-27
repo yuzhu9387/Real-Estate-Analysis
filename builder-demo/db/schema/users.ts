@@ -10,6 +10,7 @@ export const users = pgTable('users', {
   role: text('role', { enum: ['owner', 'pm', 'ic'] }).notNull().default('ic'),
   team: text('team', { enum: ['design', 'construction', 'sales'] }),
   isActive: boolean('is_active').notNull().default(true),
+  larkDigestOptedOut: boolean('lark_digest_opted_out').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
 })
