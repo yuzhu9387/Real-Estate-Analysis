@@ -57,6 +57,13 @@
       "when": 1779840676750,
       "tag": "0007_bright_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1779913897017,
+      "tag": "0008_password_auth",
+      "breakpoints": true
     }
   ]
 }

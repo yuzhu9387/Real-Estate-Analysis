@@ -8,7 +8,7 @@ export async function seedUser(overrides: Partial<NewUser> = {}): Promise<User> 
     name: overrides.name ?? 'Test User',
     role: overrides.role ?? 'ic',
     team: overrides.team ?? null,
-    email: overrides.email ?? null,
+    email: overrides.email ?? `user_${Math.random().toString(36).slice(2)}@buildflow.local`,
     avatarUrl: overrides.avatarUrl ?? null,
     isActive: overrides.isActive ?? true,
     ...overrides,

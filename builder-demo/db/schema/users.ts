@@ -2,9 +2,10 @@ import { pgTable, uuid, text, boolean, timestamp } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
-  larkOpenId: text('lark_open_id').notNull().unique(),
-  larkTenantKey: text('lark_tenant_key').notNull(),
-  email: text('email'),
+  larkOpenId: text('lark_open_id').unique(),
+  larkTenantKey: text('lark_tenant_key'),
+  email: text('email').notNull(),
+  passwordHash: text('password_hash'),
   name: text('name').notNull(),
   avatarUrl: text('avatar_url'),
   role: text('role', { enum: ['owner', 'pm', 'ic'] }).notNull().default('ic'),
