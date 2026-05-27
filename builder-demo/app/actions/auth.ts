@@ -5,6 +5,7 @@ import { db } from '@/db/client'
 import { users } from '@/db/schema'
 import { hashPassword, verifyPassword } from '@/lib/auth/password'
 import { issueSession } from '@/lib/auth/session'
+import { requirePermission } from '@/lib/server/require-permission'
 
 export async function registerWithPassword(raw: unknown) {
   const input = z.object({
@@ -56,5 +57,18 @@ export async function loginWithPassword(raw: unknown) {
 
   await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id))
   await issueSession(user.id)
+  return { ok: true as const }
+}
+
+export async function adminResetPassword(raw: unknown) {
+  const input = z.object({
+    userId: z.string().uuid(),
+    newPassword: z.string().min(8),
+  }).parse(raw)
+
+  await requirePermission({ type: 'auth.admin_reset_password' })
+
+  const passwordHash = await hashPassword(input.newPassword)
+  await db.update(users).set({ passwordHash }).where(eq(users.id, input.userId))
   return { ok: true as const }
 }
