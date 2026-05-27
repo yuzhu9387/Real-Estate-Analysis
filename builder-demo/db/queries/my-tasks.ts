@@ -2,7 +2,7 @@ import { and, eq, inArray, notInArray, desc, asc, sql } from 'drizzle-orm'
 import type { DB } from '@/db/client'
 import {
   tasks, projects, projectPhases, projectWorkflows, users,
-  type Task, type Project, type ProjectPhase,
+  type Task, type Project, type ProjectPhase, type TaskStatus,
 } from '@/db/schema'
 import { rankMyOpenTasks } from '@/lib/my-tasks/ranking'
 
@@ -20,7 +20,7 @@ export type MyTasksData = {
   todayDayOffset: number
 }
 
-const TERMINAL_STATUSES = ['complete', 'wont_do'] as const
+const TERMINAL_STATUSES: TaskStatus[] = ['complete', 'wont_do']
 
 async function withContext(db: DB, rows: Task[]): Promise<TaskWithContext[]> {
   if (rows.length === 0) return []
@@ -66,7 +66,7 @@ export async function getMyTasks(
     .innerJoin(projects, eq(tasks.projectId, projects.id))
     .where(and(
       eq(tasks.ownerId, userId),
-      notInArray(tasks.status, TERMINAL_STATUSES as unknown as string[]),
+      notInArray(tasks.status, TERMINAL_STATUSES),
       inArray(projects.status, ['draft','in_progress']),
     ))
   const openTaskRows = openRows.map(r => r.tasks)
@@ -104,7 +104,7 @@ export async function getMyTasks(
     .innerJoin(projects, eq(tasks.projectId, projects.id))
     .where(and(
       eq(tasks.ownerId, userId),
-      inArray(tasks.status, TERMINAL_STATUSES as unknown as string[]),
+      inArray(tasks.status, TERMINAL_STATUSES),
     ))
     .orderBy(desc(tasks.updatedAt))
     .limit(completedLimit)
@@ -115,7 +115,7 @@ export async function getMyTasks(
     .from(tasks)
     .where(and(
       eq(tasks.ownerId, userId),
-      inArray(tasks.status, TERMINAL_STATUSES as unknown as string[]),
+      inArray(tasks.status, TERMINAL_STATUSES),
     ))
   const completedTotal = completedCountRow[0]?.c ?? 0
 
@@ -148,7 +148,7 @@ export async function getDigestSummariesForActiveOptedInUsers(db: DB): Promise<D
       .innerJoin(projects, eq(tasks.projectId, projects.id))
       .where(and(
         eq(tasks.ownerId, u.id),
-        notInArray(tasks.status, TERMINAL_STATUSES as unknown as string[]),
+        notInArray(tasks.status, TERMINAL_STATUSES),
         eq(projects.status, 'in_progress'),
       ))
 
