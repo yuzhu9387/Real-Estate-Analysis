@@ -27,7 +27,7 @@ export function TaskList({
           <div className="p-6 text-center text-sm text-zinc-500">No tasks in this phase yet.</div>
         ) : (
           phaseTasks.map(t => (
-            <TaskRow key={t.id} task={t} owner={userById.get(t.ownerId)} todayDayOffset={todayDayOffset} urlSearch={urlSearch} />
+            <TaskRow key={t.id} task={t} owner={userById.get(t.ownerId)} todayDayOffset={todayDayOffset} urlSearch={urlSearch} project={project} />
           ))
         )}
       </div>

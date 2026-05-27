@@ -181,7 +181,7 @@ export async function setTaskPriority(raw: unknown) {
 
 export async function deleteTaskInDraft(raw: unknown) {
   const input = z.object({ taskId: z.string().uuid() }).parse(raw)
-  const { task, project } = await loadTaskCtx(input.taskId)
+  const { project } = await loadTaskCtx(input.taskId)
   const user = await requirePermission({
     type: 'task.update_structure',
     project: { pmId: project.pmId, status: project.status },
