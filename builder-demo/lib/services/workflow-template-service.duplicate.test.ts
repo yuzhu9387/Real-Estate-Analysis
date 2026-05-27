@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { testDb, truncateAll } from '@/tests/db'
-import { workflowTemplates, workflowTemplateTasks, workflowTemplateTaskDeps } from '@/db/schema'
+import { workflowTemplateTasks, workflowTemplateTaskDeps } from '@/db/schema'
 import { seedOwner } from '@/tests/fixtures/users'
 import { workflowTemplateService } from './workflow-template-service'
 import { ConflictError } from '@/lib/server/errors'
