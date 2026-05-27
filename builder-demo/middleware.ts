@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SESSION_COOKIE_NAME } from '@/lib/auth/session-constants'
 
-const PUBLIC_PATHS = ['/login', '/api/auth', '/api/health', '/_next', '/favicon']
+const PUBLIC_PATHS = ['/login', '/register', '/api/auth', '/api/health', '/_next', '/favicon']
 
 export function middleware(req: NextRequest) {
   // Dev bypass: skip Lark gate when DEV_AUTH_BYPASS=true. Never set in production.
