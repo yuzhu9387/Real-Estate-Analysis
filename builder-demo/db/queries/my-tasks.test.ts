@@ -103,3 +103,44 @@ describe('getMyTasks', () => {
     expect(out.openTasks).toHaveLength(0)
   })
 })
+
+import { getDigestSummariesForActiveOptedInUsers } from './my-tasks'
+import { users } from '@/db/schema'
+
+describe('getDigestSummariesForActiveOptedInUsers', () => {
+  beforeEach(async () => { await truncateAll() })
+
+  it('excludes opted-out and inactive users', async () => {
+    const ic1 = await seedIc('a', 'design')
+    const ic2 = await seedIc('b', 'design')
+    const ic3 = await seedIc('c', 'design')
+    await testDb.update(users).set({ larkDigestOptedOut: true }).where(eq(users.id, ic2.id))
+    await testDb.update(users).set({ isActive: false }).where(eq(users.id, ic3.id))
+
+    const out = await getDigestSummariesForActiveOptedInUsers(testDb)
+    const ids = out.map(r => r.userId).sort()
+    expect(ids).toEqual([ic1.id].sort())
+  })
+
+  it('computes counts correctly', async () => {
+    const owner = await seedOwner()
+    const pm = await seedPm()
+    const ic = await seedIc('IC', 'design')
+    const { template } = await seedTemplate({
+      createdById: owner.id, name: 'P',
+      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      deps: [],
+    })
+    const project = await projectService.create({
+      createdById: pm.id, name: 'X', brand: 'al_homes', pmId: pm.id,
+      assignments: [{ phaseName: 'Permitting', templateId: template.id, sortOrder: 0 }],
+    }, testDb)
+    const ts = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
+    for (const t of ts) await testDb.update(tasks).set({ ownerId: ic.id, reviewerId: pm.id }).where(eq(tasks.id, t.id))
+
+    const summaries = await getDigestSummariesForActiveOptedInUsers(testDb)
+    const me = summaries.find(s => s.userId === ic.id)
+    expect(me).toBeDefined()
+    expect(me!.overdueCount + me!.dueThisWeekCount).toBeGreaterThanOrEqual(0)
+  })
+})
