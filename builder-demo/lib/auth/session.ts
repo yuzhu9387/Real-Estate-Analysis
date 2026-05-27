@@ -1,4 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { cookies } from 'next/headers'
+import { SESSION_COOKIE_NAME, SESSION_DURATION_MS } from './session-constants'
 export { SESSION_COOKIE_NAME, SESSION_DURATION_MS } from './session-constants'
 
 type SessionPayload = { userId: string; expiresAt: number }
@@ -30,5 +32,19 @@ export async function verifySessionToken(token: string, secret: string): Promise
   if (!payload.userId || !payload.expiresAt) throw new Error('invalid payload')
   if (payload.expiresAt < Date.now()) throw new Error('token expired')
   return payload
+}
+
+export async function issueSession(userId: string): Promise<void> {
+  const secret = process.env.AUTH_SECRET
+  if (!secret) throw new Error('AUTH_SECRET not set')
+  const expiresAt = Date.now() + SESSION_DURATION_MS
+  const token = await signSessionToken({ userId, expiresAt }, secret)
+  cookies().set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    expires: new Date(expiresAt),
+    path: '/',
+  })
 }
 
