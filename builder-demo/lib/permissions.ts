@@ -34,6 +34,7 @@ export type Action =
   | { type: 'task.reassign'; project: ProjectContext; task: TaskContext }
   | { type: 'user.update_role' }
   | { type: 'user.disable' }
+  | { type: 'auth.admin_reset_password' }
   | { type: 'audit.view' }
 
 export function can(user: User, action: Action): boolean {
@@ -116,6 +117,7 @@ export function can(user: User, action: Action): boolean {
 
     case 'user.update_role':
     case 'user.disable':
+    case 'auth.admin_reset_password':
     case 'audit.view':
       return isOwnerRole
   }
