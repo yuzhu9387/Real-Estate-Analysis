@@ -16,6 +16,7 @@ export function Sidebar({ user }: { user: User }) {
       {baseLinks.map((l) => (
         <Link key={l.href} href={l.href} className="rounded px-3 py-2 hover:bg-zinc-100">{l.label}</Link>
       ))}
+      <Link href="/settings/me" className="rounded px-3 py-2 hover:bg-zinc-100">Settings</Link>
       {user.role === 'owner' && (
         <>
           <div className="mt-4 text-xs uppercase text-zinc-500">Settings</div>
