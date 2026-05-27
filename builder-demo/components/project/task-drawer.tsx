@@ -6,6 +6,7 @@ import { DrawerStatusStepper } from './drawer-status-stepper'
 import { DrawerStatusActions } from './drawer-status-actions'
 import { DrawerSubtasks } from './drawer-subtasks'
 import { DrawerComments } from './drawer-comments'
+import { DrawerPriorityControl } from './drawer-priority-control'
 import { currentTaskStatus } from '@/lib/project-page/current-task-status'
 import type { ProjectPageData } from '@/db/queries/project-page'
 
@@ -85,6 +86,8 @@ export function TaskDrawer({
             </div>
           </div>
         </div>
+
+        <DrawerPriorityControl task={task} project={initialData.project} />
 
         <div className="mt-4">
           <DrawerStatusStepper status={task.status} hasReviewer={!!task.reviewerId} />
