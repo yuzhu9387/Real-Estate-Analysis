@@ -280,4 +280,20 @@ export const taskService = {
     await db.update(tasks).set({ description: input.description, updatedAt: new Date() })
       .where(eq(tasks.id, input.taskId))
   },
+
+  async setPriority(input: { taskId: string; priority: 'low'|'normal'|'high'; actorId: string }, db: DB) {
+    return db.transaction(async (tx) => {
+      const rows = await tx.select().from(tasks).where(eq(tasks.id, input.taskId))
+      if (rows.length === 0) throw new NotFoundError('Task')
+      const before = rows[0].priority
+      if (before === input.priority) return
+      await tx.update(tasks).set({ priority: input.priority, updatedAt: new Date() })
+        .where(eq(tasks.id, input.taskId))
+      await tx.insert(activities).values({
+        projectId: rows[0].projectId, actorId: input.actorId,
+        type: 'task.priority_changed',
+        payload: { taskId: input.taskId, from: before, to: input.priority },
+      })
+    })
+  },
 }

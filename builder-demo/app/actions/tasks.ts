@@ -161,3 +161,20 @@ export async function updateTaskNotes(raw: unknown) {
   revalidatePath(`/projects/${project.id}`)
   return { ok: true }
 }
+
+export async function setTaskPriority(raw: unknown) {
+  const input = z.object({
+    taskId: z.string().uuid(),
+    priority: z.enum(['low','normal','high']),
+  }).parse(raw)
+  const { task, project } = await loadTaskCtx(input.taskId)
+  const user = await requirePermission({
+    type: 'task.set_priority',
+    project: { pmId: project.pmId, status: project.status },
+    task: { ownerId: task.ownerId, reviewerId: task.reviewerId },
+  })
+  await taskService.setPriority({ taskId: input.taskId, priority: input.priority, actorId: user.id }, db)
+  revalidatePath(`/projects/${project.id}`)
+  revalidatePath('/my-tasks')
+  return { ok: true }
+}
