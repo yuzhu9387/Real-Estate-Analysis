@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm'
 import type { DB } from '@/db/client'
 import { workflowTemplates, workflowTemplateTasks, workflowTemplateTaskDeps } from '@/db/schema'
 import { NotFoundError, ValidationError } from '@/lib/server/errors'
+import { hasCycle } from '@/lib/workflow-editor/has-cycle'
 
 type TaskInput = { name: string; description?: string | null; durationDays: number; ownerRoleLabel?: string | null }
 type DepInput  = { fromIdx: number; toIdx: number; lagDays: number }
@@ -15,6 +16,12 @@ export const workflowTemplateService = {
     deps: DepInput[]
   }, db: DB) {
     if (input.tasks.length === 0) throw new ValidationError('Template must have at least one task')
+
+    const fakeTasks = input.tasks.map((_, i) => ({ id: String(i) }))
+    const fakeDeps = input.deps.map(d => ({ fromId: String(d.fromIdx), toId: String(d.toIdx) }))
+    if (hasCycle({ tasks: fakeTasks, deps: fakeDeps })) {
+      throw new ValidationError('Dependencies form a cycle')
+    }
 
     return db.transaction(async (tx) => {
       const [tpl] = await tx.insert(workflowTemplates).values({
@@ -57,6 +64,12 @@ export const workflowTemplateService = {
     tasks: TaskInput[]
     deps: DepInput[]
   }, db: DB) {
+    const fakeTasks = input.tasks.map((_, i) => ({ id: String(i) }))
+    const fakeDeps = input.deps.map(d => ({ fromId: String(d.fromIdx), toId: String(d.toIdx) }))
+    if (hasCycle({ tasks: fakeTasks, deps: fakeDeps })) {
+      throw new ValidationError('Dependencies form a cycle')
+    }
+
     return db.transaction(async (tx) => {
       const existing = await tx.select().from(workflowTemplates).where(eq(workflowTemplates.id, id))
       if (existing.length === 0) throw new NotFoundError('WorkflowTemplate')
