@@ -34,11 +34,7 @@ export function RegisterForm() {
         router.push('/')
         router.refresh()
       } else {
-        if (res.field) {
-          setFieldErrors({ [res.field]: res.message })
-        } else {
-          setBanner(res.message)
-        }
+        setFieldErrors({ [res.field]: res.message })
       }
     } catch (e) {
       setBanner(e instanceof Error ? e.message : 'Sign-up failed')
