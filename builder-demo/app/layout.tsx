@@ -1,7 +1,7 @@
 import './globals.css'
 import type { ReactNode } from 'react'
 
-export const metadata = { title: 'BuildFlow' }
+export const metadata = { title: 'AlphaX Hub' }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

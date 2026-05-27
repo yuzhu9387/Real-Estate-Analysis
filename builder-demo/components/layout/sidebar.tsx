@@ -12,7 +12,7 @@ const baseLinks = [
 export function Sidebar({ user }: { user: User }) {
   return (
     <nav className="flex h-screen w-60 flex-col gap-1 border-r border-zinc-200 bg-white p-4">
-      <div className="mb-4 text-lg font-semibold">BuildFlow</div>
+      <div className="mb-4 text-lg font-semibold">AlphaX Hub</div>
       {baseLinks.map((l) => (
         <Link key={l.href} href={l.href} className="rounded px-3 py-2 hover:bg-zinc-100">{l.label}</Link>
       ))}

@@ -10,7 +10,7 @@ export function shouldSendDigest(counts: DigestCounts): boolean {
 
 export function buildDigestMessage(input: DigestCounts & { myTasksUrl: string }): string {
   return [
-    '📋 BuildFlow daily digest',
+    '📋 AlphaX Hub daily digest',
     `Overdue: ${input.overdueCount}`,
     `Due this week: ${input.dueThisWeekCount}`,
     `Pending your review: ${input.pendingMyReviewCount}`,

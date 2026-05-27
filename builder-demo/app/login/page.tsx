@@ -14,7 +14,7 @@ export default function LoginPage({ searchParams }: { searchParams: SearchParams
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-50">
       <div className="w-96 rounded-2xl bg-white p-8 shadow space-y-4">
-        <h1 className="text-2xl font-semibold">BuildFlow</h1>
+        <h1 className="text-2xl font-semibold">AlphaX Hub</h1>
         {err && <div className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{err}</div>}
 
         <a
