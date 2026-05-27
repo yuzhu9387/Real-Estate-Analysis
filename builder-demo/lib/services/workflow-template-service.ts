@@ -122,4 +122,58 @@ export const workflowTemplateService = {
     const rows = await db.select().from(workflowTemplates)
     return opts.includeArchived ? rows : rows.filter(r => !r.isArchived)
   },
+
+  async duplicate(sourceId: string, input: { newName: string; createdById: string }, db: DB) {
+    const { ConflictError } = await import('@/lib/server/errors')
+    return db.transaction(async (tx) => {
+      const sourceRows = await tx.select().from(workflowTemplates).where(eq(workflowTemplates.id, sourceId))
+      if (sourceRows.length === 0) throw new NotFoundError('WorkflowTemplate')
+      if (sourceRows[0].isArchived) throw new ConflictError('Cannot duplicate an archived template')
+
+      const sourceTasks = await tx.select().from(workflowTemplateTasks)
+        .where(eq(workflowTemplateTasks.workflowTemplateId, sourceId))
+      const sourceDeps = await tx.select().from(workflowTemplateTaskDeps)
+        .where(eq(workflowTemplateTaskDeps.workflowTemplateId, sourceId))
+
+      const [newTpl] = await tx.insert(workflowTemplates).values({
+        name: input.newName,
+        description: sourceRows[0].description,
+        createdById: input.createdById,
+      }).returning()
+
+      const idMap = new Map<string, string>()
+      const insertedTasks = await tx.insert(workflowTemplateTasks).values(
+        sourceTasks.map(t => ({
+          workflowTemplateId: newTpl.id,
+          name: t.name,
+          description: t.description,
+          defaultDurationDays: t.defaultDurationDays,
+          defaultOwnerRoleLabel: t.defaultOwnerRoleLabel,
+          sortOrder: t.sortOrder,
+        })),
+      ).returning()
+      sourceTasks.forEach((src, i) => idMap.set(src.id, insertedTasks[i].id))
+
+      if (sourceDeps.length > 0) {
+        await tx.insert(workflowTemplateTaskDeps).values(
+          sourceDeps.map(d => ({
+            workflowTemplateId: newTpl.id,
+            fromTaskId: idMap.get(d.fromTaskId)!,
+            toTaskId: idMap.get(d.toTaskId)!,
+            dependencyType: d.dependencyType,
+            lagDays: d.lagDays,
+          })),
+        )
+      }
+      return newTpl
+    })
+  },
+
+  async unarchive(id: string, db: DB) {
+    const result = await db.update(workflowTemplates)
+      .set({ isArchived: false, updatedAt: new Date() })
+      .where(eq(workflowTemplates.id, id))
+      .returning()
+    if (result.length === 0) throw new NotFoundError('WorkflowTemplate')
+  },
 }

@@ -60,3 +60,27 @@ export async function archiveWorkflowTemplate(raw: unknown) {
   revalidatePath('/workflows')
   return { ok: true }
 }
+
+export async function duplicateWorkflowTemplate(raw: unknown) {
+  const input = z.object({
+    sourceId: z.string().uuid(),
+    newName: z.string().min(1),
+  }).parse(raw)
+  const user = await requirePermission({ type: 'workflow.create' })
+  const tpl = await workflowTemplateService.duplicate(input.sourceId, {
+    newName: input.newName, createdById: user.id,
+  }, db)
+  revalidatePath('/workflows')
+  return { ok: true, id: tpl.id }
+}
+
+export async function unarchiveWorkflowTemplate(raw: unknown) {
+  const input = z.object({ id: z.string().uuid() }).parse(raw)
+  const existing = await workflowTemplateService.getById(input.id, db)
+  if (!existing) throw new Error('not found')
+  await requirePermission({ type: 'workflow.update', workflow: { createdById: existing.createdById } })
+  await workflowTemplateService.unarchive(input.id, db)
+  revalidatePath('/workflows')
+  revalidatePath(`/workflows/${input.id}`)
+  return { ok: true }
+}
