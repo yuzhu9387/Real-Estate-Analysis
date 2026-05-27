@@ -6,6 +6,7 @@ import { db } from '@/db/client'
 import { users } from '@/db/schema'
 import { requirePermission } from '@/lib/server/require-permission'
 import { ValidationError, NotFoundError } from '@/lib/server/errors'
+import { requireUser } from '@/lib/server/get-current-user'
 
 export async function updateUserRole(raw: unknown) {
   const input = z.object({
@@ -51,5 +52,13 @@ export async function setUserActive(raw: unknown) {
   }
   await db.update(users).set({ isActive: input.isActive }).where(eq(users.id, input.userId))
   revalidatePath('/settings/members')
+  return { ok: true }
+}
+
+export async function setLarkDigestOptOut(raw: unknown) {
+  const input = z.object({ optedOut: z.boolean() }).parse(raw)
+  const user = await requireUser()
+  await db.update(users).set({ larkDigestOptedOut: input.optedOut }).where(eq(users.id, user.id))
+  revalidatePath('/settings/me')
   return { ok: true }
 }
