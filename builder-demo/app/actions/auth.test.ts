@@ -62,3 +62,56 @@ describe('registerWithPassword', () => {
     })).rejects.toThrow()
   })
 })
+
+import { loginWithPassword } from './auth'
+
+describe('loginWithPassword', () => {
+  beforeEach(async () => { await truncateAll() })
+
+  async function setupUser() {
+    await registerWithPassword({ email: 'alice@example.com', name: 'Alice', password: 'supersecret' })
+  }
+
+  it('returns ok=true and updates lastLoginAt on correct password', async () => {
+    await setupUser()
+    const before = (await testDb.select().from(users))[0].lastLoginAt
+    const res = await loginWithPassword({ email: 'alice@example.com', password: 'supersecret' })
+    expect(res).toEqual({ ok: true })
+    const after = (await testDb.select().from(users))[0].lastLoginAt
+    expect(after).not.toEqual(before)
+    expect(after).not.toBeNull()
+  })
+
+  it('returns unified error on wrong password', async () => {
+    await setupUser()
+    expect(await loginWithPassword({ email: 'alice@example.com', password: 'wrong' }))
+      .toEqual({ ok: false, message: 'Invalid email or password' })
+  })
+
+  it('returns unified error on unknown email', async () => {
+    expect(await loginWithPassword({ email: 'nobody@example.com', password: 'whatever' }))
+      .toEqual({ ok: false, message: 'Invalid email or password' })
+  })
+
+  it('returns unified error when user has no password (Lark-only)', async () => {
+    await testDb.insert(users).values({
+      larkOpenId: 'lark_only', larkTenantKey: 't1',
+      email: 'lark@example.com', name: 'Lark User', role: 'ic',
+    })
+    expect(await loginWithPassword({ email: 'lark@example.com', password: 'supersecret' }))
+      .toEqual({ ok: false, message: 'Invalid email or password' })
+  })
+
+  it('returns Account disabled when user.isActive=false', async () => {
+    await setupUser()
+    await testDb.update(users).set({ isActive: false })
+    expect(await loginWithPassword({ email: 'alice@example.com', password: 'supersecret' }))
+      .toEqual({ ok: false, message: 'Account disabled' })
+  })
+
+  it('matches email case-insensitively', async () => {
+    await setupUser()
+    expect(await loginWithPassword({ email: 'ALICE@EXAMPLE.com', password: 'supersecret' }))
+      .toEqual({ ok: true })
+  })
+})
