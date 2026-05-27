@@ -296,4 +296,30 @@ export const taskService = {
       })
     })
   },
+
+  async deleteInDraft(taskId: string, actorId: string, db: DB) {
+    const { projects } = await import('@/db/schema')
+    const { ProjectLockedError } = await import('@/lib/server/errors')
+    const { applyScheduleToProject } = await import('@/lib/snapshot/apply-schedule')
+
+    return db.transaction(async (tx) => {
+      const taskRows = await tx.select().from(tasks).where(eq(tasks.id, taskId))
+      if (taskRows.length === 0) throw new NotFoundError('Task')
+      const task = taskRows[0]
+
+      const projRows = await tx.select().from(projects).where(eq(projects.id, task.projectId))
+      if (projRows.length === 0) throw new NotFoundError('Project')
+      if (projRows[0].status !== 'draft') throw new ProjectLockedError(projRows[0].status)
+
+      await tx.delete(tasks).where(eq(tasks.id, taskId))
+
+      await tx.insert(activities).values({
+        projectId: task.projectId, actorId,
+        type: 'task.deleted',
+        payload: { taskId, name: task.name },
+      })
+
+      await applyScheduleToProject(tx, { projectId: task.projectId })
+    })
+  },
 }

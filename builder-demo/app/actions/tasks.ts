@@ -178,3 +178,16 @@ export async function setTaskPriority(raw: unknown) {
   revalidatePath('/my-tasks')
   return { ok: true }
 }
+
+export async function deleteTaskInDraft(raw: unknown) {
+  const input = z.object({ taskId: z.string().uuid() }).parse(raw)
+  const { task, project } = await loadTaskCtx(input.taskId)
+  const user = await requirePermission({
+    type: 'task.update_structure',
+    project: { pmId: project.pmId, status: project.status },
+  })
+  await taskService.deleteInDraft(input.taskId, user.id, db)
+  revalidatePath(`/projects/${project.id}`)
+  revalidatePath('/my-tasks')
+  return { ok: true }
+}
