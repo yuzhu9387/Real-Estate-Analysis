@@ -43,6 +43,13 @@
       "when": 1779825000000,
       "tag": "0005_add_check_constraints",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779840653283,
+      "tag": "0006_harsh_joystick",
+      "breakpoints": true
     }
   ]
 }

@@ -20,6 +20,7 @@ export const tasks = pgTable('tasks', {
   actualStartDay: integer('actual_start_day'),
   actualEndDay: integer('actual_end_day'),
   status: text('status', { enum: ['not_started','started','pending_review','approved','complete','wont_do'] }).notNull().default('not_started'),
+  priority: text('priority', { enum: ['low', 'normal', 'high'] }).notNull().default('normal'),
   isBlocked: boolean('is_blocked').notNull().default(false),
   isUnplanned: boolean('is_unplanned').notNull().default(false),
   isOnCriticalPath: boolean('is_on_critical_path').notNull().default(false),
@@ -32,3 +33,4 @@ export const tasks = pgTable('tasks', {
 export type Task = typeof tasks.$inferSelect
 export type NewTask = typeof tasks.$inferInsert
 export type TaskStatus = Task['status']
+export type TaskPriority = Task['priority']
