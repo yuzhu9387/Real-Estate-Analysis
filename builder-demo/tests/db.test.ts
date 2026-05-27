@@ -10,6 +10,7 @@ describe('test db helper', () => {
     await testDb.insert(users).values({
       larkOpenId: 'lark_test_1',
       larkTenantKey: 'tenant_a',
+      email: 'test_user@buildflow.local',
       name: 'Test User',
       role: 'ic',
     })

@@ -9,7 +9,7 @@ describe('applyBootstrapOwner', () => {
 
   it('promotes the matching open_id to owner exactly once', async () => {
     const [u] = await testDb.insert(users).values({
-      larkOpenId: 'ou_boot', larkTenantKey: 't1', name: 'Boot', role: 'ic',
+      larkOpenId: 'ou_boot', larkTenantKey: 't1', email: 'boot@buildflow.local', name: 'Boot', role: 'ic',
     }).returning()
 
     const first = await applyBootstrapOwner(testDb, { openId: 'ou_boot' })

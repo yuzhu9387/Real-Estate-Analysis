@@ -14,6 +14,7 @@ async function getDevBypassUser(): Promise<User | null> {
   const [created] = await db.insert(users).values({
     larkOpenId: 'dev_bypass_owner',
     larkTenantKey: 'dev',
+    email: 'dev_owner@buildflow.local',
     name: 'Dev Owner',
     role: 'owner',
     team: null,

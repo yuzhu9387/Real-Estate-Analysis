@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     const [created] = await db.insert(users).values({
       larkOpenId: info.open_id,
       larkTenantKey: info.tenant_key,
-      email: info.email,
+      email: info.email ?? `lark_${info.open_id}@buildflow.local`,
       name: info.name,
       avatarUrl: info.avatar_url,
       role: 'ic',

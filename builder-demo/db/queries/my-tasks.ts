@@ -141,6 +141,8 @@ export async function getDigestSummariesForActiveOptedInUsers(db: DB): Promise<D
 
   const out: DigestSummary[] = []
   for (const u of eligibleUsers) {
+    if (!u.larkOpenId) continue
+
     const ownedOpen = await db.select({
       plannedEndDay: tasks.plannedEndDay,
       kickedOffAt: projects.kickedOffAt,
