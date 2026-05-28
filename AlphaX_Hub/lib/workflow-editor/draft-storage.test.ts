@@ -12,7 +12,7 @@ const storage = new MemStorage()
 const SAMPLE: Draft = {
   name: 'P',
   description: '',
-  tasks: [{ id: 't1', name: 'A', description: '', durationDays: 1, ownerRoleLabel: 'design', sortOrder: 0 }],
+  tasks: [{ id: 't1', name: 'A', description: '', startDay: 1, endDay: 2, ownerRoleLabel: 'design', sortOrder: 0 }],
   deps: [],
   savedAt: '2026-05-27T10:00:00.000Z',
 }
@@ -47,5 +47,15 @@ describe('draft storage', () => {
     saveDraft('id-1', { ...SAMPLE, name: 'X' }, storage as unknown as Storage)
     expect(loadDraft('__new__', storage as unknown as Storage)?.name).toBe('P')
     expect(loadDraft('id-1', storage as unknown as Storage)?.name).toBe('X')
+  })
+
+  it('discards pre-change drafts that have durationDays instead of startDay/endDay', () => {
+    const memStorage = new MemStorage()
+    memStorage.setItem('workflow-draft-foo', JSON.stringify({
+      name: 'old', description: '', tasks: [
+        { id: 't1', name: 'A', description: '', durationDays: 1, ownerRoleLabel: '', sortOrder: 0 },
+      ], deps: [], savedAt: new Date().toISOString(),
+    }))
+    expect(loadDraft('foo', memStorage as unknown as Storage)).toBeNull()
   })
 })

@@ -2,7 +2,8 @@ export type DraftTask = {
   id: string
   name: string
   description: string
-  durationDays: number
+  startDay: number
+  endDay: number
   ownerRoleLabel: string
   sortOrder: number
 }
@@ -34,7 +35,10 @@ export function loadDraft(idOrNew: string, storage: Storage = localStorage): Dra
   const raw = storage.getItem(draftKey(idOrNew))
   if (!raw) return null
   try {
-    return JSON.parse(raw) as Draft
+    const parsed = JSON.parse(raw) as { tasks?: Array<Record<string, unknown>> }
+    // Drop drafts saved before the start/end day shape change.
+    if (parsed.tasks?.some(t => !('startDay' in t) || !('endDay' in t))) return null
+    return parsed as Draft
   } catch {
     return null
   }
