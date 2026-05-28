@@ -55,7 +55,7 @@ export default async function WorkflowDetailPage({ params }: { params: { id: str
                 <div className="flex items-center gap-3">
                   <span className="text-zinc-500 w-6">{i + 1}.</span>
                   <span className="flex-1">{t.name}</span>
-                  <span className="text-zinc-500">{t.defaultDurationDays}d</span>
+                  <span className="text-zinc-500">{t.defaultEndDay - t.defaultStartDay}d</span>
                   {t.defaultOwnerRoleLabel && <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded">{t.defaultOwnerRoleLabel}</span>}
                 </div>
                 {upstreamIds.length > 0 && (

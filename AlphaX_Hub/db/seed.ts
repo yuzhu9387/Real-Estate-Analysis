@@ -17,12 +17,12 @@ async function main() {
   await db.insert(workflowTemplateTasks).values([
     {
       workflowTemplateId: tpl.id, name: 'Survey',
-      defaultDurationDays: 5, defaultStartDay: 1, defaultEndDay: 6,
+      defaultStartDay: 1, defaultEndDay: 6,
       sortOrder: 0,
     },
     {
       workflowTemplateId: tpl.id, name: 'Apply',
-      defaultDurationDays: 10, defaultStartDay: 6, defaultEndDay: 16,
+      defaultStartDay: 6, defaultEndDay: 16,
       sortOrder: 1,
     },
   ])

@@ -71,6 +71,13 @@
       "when": 1779929542638,
       "tag": "0009_workflow_task_dates_add",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1779995082979,
+      "tag": "0010_workflow_task_dates_drop_duration",
+      "breakpoints": true
     }
   ]
 }

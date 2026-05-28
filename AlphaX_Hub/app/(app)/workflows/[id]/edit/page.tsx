@@ -27,7 +27,7 @@ export default async function EditWorkflowPage({ params }: { params: { id: strin
           id: t.id,
           name: t.name,
           description: t.description ?? '',
-          durationDays: t.defaultDurationDays,
+          durationDays: t.defaultEndDay - t.defaultStartDay,
           ownerRoleLabel: t.defaultOwnerRoleLabel ?? '',
           sortOrder: t.sortOrder,
         })),

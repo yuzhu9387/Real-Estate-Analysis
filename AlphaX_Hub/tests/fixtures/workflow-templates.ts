@@ -20,7 +20,6 @@ export async function seedTemplate(input: {
     input.tasks.map((t, i) => ({
       workflowTemplateId: tpl.id,
       name: t.name,
-      defaultDurationDays: t.endDay - t.startDay,
       defaultStartDay: t.startDay,
       defaultEndDay: t.endDay,
       defaultOwnerRoleLabel: t.ownerRoleLabel ?? null,
