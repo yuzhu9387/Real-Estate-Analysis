@@ -144,6 +144,12 @@ export const taskService = {
       const siblings = await tx.select().from(tasks).where(eq(tasks.projectWorkflowId, input.projectWorkflowId))
       const sortOrder = siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder)) + 1
 
+      // Determine start day: place after the latest planned end day in the project
+      const projectTasks = await tx.select().from(tasks).where(eq(tasks.projectId, input.projectId))
+      const maxEndDay = projectTasks.reduce((max, t) => Math.max(max, t.plannedEndDay ?? 0), 0)
+      const plannedStartDay = maxEndDay
+      const plannedEndDay = maxEndDay + input.plannedDurationDays
+
       const [inserted] = await tx.insert(tasks).values({
         projectId: input.projectId,
         projectWorkflowId: input.projectWorkflowId,
@@ -152,6 +158,8 @@ export const taskService = {
         ownerId: input.ownerId,
         reviewerId: input.reviewerId ?? null,
         plannedDurationDays: input.plannedDurationDays,
+        plannedStartDay,
+        plannedEndDay,
         isUnplanned: true,
         sortOrder,
       }).returning()

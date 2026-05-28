@@ -13,7 +13,8 @@ export async function applyScheduleToProject(tx: Tx, input: { projectId: string 
   const schedule = recomputeSchedule({
     tasks: taskRows.map(t => ({
       id: t.id,
-      durationDays: t.plannedDurationDays,
+      startDay: t.plannedStartDay ?? 0,
+      endDay: t.plannedEndDay ?? 0,
       status: t.status,
     })),
     deps: depRows.map(d => ({
@@ -30,8 +31,6 @@ export async function applyScheduleToProject(tx: Tx, input: { projectId: string 
 
   for (const s of schedule) {
     await tx.update(tasks).set({
-      plannedStartDay: s.earliestStartDay,
-      plannedEndDay:   s.earliestEndDay,
       isOnCriticalPath: s.isOnCriticalPath,
       isBlocked: blockedById.get(s.taskId) ?? false,
       updatedAt: new Date(),

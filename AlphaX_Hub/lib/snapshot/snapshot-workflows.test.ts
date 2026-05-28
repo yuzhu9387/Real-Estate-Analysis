@@ -52,6 +52,8 @@ describe('snapshotWorkflowsIntoProject', () => {
     expect(projTasks).toHaveLength(3)
     const surveyTask = projTasks.find(t => t.name === 'Survey')!
     expect(surveyTask.plannedDurationDays).toBe(5)
+    expect(surveyTask.plannedStartDay).toBe(1)
+    expect(surveyTask.plannedEndDay).toBe(6)
     expect(surveyTask.ownerId).toBe(pm.id)
     expect(surveyTask.sourceWorkflowTemplateId).toBe(template.id)
 

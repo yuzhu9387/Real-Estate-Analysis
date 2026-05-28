@@ -42,10 +42,11 @@ describe('applyScheduleToProject', () => {
     const rows = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
     const a = rows.find(t => t.name === 'a')!
     const b = rows.find(t => t.name === 'b')!
-    expect(a.plannedStartDay).toBe(0)
-    expect(a.plannedEndDay).toBe(2)
-    expect(b.plannedStartDay).toBe(2)
-    expect(b.plannedEndDay).toBe(5)
+    // plannedStartDay/plannedEndDay are set by the snapshot from template values, not by applyScheduleToProject
+    expect(a.plannedStartDay).toBe(1)
+    expect(a.plannedEndDay).toBe(3)
+    expect(b.plannedStartDay).toBe(3)
+    expect(b.plannedEndDay).toBe(6)
     expect(a.isOnCriticalPath).toBe(true)
     expect(b.isOnCriticalPath).toBe(true)
   })
