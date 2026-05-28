@@ -1,10 +1,11 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { EditorHeader } from './editor-header'
 import { DraftBanner } from './draft-banner'
 import { TaskList } from './task-list'
 import { hasCycle } from '@/lib/workflow-editor/has-cycle'
+import { computeTotals } from '@/lib/workflow-editor/compute-totals'
 import {
   saveDraft, loadDraft, clearDraft, NEW_MODE_KEY,
   type Draft, type DraftTask,
@@ -52,6 +53,22 @@ export function EditorShell({
   const isDirty = JSON.stringify(state) !== JSON.stringify(lastSavedRef.current)
   useLeavePrompt(isDirty)
 
+  const totals = useMemo(
+    () => computeTotals(state.tasks.map(t => ({ startDay: t.startDay, endDay: t.endDay }))),
+    [state.tasks],
+  )
+
+  const violations = useMemo(() => {
+    const taskById = new Map(state.tasks.map(t => [t.id, t]))
+    return state.deps
+      .map(d => ({
+        pred: taskById.get(d.fromTaskId),
+        succ: taskById.get(d.toTaskId),
+      }))
+      .filter(({ pred, succ }) => pred && succ && succ.startDay < pred.endDay)
+      .map(({ pred, succ }) => ({ predName: pred!.name || '(unnamed)', succName: succ!.name || '(unnamed)' }))
+  }, [state.tasks, state.deps])
+
   function patch(next: Partial<Draft>) {
     setState(s => ({ ...s, ...next }))
   }
@@ -68,9 +85,13 @@ export function EditorShell({
   }
   function addTask() {
     const id = `new-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+    const startDay = state.tasks.length === 0
+      ? 1
+      : Math.max(...state.tasks.map(t => t.endDay))
     patch({
       tasks: [...state.tasks, {
-        id, name: '', description: '', durationDays: 1,
+        id, name: '', description: '',
+        startDay, endDay: startDay,
         ownerRoleLabel: '', sortOrder: state.tasks.length,
       }],
     })
@@ -78,7 +99,24 @@ export function EditorShell({
   function addDep(taskId: string, upstreamTaskId: string) {
     if (state.deps.some(d => d.toTaskId === taskId && d.fromTaskId === upstreamTaskId)) return
     const id = `dep-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
-    patch({ deps: [...state.deps, { id, fromTaskId: upstreamTaskId, toTaskId: taskId, lagDays: 0 }] })
+    const newDeps = [...state.deps, { id, fromTaskId: upstreamTaskId, toTaskId: taskId, lagDays: 0 }]
+    // Auto-suggest: shift successor start to max(predecessor.endDay + lag) for all current preds (incl. the new one).
+    const target = state.tasks.find(t => t.id === taskId)
+    if (!target) { patch({ deps: newDeps }); return }
+    const newPredEnds = newDeps
+      .filter(d => d.toTaskId === taskId)
+      .map(d => {
+        const p = state.tasks.find(t => t.id === d.fromTaskId)
+        return p ? p.endDay + d.lagDays : 0
+      })
+    const newStart = Math.max(...newPredEnds, 1)
+    const duration = target.endDay - target.startDay
+    patch({
+      tasks: state.tasks.map(t =>
+        t.id === taskId ? { ...t, startDay: newStart, endDay: newStart + duration } : t
+      ),
+      deps: newDeps,
+    })
   }
   function removeDep(taskId: string, upstreamTaskId: string) {
     patch({ deps: state.deps.filter(d => !(d.toTaskId === taskId && d.fromTaskId === upstreamTaskId)) })
@@ -88,7 +126,10 @@ export function EditorShell({
     if (!state.name.trim()) return 'Name is required'
     if (state.tasks.length === 0) return 'At least one task is required'
     if (state.tasks.some(t => !t.name.trim())) return 'Every task needs a name'
-    if (state.tasks.some(t => t.durationDays < 0)) return 'Duration cannot be negative'
+    if (state.tasks.some(t => !Number.isInteger(t.startDay) || t.startDay < 1))
+      return 'Every task needs a start day >= 1'
+    if (state.tasks.some(t => !Number.isInteger(t.endDay) || t.endDay < t.startDay))
+      return 'End day cannot be before start day'
     const cycleInput = {
       tasks: state.tasks.map(t => ({ id: t.id })),
       deps: state.deps.map(d => ({ fromId: d.fromTaskId, toId: d.toTaskId })),
@@ -108,7 +149,7 @@ export function EditorShell({
         description: state.description || null,
         tasks: state.tasks.map(t => ({
           name: t.name, description: t.description || null,
-          durationDays: t.durationDays,
+          startDay: t.startDay, endDay: t.endDay,
           ownerRoleLabel: t.ownerRoleLabel || null,
         })),
         deps: state.deps.map(d => ({
@@ -173,6 +214,32 @@ export function EditorShell({
         <input value={state.description} onChange={(e) => patch({ description: e.target.value })}
           placeholder="One-line description (optional)"
           className="w-full text-sm border-b border-zinc-200 outline-none px-1 py-1 focus:border-blue-400" />
+
+        <div className="rounded border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm flex items-center gap-4">
+          <span className="text-zinc-500 font-medium">Workflow schedule:</span>
+          {state.tasks.length === 0 ? (
+            <span className="text-zinc-500">Add a task to see the schedule.</span>
+          ) : (
+            <>
+              <span>Start: day {totals.totalStartDay}</span>
+              <span>·</span>
+              <span>End: day {totals.totalEndDay}</span>
+              <span>·</span>
+              <span>Duration: {totals.totalDurationDays} days</span>
+              <span>·</span>
+              <span>{state.tasks.length} tasks</span>
+            </>
+          )}
+        </div>
+
+        {violations.length > 0 && (
+          <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            {violations.length === 1
+              ? `Task "${violations[0].succName}" starts before its dependency "${violations[0].predName}" ends.`
+              : `${violations.length} tasks start before their dependencies end.`}
+          </div>
+        )}
+
         <h2 className="text-sm font-semibold text-zinc-700 mt-4">Tasks</h2>
         <TaskList
           tasks={state.tasks}
