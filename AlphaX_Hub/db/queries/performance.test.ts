@@ -17,7 +17,7 @@ describe('computeTeamPerformance', () => {
     const ic = await seedIc('IC-design', 'design')
     const { template } = await seedTemplate({
       createdById: owner.id, name: 't',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 2, endDay: 3 }],
       deps: [],
     })
     const project = await projectService.create({
@@ -46,7 +46,7 @@ describe('computeTeamPerformance', () => {
     const ic = await seedIc('IC-design', 'design')
     const reviewer = await seedIc('Reviewer', 'design')
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 't', tasks: [{ name: 'A', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 't', tasks: [{ name: 'A', startDay: 1, endDay: 2 }], deps: [],
     })
     const project = await projectService.create({
       createdById: pm.id, name: 'P', brand: 'al_homes', pmId: pm.id,

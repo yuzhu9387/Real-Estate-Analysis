@@ -16,9 +16,9 @@ describe('snapshotWorkflowsIntoProject', () => {
       createdById: owner.id,
       name: 'Permitting Basics',
       tasks: [
-        { name: 'Survey', durationDays: 5 },
-        { name: 'Zoning', durationDays: 10 },
-        { name: 'Submit', durationDays: 2 },
+        { name: 'Survey', startDay: 1, endDay: 6 },
+        { name: 'Zoning', startDay: 6, endDay: 16 },
+        { name: 'Submit', startDay: 16, endDay: 18 },
       ],
       deps: [
         { fromIdx: 0, toIdx: 1 },
@@ -68,14 +68,14 @@ describe('snapshotWorkflowsIntoProject', () => {
     const a = await seedTemplate({
       createdById: owner.id, name: 'A',
       tasks: [
-        { name: 'A1', durationDays: 1 },
-        { name: 'A2', durationDays: 1 },
+        { name: 'A1', startDay: 1, endDay: 2 },
+        { name: 'A2', startDay: 2, endDay: 3 },
       ],
       deps: [{ fromIdx: 0, toIdx: 1 }],
     })
     const b = await seedTemplate({
       createdById: owner.id, name: 'B',
-      tasks: [{ name: 'B1', durationDays: 1 }],
+      tasks: [{ name: 'B1', startDay: 1, endDay: 2 }],
       deps: [],
     })
 

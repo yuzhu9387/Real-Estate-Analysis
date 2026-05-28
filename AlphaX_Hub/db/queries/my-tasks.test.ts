@@ -17,7 +17,7 @@ describe('getMyTasks', () => {
     const ic = await seedIc('IC', 'design')
     const { template } = await seedTemplate({
       createdById: owner.id, name: 'P',
-      tasks: [{ name: 'A', durationDays: 2 }, { name: 'B', durationDays: 3 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 3 }, { name: 'B', startDay: 3, endDay: 6 }],
       deps: [],
     })
     const project = await projectService.create({
@@ -39,7 +39,7 @@ describe('getMyTasks', () => {
     const ic = await seedIc('IC', 'design')
     const reviewer = await seedIc('Rev', 'design')
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 'P', tasks: [{ name: 'A', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 'P', tasks: [{ name: 'A', startDay: 1, endDay: 2 }], deps: [],
     })
     const project = await projectService.create({
       createdById: pm.id, name: 'X', brand: 'al_homes', pmId: pm.id,
@@ -65,7 +65,7 @@ describe('getMyTasks', () => {
     const ic = await seedIc('IC', 'design')
     const { template } = await seedTemplate({
       createdById: owner.id, name: 'P',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 2, endDay: 3 }],
       deps: [],
     })
     const project = await projectService.create({
@@ -87,7 +87,7 @@ describe('getMyTasks', () => {
     const pm = await seedPm()
     const ic = await seedIc('IC', 'design')
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 'P', tasks: [{ name: 'A', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 'P', tasks: [{ name: 'A', startDay: 1, endDay: 2 }], deps: [],
     })
     const project = await projectService.create({
       createdById: pm.id, name: 'X', brand: 'al_homes', pmId: pm.id,
@@ -128,7 +128,7 @@ describe('getDigestSummariesForActiveOptedInUsers', () => {
     const ic = await seedIc('IC', 'design')
     const { template } = await seedTemplate({
       createdById: owner.id, name: 'P',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 2, endDay: 3 }],
       deps: [],
     })
     const project = await projectService.create({

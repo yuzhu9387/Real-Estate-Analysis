@@ -15,8 +15,8 @@ describe('projectService.create', () => {
     const { template } = await seedTemplate({
       createdById: owner.id, name: 'Permits',
       tasks: [
-        { name: 'Survey', durationDays: 5 },
-        { name: 'Apply',  durationDays: 10 },
+        { name: 'Survey', startDay: 1, endDay: 6 },
+        { name: 'Apply',  startDay: 6, endDay: 16 },
       ],
       deps: [{ fromIdx: 0, toIdx: 1 }],
     })

@@ -1,22 +1,28 @@
 import { testDb } from '@/tests/db'
 import { workflowTemplates, workflowTemplateTasks, workflowTemplateTaskDeps } from '@/db/schema'
+import { computeTotals } from '@/lib/workflow-editor/compute-totals'
 
 export async function seedTemplate(input: {
   createdById: string
   name: string
-  tasks: Array<{ name: string; durationDays: number; ownerRoleLabel?: string }>
+  tasks: Array<{ name: string; startDay: number; endDay: number; ownerRoleLabel?: string }>
   deps: Array<{ fromIdx: number; toIdx: number; lagDays?: number }>
 }) {
+  const totals = computeTotals(input.tasks.map(t => ({ startDay: t.startDay, endDay: t.endDay })))
   const [tpl] = await testDb.insert(workflowTemplates).values({
-    name: input.name, createdById: input.createdById,
+    name: input.name,
+    createdById: input.createdById,
+    totalStartDay: totals.totalStartDay,
+    totalEndDay: totals.totalEndDay,
+    totalDurationDays: totals.totalDurationDays,
   }).returning()
   const insertedTasks = await testDb.insert(workflowTemplateTasks).values(
     input.tasks.map((t, i) => ({
       workflowTemplateId: tpl.id,
       name: t.name,
-      defaultDurationDays: t.durationDays,
-      defaultStartDay: 1,
-      defaultEndDay: t.durationDays + 1,
+      defaultDurationDays: t.endDay - t.startDay,
+      defaultStartDay: t.startDay,
+      defaultEndDay: t.endDay,
       defaultOwnerRoleLabel: t.ownerRoleLabel ?? null,
       sortOrder: i,
     })),

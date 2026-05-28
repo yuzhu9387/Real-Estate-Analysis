@@ -17,8 +17,8 @@ describe('applyScheduleToProject', () => {
     const { template } = await seedTemplate({
       createdById: owner.id, name: 'T',
       tasks: [
-        { name: 'a', durationDays: 2 },
-        { name: 'b', durationDays: 3 },
+        { name: 'a', startDay: 1, endDay: 3 },
+        { name: 'b', startDay: 3, endDay: 6 },
       ],
       deps: [{ fromIdx: 0, toIdx: 1 }],
     })

@@ -15,9 +15,9 @@ async function setup() {
   const { template } = await seedTemplate({
     createdById: owner.id, name: 'P',
     tasks: [
-      { name: 'A', durationDays: 2 },
-      { name: 'B', durationDays: 3 },
-      { name: 'C', durationDays: 1 },
+      { name: 'A', startDay: 1, endDay: 3 },
+      { name: 'B', startDay: 3, endDay: 6 },
+      { name: 'C', startDay: 6, endDay: 7 },
     ],
     deps: [
       { fromIdx: 0, toIdx: 1 },

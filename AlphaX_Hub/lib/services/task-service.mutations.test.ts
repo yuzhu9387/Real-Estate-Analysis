@@ -12,7 +12,7 @@ async function setup() {
   const pm = await seedPm()
   const ic = await seedIc('IC1')
   const { template } = await seedTemplate({
-    createdById: owner.id, name: 'P', tasks: [{ name: 'A', durationDays: 2 }], deps: [],
+    createdById: owner.id, name: 'P', tasks: [{ name: 'A', startDay: 1, endDay: 3 }], deps: [],
   })
   const project = await projectService.create({
     createdById: pm.id, name: 'X', brand: 'al_homes', pmId: pm.id,

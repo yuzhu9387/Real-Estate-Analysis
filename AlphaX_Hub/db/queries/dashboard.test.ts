@@ -12,7 +12,7 @@ describe('listProjectsForDashboard', () => {
     const owner = await seedOwner()
     const pm = await seedPm()
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 't', tasks: [{ name: 'a', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 't', tasks: [{ name: 'a', startDay: 1, endDay: 2 }], deps: [],
     })
     await projectService.create({
       createdById: pm.id, name: '1 Main', brand: 'al_homes', pmId: pm.id,
@@ -33,7 +33,7 @@ describe('listProjectsForDashboard', () => {
     const owner = await seedOwner()
     const pm = await seedPm()
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 't', tasks: [{ name: 'a', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 't', tasks: [{ name: 'a', startDay: 1, endDay: 2 }], deps: [],
     })
     await projectService.create({
       createdById: pm.id, name: '1', brand: 'al_homes', pmId: pm.id,
@@ -61,7 +61,7 @@ describe('computeDashboardCounters', () => {
     const owner = await seedOwner()
     const pm = await seedPm()
     const { template } = await seedTemplate({
-      createdById: owner.id, name: 't', tasks: [{ name: 'a', durationDays: 1 }], deps: [],
+      createdById: owner.id, name: 't', tasks: [{ name: 'a', startDay: 1, endDay: 2 }], deps: [],
     })
     await projectService.create({ createdById: pm.id, name: 'A', brand: 'al_homes', pmId: pm.id,
       assignments: [{ phaseName: 'Permitting', templateId: template.id, sortOrder: 0 }] }, testDb)
@@ -84,7 +84,7 @@ describe('listActiveProjectsForTeam', () => {
     const designIc = await (await import('@/tests/fixtures/users')).seedIc('IC-design', 'design')
     const { template } = await seedTemplate({
       createdById: owner.id, name: 't',
-      tasks: [{ name: 'a', durationDays: 1 }, { name: 'b', durationDays: 1 }],
+      tasks: [{ name: 'a', startDay: 1, endDay: 2 }, { name: 'b', startDay: 2, endDay: 3 }],
       deps: [],
     })
     const project = await projectService.create({
