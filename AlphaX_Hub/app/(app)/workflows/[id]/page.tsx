@@ -44,6 +44,23 @@ export default async function WorkflowDetailPage({ params }: { params: { id: str
       </h1>
       {tpl.description && <p className="text-sm text-zinc-600">{tpl.description}</p>}
 
+      <div className="rounded border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm flex items-center gap-4">
+        <span className="text-zinc-500 font-medium">Workflow schedule:</span>
+        {tasks.length === 0 ? (
+          <span className="text-zinc-500">No tasks.</span>
+        ) : (
+          <>
+            <span>Start: day {tpl.totalStartDay}</span>
+            <span>·</span>
+            <span>End: day {tpl.totalEndDay}</span>
+            <span>·</span>
+            <span>Duration: {tpl.totalDurationDays} days</span>
+            <span>·</span>
+            <span>{tasks.length} tasks</span>
+          </>
+        )}
+      </div>
+
       <section className="rounded-lg border border-zinc-200 bg-white p-4">
         <h2 className="text-sm font-semibold text-zinc-700 mb-3">Tasks ({tasks.length})</h2>
         {tasks.length === 0 && <div className="text-sm text-zinc-500">No tasks.</div>}
@@ -55,7 +72,7 @@ export default async function WorkflowDetailPage({ params }: { params: { id: str
                 <div className="flex items-center gap-3">
                   <span className="text-zinc-500 w-6">{i + 1}.</span>
                   <span className="flex-1">{t.name}</span>
-                  <span className="text-zinc-500">{t.defaultEndDay - t.defaultStartDay}d</span>
+                  <span className="text-zinc-500">day {t.defaultStartDay}–{t.defaultEndDay} · {t.defaultEndDay - t.defaultStartDay}d</span>
                   {t.defaultOwnerRoleLabel && <span className="text-xs bg-zinc-100 text-zinc-700 px-2 py-0.5 rounded">{t.defaultOwnerRoleLabel}</span>}
                 </div>
                 {upstreamIds.length > 0 && (
