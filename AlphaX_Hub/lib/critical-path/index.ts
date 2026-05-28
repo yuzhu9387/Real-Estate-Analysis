@@ -1,6 +1,7 @@
 export type TaskInput = {
   id: string
-  durationDays: number
+  startDay: number
+  endDay: number
   status: 'not_started' | 'started' | 'pending_review' | 'approved' | 'complete' | 'wont_do'
 }
 export type DepInput = { fromTaskId: string; toTaskId: string; lagDays: number }
@@ -31,6 +32,7 @@ export function recomputeSchedule(input: {
     predecessors.get(d.toTaskId)!.push(d)
   }
 
+  // Topo-sort for cycle detection (still required).
   const indeg = new Map<string, number>()
   for (const t of liveTasks) indeg.set(t.id, predecessors.get(t.id)!.length)
   const queue: string[] = []
@@ -48,27 +50,26 @@ export function recomputeSchedule(input: {
   if (order.length !== liveTasks.length) {
     throw new Error('Cycle detected in task dependencies')
   }
-  const taskById = new Map(liveTasks.map(t => [t.id, t]))
 
+  const taskById = new Map(liveTasks.map(t => [t.id, t]))
   const earliestStart = new Map<string, number>()
   const earliestEnd = new Map<string, number>()
-  for (const id of order) {
-    const preds = predecessors.get(id)!
-    const es = preds.length === 0 ? 0
-      : Math.max(...preds.map(p => earliestEnd.get(p.fromTaskId)! + p.lagDays))
-    const dur = taskById.get(id)!.durationDays
-    earliestStart.set(id, es)
-    earliestEnd.set(id, es + dur)
+  for (const t of liveTasks) {
+    earliestStart.set(t.id, t.startDay)
+    earliestEnd.set(t.id, t.endDay)
   }
 
-  const projectEnd = Math.max(0, ...Array.from(earliestEnd.values()))
+  // Backward pass over deps + durations to compute slack + critical-path flag.
+  const projectEnd = Math.max(0, ...liveTasks.map(t => t.endDay))
   const latestEnd = new Map<string, number>()
   const latestStart = new Map<string, number>()
   for (const id of [...order].reverse()) {
     const succs = successors.get(id)!
-    const le = succs.length === 0 ? projectEnd
+    const le = succs.length === 0
+      ? projectEnd
       : Math.min(...succs.map(s => latestStart.get(s.toTaskId)! - s.lagDays))
-    const dur = taskById.get(id)!.durationDays
+    const t = taskById.get(id)!
+    const dur = t.endDay - t.startDay
     latestEnd.set(id, le)
     latestStart.set(id, le - dur)
   }
