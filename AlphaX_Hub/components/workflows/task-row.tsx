@@ -7,14 +7,13 @@ import type { DraftTask } from '@/lib/workflow-editor/draft-storage'
 const ROLE_SUGGESTIONS = ['design', 'construction', 'sales', 'development']
 
 export function TaskRow({
-  task, sortIndex, allTasks, depUpstreamIds, schedule,
+  task, sortIndex, allTasks, depUpstreamIds,
   onChange, onDelete, onAddDep, onRemoveDep,
 }: {
   task: DraftTask
   sortIndex: number
   allTasks: Array<{ id: string; name: string; sortOrder: number }>
   depUpstreamIds: string[]
-  schedule: { start: number; end: number } | null
   onChange: (patch: Partial<DraftTask>) => void
   onDelete: () => void
   onAddDep: (upstreamTaskId: string) => void
@@ -26,6 +25,7 @@ export function TaskRow({
     transition,
     opacity: isDragging ? 0.5 : 1,
   }
+  const duration = task.endDay - task.startDay
 
   return (
     <div ref={setNodeRef} style={style}
@@ -41,19 +41,28 @@ export function TaskRow({
           placeholder="Task name"
           className="flex-1 border-b border-transparent focus:border-zinc-300 outline-none text-sm px-1"
         />
+        <label className="text-xs text-zinc-500">Start</label>
         <input
           type="number"
-          min="0"
-          value={task.durationDays}
-          onChange={(e) => onChange({ durationDays: e.target.value === '' ? 0 : Number(e.target.value) })}
+          min="1"
+          value={task.startDay}
+          onChange={(e) => onChange({ startDay: e.target.value === '' ? 1 : Number(e.target.value) })}
           onFocus={(e) => e.target.select()}
           className="w-14 border border-zinc-200 rounded px-1 text-sm text-right"
+          aria-label="start day"
         />
-        <span className="text-xs text-zinc-500">d</span>
-        <span className="text-xs text-zinc-500 ml-2 tabular-nums whitespace-nowrap">
-          {schedule
-            ? `day ${schedule.start}–${schedule.end}`
-            : <span className="text-amber-600">cycle</span>}
+        <label className="text-xs text-zinc-500">End</label>
+        <input
+          type="number"
+          min="1"
+          value={task.endDay}
+          onChange={(e) => onChange({ endDay: e.target.value === '' ? task.startDay : Number(e.target.value) })}
+          onFocus={(e) => e.target.select()}
+          className="w-14 border border-zinc-200 rounded px-1 text-sm text-right"
+          aria-label="end day"
+        />
+        <span className="text-xs text-zinc-500 tabular-nums whitespace-nowrap min-w-[2.5rem]">
+          {duration}d
         </span>
         <input
           list="owner-role-suggestions"
