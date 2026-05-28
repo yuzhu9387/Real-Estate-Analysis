@@ -3,9 +3,27 @@ import type { DB } from '@/db/client'
 import { workflowTemplates, workflowTemplateTasks, workflowTemplateTaskDeps } from '@/db/schema'
 import { NotFoundError, ValidationError } from '@/lib/server/errors'
 import { hasCycle } from '@/lib/workflow-editor/has-cycle'
+import { computeTotals } from '@/lib/workflow-editor/compute-totals'
 
-type TaskInput = { name: string; description?: string | null; durationDays: number; ownerRoleLabel?: string | null }
+type TaskInput = {
+  name: string
+  description?: string | null
+  startDay: number
+  endDay: number
+  ownerRoleLabel?: string | null
+}
 type DepInput  = { fromIdx: number; toIdx: number; lagDays: number }
+
+function validateTaskDates(tasks: TaskInput[]) {
+  for (const t of tasks) {
+    if (!Number.isInteger(t.startDay) || t.startDay < 1) {
+      throw new ValidationError(`Task "${t.name}": startDay must be an integer >= 1`)
+    }
+    if (!Number.isInteger(t.endDay) || t.endDay < t.startDay) {
+      throw new ValidationError(`Task "${t.name}": endDay must be an integer >= startDay`)
+    }
+  }
+}
 
 export const workflowTemplateService = {
   async create(input: {
@@ -16,6 +34,7 @@ export const workflowTemplateService = {
     deps: DepInput[]
   }, db: DB) {
     if (input.tasks.length === 0) throw new ValidationError('Template must have at least one task')
+    validateTaskDates(input.tasks)
 
     const fakeTasks = input.tasks.map((_, i) => ({ id: String(i) }))
     const fakeDeps = input.deps.map(d => ({ fromId: String(d.fromIdx), toId: String(d.toIdx) }))
@@ -23,11 +42,16 @@ export const workflowTemplateService = {
       throw new ValidationError('Dependencies form a cycle')
     }
 
+    const totals = computeTotals(input.tasks.map(t => ({ startDay: t.startDay, endDay: t.endDay })))
+
     return db.transaction(async (tx) => {
       const [tpl] = await tx.insert(workflowTemplates).values({
         name: input.name,
         description: input.description ?? null,
         createdById: input.createdById,
+        totalStartDay: totals.totalStartDay,
+        totalEndDay: totals.totalEndDay,
+        totalDurationDays: totals.totalDurationDays,
       }).returning()
 
       const insertedTasks = await tx.insert(workflowTemplateTasks).values(
@@ -35,7 +59,9 @@ export const workflowTemplateService = {
           workflowTemplateId: tpl.id,
           name: t.name,
           description: t.description ?? null,
-          defaultDurationDays: t.durationDays,
+          defaultDurationDays: t.endDay - t.startDay,
+          defaultStartDay: t.startDay,
+          defaultEndDay: t.endDay,
           defaultOwnerRoleLabel: t.ownerRoleLabel ?? null,
           sortOrder: i,
         })),
@@ -64,11 +90,15 @@ export const workflowTemplateService = {
     tasks: TaskInput[]
     deps: DepInput[]
   }, db: DB) {
+    validateTaskDates(input.tasks)
+
     const fakeTasks = input.tasks.map((_, i) => ({ id: String(i) }))
     const fakeDeps = input.deps.map(d => ({ fromId: String(d.fromIdx), toId: String(d.toIdx) }))
     if (hasCycle({ tasks: fakeTasks, deps: fakeDeps })) {
       throw new ValidationError('Dependencies form a cycle')
     }
+
+    const totals = computeTotals(input.tasks.map(t => ({ startDay: t.startDay, endDay: t.endDay })))
 
     return db.transaction(async (tx) => {
       const existing = await tx.select().from(workflowTemplates).where(eq(workflowTemplates.id, id))
@@ -77,6 +107,9 @@ export const workflowTemplateService = {
       await tx.update(workflowTemplates).set({
         name: input.name ?? existing[0].name,
         description: input.description ?? existing[0].description,
+        totalStartDay: totals.totalStartDay,
+        totalEndDay: totals.totalEndDay,
+        totalDurationDays: totals.totalDurationDays,
         updatedAt: new Date(),
       }).where(eq(workflowTemplates.id, id))
 
@@ -88,7 +121,9 @@ export const workflowTemplateService = {
           workflowTemplateId: id,
           name: t.name,
           description: t.description ?? null,
-          defaultDurationDays: t.durationDays,
+          defaultDurationDays: t.endDay - t.startDay,
+          defaultStartDay: t.startDay,
+          defaultEndDay: t.endDay,
           defaultOwnerRoleLabel: t.ownerRoleLabel ?? null,
           sortOrder: i,
         })),
@@ -139,6 +174,9 @@ export const workflowTemplateService = {
         name: input.newName,
         description: sourceRows[0].description,
         createdById: input.createdById,
+        totalStartDay: sourceRows[0].totalStartDay,
+        totalEndDay: sourceRows[0].totalEndDay,
+        totalDurationDays: sourceRows[0].totalDurationDays,
       }).returning()
 
       const idMap = new Map<string, string>()
@@ -148,6 +186,8 @@ export const workflowTemplateService = {
           name: t.name,
           description: t.description,
           defaultDurationDays: t.defaultDurationDays,
+          defaultStartDay: t.defaultStartDay,
+          defaultEndDay: t.defaultEndDay,
           defaultOwnerRoleLabel: t.defaultOwnerRoleLabel,
           sortOrder: t.sortOrder,
         })),

@@ -7,6 +7,8 @@ export const workflowTemplateTasks = pgTable('workflow_template_tasks', {
   name: text('name').notNull(),
   description: text('description'),
   defaultDurationDays: integer('default_duration_days').notNull(),
+  defaultStartDay: integer('default_start_day').notNull(),
+  defaultEndDay: integer('default_end_day').notNull(),
   defaultOwnerRoleLabel: text('default_owner_role_label'),
   sortOrder: integer('sort_order').notNull(),
 })

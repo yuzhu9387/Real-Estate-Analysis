@@ -8,9 +8,11 @@ import { workflowTemplateService } from '@/lib/services/workflow-template-servic
 const TaskInput = z.object({
   name: z.string().min(1),
   description: z.string().optional().nullable(),
-  durationDays: z.number().int().min(0),
+  startDay: z.number().int().min(1),
+  endDay: z.number().int().min(1),
   ownerRoleLabel: z.string().optional().nullable(),
-})
+}).refine(t => t.endDay >= t.startDay, { message: 'endDay must be >= startDay' })
+
 const DepInput = z.object({
   fromIdx: z.number().int().min(0),
   toIdx: z.number().int().min(0),

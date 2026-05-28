@@ -13,7 +13,7 @@ describe('workflowTemplateService.duplicate', () => {
     const owner = await seedOwner()
     const src = await workflowTemplateService.create({
       createdById: owner.id, name: 'Source',
-      tasks: [{ name: 'A', durationDays: 5 }, { name: 'B', durationDays: 10 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 6 }, { name: 'B', startDay: 6, endDay: 16 }],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
 
@@ -37,7 +37,7 @@ describe('workflowTemplateService.duplicate', () => {
     const owner = await seedOwner()
     const src = await workflowTemplateService.create({
       createdById: owner.id, name: 'Source',
-      tasks: [{ name: 'A', durationDays: 1 }], deps: [],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
     await workflowTemplateService.archive(src.id, testDb)
     await expect(workflowTemplateService.duplicate(src.id, {

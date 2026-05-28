@@ -15,6 +15,8 @@ export async function seedTemplate(input: {
       workflowTemplateId: tpl.id,
       name: t.name,
       defaultDurationDays: t.durationDays,
+      defaultStartDay: 1,
+      defaultEndDay: t.durationDays + 1,
       defaultOwnerRoleLabel: t.ownerRoleLabel ?? null,
       sortOrder: i,
     })),

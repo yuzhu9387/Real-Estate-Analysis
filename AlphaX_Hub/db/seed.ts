@@ -10,8 +10,8 @@ async function main() {
     name: 'Permitting Basics', description: 'Standard permit pipeline', createdById: owners[0].id,
   }).returning()
   await db.insert(workflowTemplateTasks).values([
-    { workflowTemplateId: tpl.id, name: 'Survey', defaultDurationDays: 5,  sortOrder: 0 },
-    { workflowTemplateId: tpl.id, name: 'Apply',  defaultDurationDays: 10, sortOrder: 1 },
+    { workflowTemplateId: tpl.id, name: 'Survey', defaultDurationDays: 5,  defaultStartDay: 1,  defaultEndDay: 6,  sortOrder: 0 },
+    { workflowTemplateId: tpl.id, name: 'Apply',  defaultDurationDays: 10, defaultStartDay: 6,  defaultEndDay: 16, sortOrder: 1 },
   ])
   console.log('Seeded template:', tpl.id)
   process.exit(0)

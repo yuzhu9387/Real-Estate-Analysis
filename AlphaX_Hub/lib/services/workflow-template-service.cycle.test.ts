@@ -11,7 +11,7 @@ describe('workflowTemplateService cycle detection', () => {
     const owner = await seedOwner()
     await expect(workflowTemplateService.create({
       createdById: owner.id, name: 'X',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }],
       deps: [
         { fromIdx: 0, toIdx: 1, lagDays: 0 },
         { fromIdx: 1, toIdx: 0, lagDays: 0 },
@@ -23,11 +23,11 @@ describe('workflowTemplateService cycle detection', () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
       createdById: owner.id, name: 'X',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
     await expect(workflowTemplateService.update(tpl.id, {
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }],
       deps: [
         { fromIdx: 0, toIdx: 1, lagDays: 0 },
         { fromIdx: 1, toIdx: 0, lagDays: 0 },
@@ -39,7 +39,7 @@ describe('workflowTemplateService cycle detection', () => {
     const owner = await seedOwner()
     await expect(workflowTemplateService.create({
       createdById: owner.id, name: 'OK',
-      tasks: [{ name: 'A', durationDays: 1 }, { name: 'B', durationDays: 1 }, { name: 'C', durationDays: 1 }],
+      tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }, { name: 'C', startDay: 1, endDay: 2 }],
       deps: [
         { fromIdx: 0, toIdx: 1, lagDays: 0 },
         { fromIdx: 1, toIdx: 2, lagDays: 0 },

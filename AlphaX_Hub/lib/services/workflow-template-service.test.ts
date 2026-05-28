@@ -15,8 +15,8 @@ describe('workflowTemplateService', () => {
       name: 'Permitting Basics',
       description: 'standard permit pipeline',
       tasks: [
-        { name: 'Survey', durationDays: 5 },
-        { name: 'Apply', durationDays: 10 },
+        { name: 'Survey', startDay: 1, endDay: 6 },
+        { name: 'Apply', startDay: 6, endDay: 16 },
       ],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
@@ -31,14 +31,14 @@ describe('workflowTemplateService', () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
       createdById: owner.id, name: 'a',
-      tasks: [{ name: 't', durationDays: 1 }], deps: [],
+      tasks: [{ name: 't', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
 
     await workflowTemplateService.update(tpl.id, {
       name: 'b', description: null,
       tasks: [
-        { name: 'x', durationDays: 2 },
-        { name: 'y', durationDays: 3 },
+        { name: 'x', startDay: 1, endDay: 3 },
+        { name: 'y', startDay: 3, endDay: 6 },
       ],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
@@ -53,7 +53,7 @@ describe('workflowTemplateService', () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
       createdById: owner.id, name: 'a',
-      tasks: [{ name: 't', durationDays: 1 }], deps: [],
+      tasks: [{ name: 't', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
     await workflowTemplateService.archive(tpl.id, testDb)
     const reread = await testDb.select().from(workflowTemplates).where(eq(workflowTemplates.id, tpl.id))
