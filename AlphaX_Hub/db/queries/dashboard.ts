@@ -46,6 +46,7 @@ export type DashboardCounters = {
   atRisk: number
   underPermitting: number
   underConstruction: number
+  onSale: number
 }
 
 export async function computeDashboardCounters(
@@ -54,7 +55,7 @@ export async function computeDashboardCounters(
   today: Date,
 ): Promise<DashboardCounters> {
   const rows = await listProjectsForDashboard(db, opts)
-  let active = 0, atRisk = 0, underPermitting = 0, underConstruction = 0
+  let active = 0, atRisk = 0, underPermitting = 0, underConstruction = 0, onSale = 0
   for (const p of rows) {
     if (p.status === 'in_progress') {
       active++
@@ -71,9 +72,10 @@ export async function computeDashboardCounters(
       if (perm?.status === 'in_progress') underPermitting++
       const constr = p.phases.find(ph => ph.name === 'Construction')
       if (constr?.status === 'in_progress') underConstruction++
+      if (p.listingDate && !p.sold) onSale++
     }
   }
-  return { active, atRisk, underPermitting, underConstruction }
+  return { active, atRisk, underPermitting, underConstruction, onSale }
 }
 
 export async function listActiveProjectsForTeam(
