@@ -147,8 +147,8 @@ export const taskService = {
       // Determine start day: place after the latest planned end day in the project
       const projectTasks = await tx.select().from(tasks).where(eq(tasks.projectId, input.projectId))
       const maxEndDay = projectTasks.reduce((max, t) => Math.max(max, t.plannedEndDay ?? 0), 0)
-      const plannedStartDay = maxEndDay
-      const plannedEndDay = maxEndDay + input.plannedDurationDays
+      const plannedStartDay = Math.max(1, maxEndDay)
+      const plannedEndDay = plannedStartDay + input.plannedDurationDays
 
       const [inserted] = await tx.insert(tasks).values({
         projectId: input.projectId,
