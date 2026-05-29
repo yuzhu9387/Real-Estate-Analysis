@@ -1,10 +1,26 @@
 import type { TaskStatus } from '@/db/schema'
+import { computeVisibleStages, type FlowStage } from '@/lib/tasks/status-flow'
 
-const STAGES = [
+const STAGE_LABEL: Record<FlowStage, string> = {
+  start: 'Not started',
+  submit_review: 'In review',
+  complete: 'Complete',
+}
+
+// Drawer stepper uses the legacy 5-dot strip (Not started → Started → In review → Approved → Complete with reviewer)
+// rather than the new 3-bucket model. Keep the legacy stages here; the shared FlowStage applies only to the
+// new full-page widget. This refactor extracts the helper for the page widget without changing drawer behavior.
+const LEGACY_STAGES_WITH_REVIEWER = [
   { id: 'not_started', label: 'Not started' },
   { id: 'started', label: 'Started' },
   { id: 'pending_review', label: 'In review' },
   { id: 'approved', label: 'Approved' },
+  { id: 'complete', label: 'Complete' },
+] as const
+
+const LEGACY_STAGES_WITHOUT_REVIEWER = [
+  { id: 'not_started', label: 'Not started' },
+  { id: 'started', label: 'Started' },
   { id: 'complete', label: 'Complete' },
 ] as const
 
@@ -15,9 +31,7 @@ export function DrawerStatusStepper({
     return <div className="rounded bg-zinc-100 text-zinc-700 text-xs px-2 py-1 text-center">Won&apos;t do</div>
   }
 
-  const visibleStages = hasReviewer
-    ? STAGES
-    : STAGES.filter(s => s.id !== 'pending_review' && s.id !== 'approved')
+  const visibleStages = hasReviewer ? LEGACY_STAGES_WITH_REVIEWER : LEGACY_STAGES_WITHOUT_REVIEWER
   const currentIdx = visibleStages.findIndex(s => s.id === status)
 
   return (
@@ -44,3 +58,6 @@ export function DrawerStatusStepper({
     </div>
   )
 }
+
+// Re-export so the legacy stepper's hasReviewer-derived stage count is visible to anyone importing.
+export { computeVisibleStages, STAGE_LABEL }
