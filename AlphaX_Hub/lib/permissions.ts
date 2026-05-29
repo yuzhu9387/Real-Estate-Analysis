@@ -23,6 +23,7 @@ export type Action =
   | { type: 'project.unlock_to_draft' }
   | { type: 'task.add_planned'; project: ProjectContext }
   | { type: 'task.add_unplanned'; project: ProjectContext }
+  | { type: 'task.quick_add'; project: ProjectContext }
   | { type: 'task.update_structure'; project: ProjectContext }
   | { type: 'task.update_notes'; project: ProjectContext; task: TaskContext }
   | { type: 'task.set_priority'; project: ProjectContext; task: TaskContext }
@@ -87,6 +88,11 @@ export function can(user: User, action: Action): boolean {
 
     case 'task.add_unplanned':
       return managesProject(action.project) && projectIsActive(action.project)
+
+    case 'task.quick_add':
+      // Looser than add_unplanned — quick-add works on draft + in_progress projects since
+      // the task carries its own target dates (calendar). No kickoff required.
+      return managesProject(action.project) && projectMutable(action.project)
 
     case 'task.update_structure':
       return managesProject(action.project) && projectIsDraft(action.project)

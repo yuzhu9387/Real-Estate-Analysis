@@ -15,6 +15,12 @@ import {
   createWorkflowTemplate, updateWorkflowTemplate,
   archiveWorkflowTemplate, unarchiveWorkflowTemplate,
 } from '@/app/actions/workflows'
+import {
+  PRODUCT_TYPES,
+  PRODUCT_TYPE_LABELS,
+  productTypeGroup,
+  type ProductType,
+} from '@/lib/workflows/product-types'
 
 type Mode = 'new' | 'edit'
 
@@ -124,6 +130,7 @@ export function EditorShell({
 
   function validate(): string | null {
     if (!state.name.trim()) return 'Name is required'
+    if (!state.productType) return 'Product type is required'
     if (state.tasks.length === 0) return 'At least one task is required'
     if (state.tasks.some(t => !t.name.trim())) return 'Every task needs a name'
     if (state.tasks.some(t => !Number.isInteger(t.startDay) || t.startDay < 1))
@@ -147,6 +154,7 @@ export function EditorShell({
       const payload = {
         name: state.name,
         description: state.description || null,
+        productType: state.productType,
         tasks: state.tasks.map(t => ({
           name: t.name, description: t.description || null,
           startDay: t.startDay, endDay: t.endDay,
@@ -194,7 +202,7 @@ export function EditorShell({
   }
 
   return (
-    <div>
+    <div className="space-y-xl max-w-[1240px] pt-md">
       <EditorHeader
         mode={mode} isArchived={isArchived} isDirty={isDirty} isSaving={isSaving}
         errorBanner={errorBanner}
@@ -207,51 +215,160 @@ export function EditorShell({
           onDiscard={() => { clearDraft(draftKeyId); setDraftToOffer(null) }}
         />
       )}
-      <div className="space-y-3">
-        <input value={state.name} onChange={(e) => patch({ name: e.target.value })}
-          placeholder="Template name"
-          className="w-full text-xl font-semibold border-b border-zinc-200 outline-none px-1 py-1 focus:border-blue-400" />
-        <input value={state.description} onChange={(e) => patch({ description: e.target.value })}
-          placeholder="One-line description (optional)"
-          className="w-full text-sm border-b border-zinc-200 outline-none px-1 py-1 focus:border-blue-400" />
+      <div className="space-y-lg">
+        {/* General Information panel */}
+        <section className="rounded-xl border border-outline-variant/30 bg-white shadow-sm overflow-hidden">
+          <header className="flex items-center gap-sm px-lg py-md border-b border-outline-variant/30 bg-surface-container-low/40">
+            <span className="material-symbols-outlined text-primary text-[18px]">info</span>
+            <span className="text-label-caps font-label-caps text-on-surface tracking-widest">
+              General Information
+            </span>
+          </header>
+          <div className="p-lg space-y-md">
+            <label className="block">
+              <span className="block mb-xs text-label-caps font-label-caps text-outline tracking-widest">
+                Template name
+              </span>
+              <input
+                value={state.name}
+                onChange={(e) => patch({ name: e.target.value })}
+                placeholder={mode === 'new' ? 'Untitled template' : 'Template name'}
+                className="w-full font-headline-md text-headline-md text-on-surface bg-white rounded-lg border border-outline-variant/40 outline-none px-md py-sm focus:border-primary transition-colors placeholder:text-outline/60"
+              />
+            </label>
+            <label className="block">
+              <span className="block mb-xs text-label-caps font-label-caps text-outline tracking-widest">
+                Description
+                <span className="ml-xs text-outline normal-case tracking-normal font-normal">
+                  (optional)
+                </span>
+              </span>
+              <textarea
+                value={state.description}
+                onChange={(e) => patch({ description: e.target.value })}
+                placeholder="Short one-line description so the team knows when to use this template…"
+                rows={2}
+                className="w-full text-body-md text-on-surface bg-white rounded-lg border border-outline-variant/40 outline-none px-md py-sm focus:border-primary transition-colors placeholder:text-outline/60 resize-y min-h-[64px]"
+              />
+            </label>
 
-        <div className="rounded border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm flex items-center gap-4">
-          <span className="text-zinc-500 font-medium">Workflow schedule:</span>
+            <label className="block">
+              <span className="block mb-xs text-label-caps font-label-caps text-outline tracking-widest">
+                Product Type
+                <span className="ml-xs text-error normal-case tracking-normal font-normal">
+                  (required)
+                </span>
+              </span>
+              <select
+                value={state.productType ?? ''}
+                onChange={(e) =>
+                  patch({ productType: (e.target.value || null) as ProductType | null })
+                }
+                className="glacier-select h-10 w-full rounded-lg border border-outline-variant/40 bg-white px-md text-body-sm text-on-surface focus:outline-none focus:border-primary transition-colors"
+              >
+                <option value="">— Select the project type this workflow applies to —</option>
+                {(['ADU', 'Alera', 'AL Homes'] as const).map((group) => (
+                  <optgroup key={group} label={group}>
+                    {PRODUCT_TYPES.filter((t) => productTypeGroup(t) === group).map((t) => (
+                      <option key={t} value={t}>
+                        {PRODUCT_TYPE_LABELS[t]}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+          </div>
+        </section>
+
+        {/* Workflow Schedule strip — acts as a divider/summary between sections */}
+        <div className="rounded-xl border border-outline-variant/30 bg-white px-lg py-md shadow-sm flex flex-wrap items-center gap-md text-body-sm">
+          <span className="text-label-caps font-label-caps text-outline tracking-widest">
+            Workflow Schedule
+          </span>
           {state.tasks.length === 0 ? (
-            <span className="text-zinc-500">Add a task to see the schedule.</span>
+            <span className="text-on-surface-variant">Add a task to see the schedule.</span>
           ) : (
-            <>
-              <span>Start: day {totals.totalStartDay}</span>
-              <span>·</span>
-              <span>End: day {totals.totalEndDay}</span>
-              <span>·</span>
-              <span>Duration: {totals.totalDurationDays} days</span>
-              <span>·</span>
-              <span>{state.tasks.length} tasks</span>
-            </>
+            <div className="flex flex-wrap items-center gap-md font-data-display">
+              <ScheduleStat label="START" value={`day ${totals.totalStartDay}`} />
+              <ScheduleStat label="END" value={`day ${totals.totalEndDay}`} />
+              <ScheduleStat label="DURATION" value={`${totals.totalDurationDays}d`} accent="primary" />
+              <ScheduleStat label="TASKS" value={`${state.tasks.length}`} />
+            </div>
           )}
         </div>
 
-        {violations.length > 0 && (
-          <div className="rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            {violations.length === 1
-              ? `Task "${violations[0].succName}" starts before its dependency "${violations[0].predName}" ends.`
-              : `${violations.length} tasks start before their dependencies end.`}
-          </div>
-        )}
+        {/* Tasks panel */}
+        <section className="rounded-xl border border-outline-variant/30 bg-white shadow-sm overflow-hidden">
+          <header className="flex items-center justify-between gap-sm px-lg py-md border-b border-outline-variant/30 bg-surface-container-low/40">
+            <div className="flex items-center gap-sm min-w-0">
+              <span className="material-symbols-outlined text-primary text-[18px]">checklist</span>
+              <span className="text-label-caps font-label-caps text-on-surface tracking-widest">
+                Tasks
+              </span>
+              <span className="text-body-sm text-on-surface-variant">
+                ({state.tasks.length} {state.tasks.length === 1 ? 'task' : 'tasks'}
+                {violations.length > 0 ? `, ${violations.length} issue${violations.length === 1 ? '' : 's'}` : ''})
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={addTask}
+              className="inline-flex h-8 items-center gap-xs rounded-lg border border-outline-variant/40 bg-white px-sm text-body-sm font-semibold text-on-surface-variant hover:border-primary hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">add</span>
+              Add Task
+            </button>
+          </header>
 
-        <h2 className="text-sm font-semibold text-zinc-700 mt-4">Tasks</h2>
-        <TaskList
-          tasks={state.tasks}
-          deps={state.deps}
-          onReorder={reorderTasks}
-          onChangeTask={changeTask}
-          onDeleteTask={deleteTask}
-          onAddDep={addDep}
-          onRemoveDep={removeDep}
-          onAddTask={addTask}
-        />
+          <div className="p-lg space-y-sm">
+            {violations.length > 0 && (
+              <div className="flex items-start gap-xs rounded-lg border border-error/20 bg-error/5 px-md py-sm text-body-sm text-error">
+                <span className="material-symbols-outlined text-[18px]">warning</span>
+                <span>
+                  {violations.length === 1
+                    ? <>Task <strong>&ldquo;{violations[0].succName}&rdquo;</strong> starts before its dependency <strong>&ldquo;{violations[0].predName}&rdquo;</strong> ends.</>
+                    : <><strong>{violations.length}</strong> tasks start before their dependencies end.</>}
+                </span>
+              </div>
+            )}
+            <TaskList
+              tasks={state.tasks}
+              deps={state.deps}
+              onReorder={reorderTasks}
+              onChangeTask={changeTask}
+              onDeleteTask={deleteTask}
+              onAddDep={addDep}
+              onRemoveDep={removeDep}
+              onAddTask={addTask}
+            />
+          </div>
+        </section>
       </div>
+    </div>
+  )
+}
+
+function ScheduleStat({
+  label,
+  value,
+  accent,
+}: {
+  label: string
+  value: string
+  accent?: 'primary'
+}) {
+  return (
+    <div className="flex items-center gap-xs">
+      <span className="text-label-caps font-label-caps text-outline tracking-widest">{label}</span>
+      <span
+        className={[
+          'font-data-display text-on-surface',
+          accent === 'primary' ? 'text-primary font-semibold' : '',
+        ].join(' ')}
+      >
+        {value}
+      </span>
     </div>
   )
 }

@@ -12,7 +12,7 @@ describe('workflowTemplateService.duplicate', () => {
   it('copies tasks and deps with new IDs', async () => {
     const owner = await seedOwner()
     const src = await workflowTemplateService.create({
-      createdById: owner.id, name: 'Source',
+      createdById: owner.id, name: 'Source', productType: 'adu_pre_approved_program',
       tasks: [{ name: 'A', startDay: 1, endDay: 6 }, { name: 'B', startDay: 6, endDay: 16 }],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
@@ -36,7 +36,7 @@ describe('workflowTemplateService.duplicate', () => {
   it('rejects archived source', async () => {
     const owner = await seedOwner()
     const src = await workflowTemplateService.create({
-      createdById: owner.id, name: 'Source',
+      createdById: owner.id, name: 'Source', productType: 'adu_pre_approved_program',
       tasks: [{ name: 'A', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
     await workflowTemplateService.archive(src.id, testDb)

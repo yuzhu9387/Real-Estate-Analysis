@@ -16,6 +16,9 @@ export async function addTaskComment(raw: unknown) {
 
   const taskRows = await db.select().from(tasks).where(eq(tasks.id, input.taskId))
   if (taskRows.length === 0) throw new NotFoundError('Task')
+  if (!taskRows[0].projectId) {
+    throw new Error('Cannot comment on a personal task — it has no project context.')
+  }
   const projRows = await db.select().from(projects).where(eq(projects.id, taskRows[0].projectId))
   const project = projRows[0]
   const user = await requirePermission({

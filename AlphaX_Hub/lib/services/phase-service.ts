@@ -1,8 +1,9 @@
 import { eq, and, lt } from 'drizzle-orm'
 import type { DB } from '@/db/client'
-import { projects, projectPhases, activities } from '@/db/schema'
+import { projects, projectPhases, tasks, activities } from '@/db/schema'
 import { assertPhaseTransition } from '@/lib/state-machine/phase'
 import { NotFoundError, ConflictError } from '@/lib/server/errors'
+import { materializeTargetDate } from '@/lib/scheduling/target-dates'
 
 export const phaseService = {
   async kickOff(input: { phaseId: string; actorId: string }, db: DB) {
@@ -29,6 +30,21 @@ export const phaseService = {
         await tx.update(projects).set({
           status: 'in_progress', kickedOffAt: now, updatedAt: now,
         }).where(eq(projects.id, proj.id))
+
+        // The project just kicked off — materialize calendar target dates on every
+        // existing task from planned_*_day relative to `now`. Skip tasks that already
+        // have a target_*_date (e.g. quick-added before kickoff in some future flow).
+        const projTasks = await tx.select().from(tasks).where(eq(tasks.projectId, proj.id))
+        for (const t of projTasks) {
+          const tStart = materializeTargetDate(now, t.plannedStartDay)
+          const tEnd = materializeTargetDate(now, t.plannedEndDay)
+          if (tStart === null && tEnd === null) continue
+          await tx.update(tasks).set({
+            ...(t.targetStartDate === null && tStart !== null ? { targetStartDate: tStart } : {}),
+            ...(t.targetEndDate === null && tEnd !== null ? { targetEndDate: tEnd } : {}),
+            updatedAt: now,
+          }).where(eq(tasks.id, t.id))
+        }
       }
 
       await tx.insert(activities).values({

@@ -14,7 +14,7 @@ export function PhaseContent({
 
   const phaseWorkflows = data.workflows.filter(w => w.projectPhaseId === phase.id)
   const phaseWorkflowIds = phaseWorkflows.map(w => w.id)
-  const phaseTasks = data.tasks.filter(t => phaseWorkflowIds.includes(t.projectWorkflowId))
+  const phaseTasks = data.tasks.filter(t => t.projectWorkflowId !== null && phaseWorkflowIds.includes(t.projectWorkflowId))
   const openCount = phaseTasks.filter(t => t.status !== 'complete' && t.status !== 'wont_do').length
 
   const today = new Date()

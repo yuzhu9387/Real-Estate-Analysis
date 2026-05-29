@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { db } from '@/db/client'
 import { requirePermission } from '@/lib/server/require-permission'
 import { workflowTemplateService } from '@/lib/services/workflow-template-service'
+import { PRODUCT_TYPES } from '@/lib/workflows/product-types'
+
+const ProductTypeEnum = z.enum(PRODUCT_TYPES)
 
 const TaskInput = z.object({
   name: z.string().min(1),
@@ -22,6 +25,7 @@ const DepInput = z.object({
 const CreateInput = z.object({
   name: z.string().min(1),
   description: z.string().optional().nullable(),
+  productType: ProductTypeEnum,
   tasks: z.array(TaskInput).min(1),
   deps: z.array(DepInput),
 })
@@ -38,6 +42,7 @@ const UpdateInput = z.object({
   id: z.string().uuid(),
   name: z.string().optional(),
   description: z.string().optional().nullable(),
+  productType: ProductTypeEnum.nullable().optional(),
   tasks: z.array(TaskInput).min(1),
   deps: z.array(DepInput),
 })

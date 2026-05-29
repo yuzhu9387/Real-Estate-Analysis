@@ -93,7 +93,9 @@ export async function listActiveProjectsForTeam(
       inArray(tasks.ownerId, teamUserIds),
       inArray(tasks.status, NON_TERMINAL),
     ))
-  const projectIds = Array.from(new Set(candidateTasks.map(t => t.projectId)))
+  const projectIds = Array.from(
+    new Set(candidateTasks.map(t => t.projectId).filter((id): id is string => id !== null)),
+  )
   if (projectIds.length === 0) return []
 
   const projectRows = await db.select().from(projects)

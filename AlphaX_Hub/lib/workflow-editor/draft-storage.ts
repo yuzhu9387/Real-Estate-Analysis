@@ -13,9 +13,12 @@ export type DraftDep = {
   toTaskId: string
   lagDays: number
 }
+import type { ProductType } from '@/lib/workflows/product-types'
+
 export type Draft = {
   name: string
   description: string
+  productType: ProductType | null
   tasks: DraftTask[]
   deps: DraftDep[]
   savedAt: string

@@ -4,6 +4,7 @@ import { projects, projectPhases, auditLogs, type Project } from '@/db/schema'
 import { snapshotWorkflowsIntoProject } from '@/lib/snapshot/snapshot-workflows'
 import { applyScheduleToProject } from '@/lib/snapshot/apply-schedule'
 import { ValidationError, NotFoundError, ConflictError } from '@/lib/server/errors'
+import { cascadeProjectSchedule } from '@/lib/scheduling/project-targets'
 
 const PHASE_NAMES = ['Permitting', 'Construction', 'Sale'] as const
 type PhaseName = (typeof PHASE_NAMES)[number]
@@ -14,6 +15,7 @@ export const projectService = {
     name: string
     brand: 'al_homes' | 'alera' | 'apex'
     pmId: string
+    // Section 1
     address?: string | null
     city?: string | null
     state?: string | null
@@ -22,20 +24,35 @@ export const projectService = {
     projectStrategy?: string | null
     purchaseDate?: string | null
     purchasePrice?: string | null
+    // Section 2 — start + 3 durations; computed dates derived in this method.
     targetExitQuarter?: string | null
-    targetProjectDurationDays?: number | null
-    targetPermitDate?: string | null
-    targetConstructionEndDate?: string | null
+    targetStartDate?: string | null
+    targetPermittingDurationDays?: number | null
+    targetConstructionDurationDays?: number | null
+    targetSalesDurationDays?: number | null
+    // Section 3
+    permittingPmId?: string | null
+    constructionPmId?: string | null
+    salesPmId?: string | null
     assignments: Array<{ phaseName: PhaseName; templateId: string; sortOrder: number }>
   }, db: DB): Promise<Project> {
     if (input.assignments.length === 0) {
       throw new ValidationError('Project must have at least one workflow assigned')
     }
+    const cascade = cascadeProjectSchedule({
+      targetStartDate: input.targetStartDate ?? null,
+      targetPermittingDurationDays: input.targetPermittingDurationDays ?? null,
+      targetConstructionDurationDays: input.targetConstructionDurationDays ?? null,
+      targetSalesDurationDays: input.targetSalesDurationDays ?? null,
+    })
     return db.transaction(async (tx) => {
       const [project] = await tx.insert(projects).values({
         name: input.name,
         brand: input.brand,
         pmId: input.pmId,
+        permittingPmId: input.permittingPmId ?? null,
+        constructionPmId: input.constructionPmId ?? null,
+        salesPmId: input.salesPmId ?? null,
         createdById: input.createdById,
         address: input.address ?? null,
         city: input.city ?? null,
@@ -46,9 +63,14 @@ export const projectService = {
         purchaseDate: input.purchaseDate ?? null,
         purchasePrice: input.purchasePrice ?? null,
         targetExitQuarter: input.targetExitQuarter ?? null,
-        targetProjectDurationDays: input.targetProjectDurationDays ?? null,
-        targetPermitDate: input.targetPermitDate ?? null,
-        targetConstructionEndDate: input.targetConstructionEndDate ?? null,
+        targetStartDate: cascade.targetStartDate,
+        targetPermittingDurationDays: cascade.targetPermittingDurationDays,
+        targetConstructionDurationDays: cascade.targetConstructionDurationDays,
+        targetSalesDurationDays: cascade.targetSalesDurationDays,
+        targetProjectDurationDays: cascade.targetProjectDurationDays,
+        targetPermitDate: cascade.targetPermitDate,
+        targetConstructionEndDate: cascade.targetConstructionEndDate,
+        targetExitDate: cascade.targetExitDate,
       }).returning()
 
       const phases = await tx.insert(projectPhases).values(
@@ -112,19 +134,26 @@ export const projectService = {
     patch: {
       name?: string
       brand?: 'al_homes' | 'alera' | 'apex'
+      // Section 1
       address?: string | null
       city?: string | null
       state?: string | null
       zip?: string | null
-      pmId?: string
       titleHolder?: string | null
       projectStrategy?: string | null
       purchaseDate?: string | null
       purchasePrice?: string | null
+      // Section 2 — start + 3 durations; the cascade is recomputed below.
       targetExitQuarter?: string | null
-      targetProjectDurationDays?: number | null
-      targetPermitDate?: string | null
-      targetConstructionEndDate?: string | null
+      targetStartDate?: string | null
+      targetPermittingDurationDays?: number | null
+      targetConstructionDurationDays?: number | null
+      targetSalesDurationDays?: number | null
+      // Section 3
+      pmId?: string
+      permittingPmId?: string | null
+      constructionPmId?: string | null
+      salesPmId?: string | null
     }
   }, db: DB) {
     const { ProjectLockedError } = await import('@/lib/server/errors')
@@ -135,9 +164,13 @@ export const projectService = {
       throw new ProjectLockedError(existing.status)
     }
 
+    // Once a project is kicked off, the section-1 deal facts and the schedule cascade are
+    // locked. The form disables them in non-draft mode; this is the server-side enforcement.
     const DRAFT_ONLY_KEYS = [
       'titleHolder', 'projectStrategy', 'purchaseDate', 'purchasePrice',
-      'targetExitQuarter', 'targetProjectDurationDays', 'targetPermitDate', 'targetConstructionEndDate',
+      'targetExitQuarter',
+      'targetStartDate',
+      'targetPermittingDurationDays', 'targetConstructionDurationDays', 'targetSalesDurationDays',
     ] as const
 
     if (existing.status !== 'draft') {
@@ -146,10 +179,50 @@ export const projectService = {
       }
     }
 
+    // Build the row patch. For the schedule, we always re-run the cascade so the derived
+    // dates (target_permit_date / target_construction_end_date / target_exit_date /
+    // target_project_duration_days) stay consistent with the inputs the user just edited.
     const setObj: Record<string, unknown> = { updatedAt: new Date() }
     for (const [k, v] of Object.entries(input.patch)) {
-      if (v !== undefined) setObj[k] = v
+      if (v === undefined) continue
+      // The cascade-derived columns are owned by the cascade, not the patch — skip them
+      // even if the client somehow sends them.
+      if (k === 'targetPermitDate' || k === 'targetConstructionEndDate' ||
+          k === 'targetExitDate' || k === 'targetProjectDurationDays') continue
+      setObj[k] = v
     }
+
+    const scheduleTouched =
+      input.patch.targetStartDate !== undefined ||
+      input.patch.targetPermittingDurationDays !== undefined ||
+      input.patch.targetConstructionDurationDays !== undefined ||
+      input.patch.targetSalesDurationDays !== undefined
+
+    if (scheduleTouched) {
+      const cascade = cascadeProjectSchedule({
+        targetStartDate:
+          input.patch.targetStartDate !== undefined
+            ? input.patch.targetStartDate
+            : existing.targetStartDate,
+        targetPermittingDurationDays:
+          input.patch.targetPermittingDurationDays !== undefined
+            ? input.patch.targetPermittingDurationDays
+            : existing.targetPermittingDurationDays,
+        targetConstructionDurationDays:
+          input.patch.targetConstructionDurationDays !== undefined
+            ? input.patch.targetConstructionDurationDays
+            : existing.targetConstructionDurationDays,
+        targetSalesDurationDays:
+          input.patch.targetSalesDurationDays !== undefined
+            ? input.patch.targetSalesDurationDays
+            : existing.targetSalesDurationDays,
+      })
+      setObj.targetPermitDate = cascade.targetPermitDate
+      setObj.targetConstructionEndDate = cascade.targetConstructionEndDate
+      setObj.targetExitDate = cascade.targetExitDate
+      setObj.targetProjectDurationDays = cascade.targetProjectDurationDays
+    }
+
     await db.update(projects).set(setObj).where(eq(projects.id, input.projectId))
   },
 

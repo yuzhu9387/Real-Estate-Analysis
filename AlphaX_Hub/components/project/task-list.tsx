@@ -13,7 +13,7 @@ export function TaskList({
   workflowIds: string[]
   urlSearch: URLSearchParams
 }) {
-  const phaseTasks = tasks.filter(t => workflowIds.includes(t.projectWorkflowId))
+  const phaseTasks = tasks.filter(t => t.projectWorkflowId !== null && workflowIds.includes(t.projectWorkflowId))
   const userById = new Map(users.map(u => [u.id, u]))
 
   return (

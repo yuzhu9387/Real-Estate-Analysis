@@ -1,8 +1,9 @@
 import { eq } from 'drizzle-orm'
 import type { DB } from '@/db/client'
-import { tasks, taskDeps, projectWorkflows, activities, taskComments, type TaskStatus } from '@/db/schema'
+import { tasks, taskDeps, projectWorkflows, projects, activities, taskComments, type TaskStatus } from '@/db/schema'
 import { NotFoundError, ValidationError } from '@/lib/server/errors'
 import { computeBlocked } from '@/lib/critical-path/blocked'
+import { materializeTargetDate, todayISODate } from '@/lib/scheduling/target-dates'
 
 type Tx = Parameters<Parameters<DB['transaction']>[0]>[0]
 
@@ -48,7 +49,22 @@ export const taskService = {
       if (task.status === input.status) return
 
       const now = new Date()
-      await tx.update(tasks).set({ status: input.status, updatedAt: now }).where(eq(tasks.id, task.id))
+      const today = todayISODate(now)
+
+      // Calendar-date materializations driven by the status transition:
+      //   - moving INTO `started`  → stamp actual_start_date if it isn't already set
+      //   - moving INTO `complete` or `wont_do` → stamp actual_end_date if it isn't set
+      const patch: Partial<typeof task> = { status: input.status, updatedAt: now }
+      if (input.status === 'started' && task.actualStartDate === null) {
+        patch.actualStartDate = today
+      }
+      if (
+        (input.status === 'complete' || input.status === 'wont_do') &&
+        task.actualEndDate === null
+      ) {
+        patch.actualEndDate = today
+      }
+      await tx.update(tasks).set(patch).where(eq(tasks.id, task.id))
 
       await tx.insert(activities).values({
         projectId: task.projectId, actorId: input.actorId,
@@ -56,8 +72,9 @@ export const taskService = {
         payload: { taskId: task.id, from: task.status, to: input.status },
       })
 
-      await recomputeBlockedForProject(tx, task.projectId)
-      await maybeAutoCompleteWorkflow(tx, task.projectWorkflowId)
+      // Project-bound cascade work — skip entirely for personal tasks (no chain to recompute).
+      if (task.projectId) await recomputeBlockedForProject(tx, task.projectId)
+      if (task.projectWorkflowId) await maybeAutoCompleteWorkflow(tx, task.projectWorkflowId)
     })
   },
 
@@ -142,13 +159,17 @@ export const taskService = {
   }, db: DB) {
     return db.transaction(async (tx) => {
       const siblings = await tx.select().from(tasks).where(eq(tasks.projectWorkflowId, input.projectWorkflowId))
-      const sortOrder = siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder)) + 1
+      const sortOrder = siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder ?? 0)) + 1
 
       // Determine start day: place after the latest planned end day in the project
       const projectTasks = await tx.select().from(tasks).where(eq(tasks.projectId, input.projectId))
       const maxEndDay = projectTasks.reduce((max, t) => Math.max(max, t.plannedEndDay ?? 0), 0)
       const plannedStartDay = Math.max(1, maxEndDay)
       const plannedEndDay = plannedStartDay + input.plannedDurationDays
+
+      // Materialize calendar target dates if the project has kicked off.
+      const projRows = await tx.select().from(projects).where(eq(projects.id, input.projectId))
+      const kickedOffAt = projRows[0]?.kickedOffAt ?? null
 
       const [inserted] = await tx.insert(tasks).values({
         projectId: input.projectId,
@@ -160,6 +181,8 @@ export const taskService = {
         plannedDurationDays: input.plannedDurationDays,
         plannedStartDay,
         plannedEndDay,
+        targetStartDate: materializeTargetDate(kickedOffAt, plannedStartDay),
+        targetEndDate: materializeTargetDate(kickedOffAt, plannedEndDay),
         isUnplanned: true,
         sortOrder,
       }).returning()
@@ -186,6 +209,57 @@ export const taskService = {
     })
   },
 
+  /**
+   * Create a *personal* task from the My Tasks "Quick add" UI — no project, no workflow.
+   *
+   *   - project_id, project_workflow_id, sort_order: NULL.
+   *   - target_start_date / target_end_date: from the caller's calendar dates.
+   *   - planned_*_day: NULL (no chain).
+   *   - planned_duration_days: derived from target dates.
+   *   - is_unplanned: true.
+   *
+   * No activity row is written because activities require a project_id.
+   */
+  async quickAddPersonalTask(input: {
+    name: string
+    ownerId: string
+    targetStartDate: string  // YYYY-MM-DD
+    targetEndDate: string    // YYYY-MM-DD
+    actorId: string
+  }, db: DB) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.targetStartDate)) {
+      throw new ValidationError('targetStartDate must be YYYY-MM-DD')
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.targetEndDate)) {
+      throw new ValidationError('targetEndDate must be YYYY-MM-DD')
+    }
+    if (input.targetEndDate < input.targetStartDate) {
+      throw new ValidationError('targetEndDate must be on or after targetStartDate')
+    }
+
+    const durationDays = Math.max(
+      0,
+      Math.round(
+        (Date.parse(input.targetEndDate) - Date.parse(input.targetStartDate)) /
+          (24 * 60 * 60 * 1000),
+      ),
+    )
+
+    const [inserted] = await db.insert(tasks).values({
+      projectId: null,
+      projectWorkflowId: null,
+      name: input.name,
+      ownerId: input.ownerId,
+      plannedDurationDays: durationDays,
+      targetStartDate: input.targetStartDate,
+      targetEndDate: input.targetEndDate,
+      isUnplanned: true,
+      sortOrder: null,
+    }).returning()
+
+    return inserted
+  },
+
   async addPlannedTask(input: {
     projectId: string
     projectWorkflowId: string
@@ -206,7 +280,7 @@ export const taskService = {
 
     return db.transaction(async (tx) => {
       const siblings = await tx.select().from(tasks).where(eq(tasks.projectWorkflowId, input.projectWorkflowId))
-      const sortOrder = input.sortOrder ?? (siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder)) + 1)
+      const sortOrder = input.sortOrder ?? (siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder ?? 0)) + 1)
 
       const [inserted] = await tx.insert(tasks).values({
         projectId: input.projectId,
@@ -250,7 +324,7 @@ export const taskService = {
       if (parentRows.length === 0) throw new NotFoundError('Parent task')
       const parent = parentRows[0]
       const siblings = await tx.select().from(tasks).where(eq(tasks.parentTaskId, parent.id))
-      const sortOrder = siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder)) + 1
+      const sortOrder = siblings.length === 0 ? 0 : Math.max(...siblings.map(s => s.sortOrder ?? 0)) + 1
       const [inserted] = await tx.insert(tasks).values({
         projectId: parent.projectId,
         projectWorkflowId: parent.projectWorkflowId,
@@ -314,6 +388,7 @@ export const taskService = {
       const taskRows = await tx.select().from(tasks).where(eq(tasks.id, taskId))
       if (taskRows.length === 0) throw new NotFoundError('Task')
       const task = taskRows[0]
+      if (!task.projectId) throw new ValidationError('deleteInDraft is only for project tasks')
 
       const projRows = await tx.select().from(projects).where(eq(projects.id, task.projectId))
       if (projRows.length === 0) throw new NotFoundError('Project')

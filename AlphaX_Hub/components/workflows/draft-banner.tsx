@@ -10,23 +10,36 @@ function timeAgo(iso: string): string {
 }
 
 export function DraftBanner({
-  savedAt, onRestore, onDiscard,
+  savedAt,
+  onRestore,
+  onDiscard,
 }: {
   savedAt: string
   onRestore: () => void
   onDiscard: () => void
 }) {
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-sm px-3 py-2 mb-3 flex items-center gap-3">
-      <span>⚠ You have unsaved edits from {timeAgo(savedAt)}.</span>
-      <button onClick={onRestore}
-        className="ml-auto px-3 py-1 bg-white border border-amber-300 rounded text-xs hover:bg-amber-100">
-        Restore
-      </button>
-      <button onClick={onDiscard}
-        className="px-3 py-1 text-xs text-amber-700 hover:text-amber-900">
-        Discard
-      </button>
+    <div className="flex flex-wrap items-center gap-sm rounded-xl border border-secondary/30 bg-secondary/5 px-md py-sm text-body-sm text-on-surface mb-md">
+      <span className="material-symbols-outlined text-secondary">history</span>
+      <span>
+        You have unsaved edits from <strong>{timeAgo(savedAt)}</strong>.
+      </span>
+      <div className="ml-auto flex items-center gap-xs">
+        <button
+          type="button"
+          onClick={onRestore}
+          className="inline-flex h-8 items-center gap-xs rounded-lg border border-outline-variant/40 bg-white px-sm text-body-sm font-semibold text-on-surface hover:border-primary hover:text-primary transition-colors"
+        >
+          Restore
+        </button>
+        <button
+          type="button"
+          onClick={onDiscard}
+          className="px-xs text-body-sm text-on-surface-variant hover:text-on-surface"
+        >
+          Discard
+        </button>
+      </div>
     </div>
   )
 }

@@ -30,7 +30,7 @@ describe('addUnplannedTask', () => {
     const { project, pm, task } = await setup()
     const created = await taskService.addUnplannedTask({
       projectId: project.id,
-      projectWorkflowId: task.projectWorkflowId,
+      projectWorkflowId: task.projectWorkflowId!,
       name: 'Extra inspection',
       plannedDurationDays: 3,
       ownerId: pm.id,
@@ -40,6 +40,39 @@ describe('addUnplannedTask', () => {
     const rows = await testDb.select().from(tasks).where(eq(tasks.id, created.id))
     expect(rows[0].isUnplanned).toBe(true)
     expect(rows[0].plannedStartDay).not.toBeNull()
+  })
+})
+
+describe('setStatus writes actual_*_date on transitions', () => {
+  beforeEach(async () => { await truncateAll() })
+
+  it('stamps actual_start_date when status moves to started, and actual_end_date when complete', async () => {
+    const { ic, task } = await setup()
+
+    // not_started -> started: actual_start_date set, actual_end_date still null
+    await taskService.setStatus({ taskId: task.id, status: 'started', actorId: ic.id }, testDb)
+    let row = (await testDb.select().from(tasks).where(eq(tasks.id, task.id)))[0]
+    expect(row.actualStartDate).not.toBeNull()
+    expect(row.actualEndDate).toBeNull()
+    const firstStart = row.actualStartDate
+
+    // started -> complete: actual_end_date set; actual_start_date unchanged
+    await taskService.setStatus({ taskId: task.id, status: 'complete', actorId: ic.id }, testDb)
+    row = (await testDb.select().from(tasks).where(eq(tasks.id, task.id)))[0]
+    expect(row.actualStartDate).toBe(firstStart)
+    expect(row.actualEndDate).not.toBeNull()
+  })
+
+  it('does not overwrite an existing actual_start_date when status moves to started again', async () => {
+    const { ic, task } = await setup()
+    await taskService.setStatus({ taskId: task.id, status: 'started', actorId: ic.id }, testDb)
+    const before = (await testDb.select().from(tasks).where(eq(tasks.id, task.id)))[0]
+
+    // Re-toggle: not_started -> started again should keep the original actual_start_date.
+    await taskService.setStatus({ taskId: task.id, status: 'not_started', actorId: ic.id }, testDb)
+    await taskService.setStatus({ taskId: task.id, status: 'started', actorId: ic.id }, testDb)
+    const after = (await testDb.select().from(tasks).where(eq(tasks.id, task.id)))[0]
+    expect(after.actualStartDate).toBe(before.actualStartDate)
   })
 })
 

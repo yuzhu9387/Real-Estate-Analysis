@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { testDb, truncateAll } from '@/tests/db'
-import { projects, projectPhases } from '@/db/schema'
+import { projects, projectPhases, tasks } from '@/db/schema'
 import { seedPm, seedOwner } from '@/tests/fixtures/users'
 import { seedTemplate } from '@/tests/fixtures/workflow-templates'
 import { projectService } from './project-service'
 import { phaseService } from './phase-service'
+import { formatLocalISODate } from '@/lib/scheduling/target-dates'
 
 async function makeProject() {
   const owner = await seedOwner()
@@ -34,6 +35,36 @@ describe('phaseService.kickOff', () => {
     const proj = await testDb.select().from(projects).where(eq(projects.id, project.id))
     expect(proj[0].status).toBe('in_progress')
     expect(proj[0].kickedOffAt).not.toBeNull()
+  })
+
+  it('materializes target_start_date and target_end_date on every task at kickoff', async () => {
+    const { project, pm } = await makeProject()
+    const phases = await testDb.select().from(projectPhases).where(eq(projectPhases.projectId, project.id))
+    const permitting = phases.find(p => p.name === 'Permitting')!
+
+    // Pre-condition: no task has target dates yet (project is still draft).
+    const before = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
+    expect(before.length).toBeGreaterThan(0)
+    for (const t of before) {
+      expect(t.targetStartDate).toBeNull()
+      expect(t.targetEndDate).toBeNull()
+      // Sanity: the seeded task has plannedStart=1 / plannedEnd=2.
+      expect(t.plannedStartDay).toBe(1)
+      expect(t.plannedEndDay).toBe(2)
+    }
+
+    await phaseService.kickOff({ phaseId: permitting.id, actorId: pm.id }, testDb)
+
+    // After kickoff: target_start = kickoff date itself (day 1), target_end = +1 day (day 2).
+    const after = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
+    const proj = (await testDb.select().from(projects).where(eq(projects.id, project.id)))[0]
+    const kickoff = proj.kickedOffAt!
+    const expectedStart = formatLocalISODate(kickoff)
+    const expectedEnd = formatLocalISODate(new Date(kickoff.getFullYear(), kickoff.getMonth(), kickoff.getDate() + 1))
+    for (const t of after) {
+      expect(t.targetStartDate).toBe(expectedStart)
+      expect(t.targetEndDate).toBe(expectedEnd)
+    }
   })
 
   it('refuses to kick off out-of-order phase (Construction before Permitting)', async () => {

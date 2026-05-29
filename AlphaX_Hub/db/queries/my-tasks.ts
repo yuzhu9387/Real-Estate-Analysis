@@ -1,4 +1,4 @@
-import { and, eq, inArray, notInArray, desc, asc, sql } from 'drizzle-orm'
+import { and, eq, inArray, notInArray, desc, asc, sql, or } from 'drizzle-orm'
 import type { DB } from '@/db/client'
 import {
   tasks, projects, projectPhases, projectWorkflows, users,
@@ -8,8 +8,10 @@ import { rankMyOpenTasks } from '@/lib/my-tasks/ranking'
 
 export type TaskWithContext = {
   task: Task
-  project: Pick<Project, 'id' | 'name' | 'status' | 'brand' | 'kickedOffAt'>
-  phase: Pick<ProjectPhase, 'id' | 'name'>
+  /** Null for personal tasks (task.projectId IS NULL). */
+  project: Pick<Project, 'id' | 'name' | 'status' | 'brand' | 'kickedOffAt'> | null
+  /** Null for personal tasks. */
+  phase: Pick<ProjectPhase, 'id' | 'name'> | null
 }
 
 export type MyTasksData = {
@@ -24,20 +26,30 @@ const TERMINAL_STATUSES: TaskStatus[] = ['complete', 'wont_do']
 
 async function withContext(db: DB, rows: Task[]): Promise<TaskWithContext[]> {
   if (rows.length === 0) return []
-  const projectIds = Array.from(new Set(rows.map(r => r.projectId)))
-  const workflowIds = Array.from(new Set(rows.map(r => r.projectWorkflowId)))
+  const projectIds = Array.from(
+    new Set(rows.map(r => r.projectId).filter((id): id is string => id !== null)),
+  )
+  const workflowIds = Array.from(
+    new Set(rows.map(r => r.projectWorkflowId).filter((id): id is string => id !== null)),
+  )
 
   const [projectRows, workflowRows, phaseRows] = await Promise.all([
-    db.select({
-      id: projects.id, name: projects.name, status: projects.status,
-      brand: projects.brand, kickedOffAt: projects.kickedOffAt,
-    }).from(projects).where(inArray(projects.id, projectIds)),
-    db.select({
-      id: projectWorkflows.id, projectPhaseId: projectWorkflows.projectPhaseId,
-    }).from(projectWorkflows).where(inArray(projectWorkflows.id, workflowIds)),
-    db.select({
-      id: projectPhases.id, name: projectPhases.name,
-    }).from(projectPhases).where(inArray(projectPhases.projectId, projectIds)),
+    projectIds.length === 0
+      ? Promise.resolve([])
+      : db.select({
+          id: projects.id, name: projects.name, status: projects.status,
+          brand: projects.brand, kickedOffAt: projects.kickedOffAt,
+        }).from(projects).where(inArray(projects.id, projectIds)),
+    workflowIds.length === 0
+      ? Promise.resolve([])
+      : db.select({
+          id: projectWorkflows.id, projectPhaseId: projectWorkflows.projectPhaseId,
+        }).from(projectWorkflows).where(inArray(projectWorkflows.id, workflowIds)),
+    projectIds.length === 0
+      ? Promise.resolve([])
+      : db.select({
+          id: projectPhases.id, name: projectPhases.name,
+        }).from(projectPhases).where(inArray(projectPhases.projectId, projectIds)),
   ])
 
   const projectById = new Map(projectRows.map(p => [p.id, p]))
@@ -45,12 +57,10 @@ async function withContext(db: DB, rows: Task[]): Promise<TaskWithContext[]> {
   const phaseById = new Map(phaseRows.map(p => [p.id, p]))
 
   return rows.map(t => {
-    const phaseId = workflowToPhase.get(t.projectWorkflowId)!
-    return {
-      task: t,
-      project: projectById.get(t.projectId)!,
-      phase: phaseById.get(phaseId)!,
-    }
+    const project = t.projectId ? projectById.get(t.projectId) ?? null : null
+    const phaseId = t.projectWorkflowId ? workflowToPhase.get(t.projectWorkflowId) : undefined
+    const phase = phaseId ? phaseById.get(phaseId) ?? null : null
+    return { task: t, project, phase }
   })
 }
 
@@ -62,18 +72,26 @@ export async function getMyTasks(
   const completedLimit = opts.completedLimit ?? 100
   const completedOffset = opts.completedOffset ?? 0
 
+  // Open tasks: any non-terminal task owned by the user.
+  //   - If the task belongs to a project, restrict to draft + in_progress projects.
+  //   - Personal tasks (project_id IS NULL) are always included.
   const openRows = await db.select().from(tasks)
-    .innerJoin(projects, eq(tasks.projectId, projects.id))
+    .leftJoin(projects, eq(tasks.projectId, projects.id))
     .where(and(
       eq(tasks.ownerId, userId),
       notInArray(tasks.status, TERMINAL_STATUSES),
-      inArray(projects.status, ['draft','in_progress']),
+      or(
+        sql`${tasks.projectId} IS NULL`,
+        inArray(projects.status, ['draft', 'in_progress']),
+      ),
     ))
   const openTaskRows = openRows.map(r => r.tasks)
   const openWithCtx = await withContext(db, openTaskRows)
 
   const todayMs = Date.now()
-  const kickoffDates = openRows.map(r => r.projects.kickedOffAt).filter((d): d is Date => d !== null)
+  const kickoffDates = openRows
+    .map(r => r.projects?.kickedOffAt ?? null)
+    .filter((d): d is Date => d !== null)
   const earliestKickoff = kickoffDates.length === 0 ? null
     : kickoffDates.reduce((a, b) => a.getTime() < b.getTime() ? a : b)
   const todayDayOffset = earliestKickoff
@@ -90,18 +108,22 @@ export async function getMyTasks(
   const ctxById = new Map(openWithCtx.map(x => [x.task.id, x]))
   const openTasks = rankedTasks.map(r => ctxById.get(r.id)!).filter(Boolean)
 
+  // "Under Review" surface: every pending_review task I'm involved in — either I'm the
+  // reviewer (action needed) or I'm the owner (waiting for someone else's review).
+  // Include both draft and in_progress projects, matching the Open tab's project filter.
   const pendingRows = await db.select().from(tasks)
     .innerJoin(projects, eq(tasks.projectId, projects.id))
     .where(and(
-      eq(tasks.reviewerId, userId),
+      or(eq(tasks.reviewerId, userId), eq(tasks.ownerId, userId)),
       eq(tasks.status, 'pending_review'),
-      eq(projects.status, 'in_progress'),
+      inArray(projects.status, ['draft', 'in_progress']),
     ))
     .orderBy(asc(tasks.updatedAt))
   const pendingReview = await withContext(db, pendingRows.map(r => r.tasks))
 
+  // Completed: include personal tasks too (LEFT JOIN); no project-status filter.
   const completedRows = await db.select().from(tasks)
-    .innerJoin(projects, eq(tasks.projectId, projects.id))
+    .leftJoin(projects, eq(tasks.projectId, projects.id))
     .where(and(
       eq(tasks.ownerId, userId),
       inArray(tasks.status, TERMINAL_STATUSES),

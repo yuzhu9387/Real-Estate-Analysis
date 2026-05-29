@@ -12,6 +12,7 @@ const storage = new MemStorage()
 const SAMPLE: Draft = {
   name: 'P',
   description: '',
+  productType: 'adu_pre_approved_program',
   tasks: [{ id: 't1', name: 'A', description: '', startDay: 1, endDay: 2, ownerRoleLabel: 'design', sortOrder: 0 }],
   deps: [],
   savedAt: '2026-05-27T10:00:00.000Z',

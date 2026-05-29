@@ -10,7 +10,7 @@ describe('workflowTemplateService cycle detection', () => {
   it('create rejects deps that form a cycle', async () => {
     const owner = await seedOwner()
     await expect(workflowTemplateService.create({
-      createdById: owner.id, name: 'X',
+      createdById: owner.id, name: 'X', productType: 'adu_pre_approved_program',
       tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }],
       deps: [
         { fromIdx: 0, toIdx: 1, lagDays: 0 },
@@ -22,7 +22,7 @@ describe('workflowTemplateService cycle detection', () => {
   it('update rejects deps that form a cycle', async () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
-      createdById: owner.id, name: 'X',
+      createdById: owner.id, name: 'X', productType: 'adu_pre_approved_program',
       tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }],
       deps: [{ fromIdx: 0, toIdx: 1, lagDays: 0 }],
     }, testDb)
@@ -38,7 +38,7 @@ describe('workflowTemplateService cycle detection', () => {
   it('linear chain still accepted', async () => {
     const owner = await seedOwner()
     await expect(workflowTemplateService.create({
-      createdById: owner.id, name: 'OK',
+      createdById: owner.id, name: 'OK', productType: 'adu_pre_approved_program',
       tasks: [{ name: 'A', startDay: 1, endDay: 2 }, { name: 'B', startDay: 1, endDay: 2 }, { name: 'C', startDay: 1, endDay: 2 }],
       deps: [
         { fromIdx: 0, toIdx: 1, lagDays: 0 },

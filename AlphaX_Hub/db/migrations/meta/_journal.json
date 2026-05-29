@@ -78,6 +78,34 @@
       "when": 1779995082979,
       "tag": "0010_workflow_task_dates_drop_duration",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1780002000000,
+      "tag": "0011_workflow_product_type",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1780026000000,
+      "tag": "0012_task_calendar_dates",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1780050000000,
+      "tag": "0013_personal_tasks",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1780074000000,
+      "tag": "0014_project_schedule_and_team",
+      "breakpoints": true
     }
   ]
 }

@@ -28,7 +28,7 @@ describe('addPlannedTask', () => {
   it('creates a planned task in draft project', async () => {
     const { project, pm } = await setup()
     const projTasks = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
-    const workflowId = projTasks[0].projectWorkflowId
+    const workflowId = projTasks[0].projectWorkflowId!
     const created = await taskService.addPlannedTask({
       projectId: project.id, projectWorkflowId: workflowId,
       name: 'Extra survey', plannedDurationDays: 3, ownerId: pm.id, actorId: pm.id,
@@ -46,7 +46,7 @@ describe('addPlannedTask', () => {
       .kickOff({ phaseId: permitting.id, actorId: pm.id }, testDb)
     const projTasks = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
     await expect(taskService.addPlannedTask({
-      projectId: project.id, projectWorkflowId: projTasks[0].projectWorkflowId,
+      projectId: project.id, projectWorkflowId: projTasks[0].projectWorkflowId!,
       name: 'X', plannedDurationDays: 1, ownerId: pm.id, actorId: pm.id,
     }, testDb)).rejects.toThrow(ProjectLockedError)
   })
@@ -55,7 +55,7 @@ describe('addPlannedTask', () => {
     const { project, pm } = await setup()
     const projTasks = await testDb.select().from(tasks).where(eq(tasks.projectId, project.id))
     const created = await taskService.addPlannedTask({
-      projectId: project.id, projectWorkflowId: projTasks[0].projectWorkflowId,
+      projectId: project.id, projectWorkflowId: projTasks[0].projectWorkflowId!,
       name: 'After A', plannedDurationDays: 1, ownerId: pm.id, actorId: pm.id,
       upstreamTaskIds: [projTasks[0].id],
     }, testDb)

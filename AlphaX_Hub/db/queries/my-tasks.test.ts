@@ -29,8 +29,8 @@ describe('getMyTasks', () => {
 
     const out = await getMyTasks(testDb, ic.id)
     expect(out.openTasks.length).toBe(2)
-    expect(out.openTasks[0].project.name).toBe('12 Maple')
-    expect(out.openTasks[0].phase.name).toBe('Permitting')
+    expect(out.openTasks[0].project?.name).toBe('12 Maple')
+    expect(out.openTasks[0].phase?.name).toBe('Permitting')
   })
 
   it('Pending Review returns tasks where user is reviewer and status=pending_review', async () => {

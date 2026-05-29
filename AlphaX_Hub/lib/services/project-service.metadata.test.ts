@@ -42,18 +42,29 @@ describe('updateProjectMetadata', () => {
       .kickOff({ phaseId: phases.find(p => p.sortOrder === 1)!.id, actorId: pm.id }, testDb)
     await expect(projectService.updateMetadata({
       projectId: project.id, actorId: pm.id,
-      patch: { targetPermitDate: '2027-01-01' },
+      patch: { targetStartDate: '2027-01-01' },
     }, testDb)).rejects.toThrow(ProjectLockedError)
   })
 
-  it('allows draft-only fields when still in draft', async () => {
+  it('allows draft-only fields when still in draft and cascades target dates', async () => {
     const { project, pm } = await setup()
     await projectService.updateMetadata({
       projectId: project.id, actorId: pm.id,
-      patch: { targetPermitDate: '2027-06-01', purchasePrice: '850000.00' },
+      patch: {
+        targetStartDate: '2027-01-01',
+        targetPermittingDurationDays: 30,
+        targetConstructionDurationDays: 60,
+        targetSalesDurationDays: 90,
+        purchasePrice: '850000.00',
+      },
     }, testDb)
     const re = await testDb.select().from(projects).where(eq(projects.id, project.id))
-    expect(re[0].targetPermitDate).toBe('2027-06-01')
+    expect(re[0].targetStartDate).toBe('2027-01-01')
     expect(re[0].purchasePrice).toBe('850000.00')
+    // Cascade: start + permitting = permit; + construction = constructionEnd; + sales = exit.
+    expect(re[0].targetPermitDate).toBe('2027-01-31')
+    expect(re[0].targetConstructionEndDate).toBe('2027-04-01')
+    expect(re[0].targetExitDate).toBe('2027-06-30')
+    expect(re[0].targetProjectDurationDays).toBe(180)
   })
 })

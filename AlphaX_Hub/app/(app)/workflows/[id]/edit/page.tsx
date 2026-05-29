@@ -23,6 +23,7 @@ export default async function EditWorkflowPage({ params }: { params: { id: strin
       initial={{
         name: tpl.name,
         description: tpl.description ?? '',
+        productType: tpl.productType ?? null,
         tasks: tasks.sort((a, b) => a.sortOrder - b.sortOrder).map(t => ({
           id: t.id,
           name: t.name,

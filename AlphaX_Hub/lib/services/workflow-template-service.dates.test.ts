@@ -13,6 +13,7 @@ describe('workflowTemplateService date semantics', () => {
     const owner = await seedUser({ role: 'owner' })
     const tpl = await workflowTemplateService.create({
       createdById: owner.id,
+      productType: 'adu_pre_approved_program',
       name: 'Demo',
       tasks: [
         { name: 'A', startDay: 1,  endDay: 6  },
@@ -31,6 +32,7 @@ describe('workflowTemplateService date semantics', () => {
     const owner = await seedUser({ role: 'owner' })
     const tpl = await workflowTemplateService.create({
       createdById: owner.id,
+      productType: 'adu_pre_approved_program',
       name: 'Demo',
       tasks: [{ name: 'A', startDay: 1, endDay: 6 }],
       deps: [],
@@ -52,6 +54,7 @@ describe('workflowTemplateService date semantics', () => {
     const owner = await seedUser({ role: 'owner' })
     await expect(workflowTemplateService.create({
       createdById: owner.id,
+      productType: 'adu_pre_approved_program',
       name: 'Demo',
       tasks: [{ name: 'A', startDay: 0, endDay: 5 }],
       deps: [],
@@ -62,6 +65,7 @@ describe('workflowTemplateService date semantics', () => {
     const owner = await seedUser({ role: 'owner' })
     await expect(workflowTemplateService.create({
       createdById: owner.id,
+      productType: 'adu_pre_approved_program',
       name: 'Demo',
       tasks: [{ name: 'A', startDay: 5, endDay: 4 }],
       deps: [],
@@ -72,6 +76,7 @@ describe('workflowTemplateService date semantics', () => {
     const owner = await seedUser({ role: 'owner' })
     const tpl = await workflowTemplateService.create({
       createdById: owner.id,
+      productType: 'adu_pre_approved_program',
       name: 'Demo',
       tasks: [
         { name: 'Work',     startDay: 1, endDay: 5 },

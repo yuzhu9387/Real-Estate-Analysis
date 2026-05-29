@@ -14,6 +14,7 @@ describe('workflowTemplateService', () => {
       createdById: owner.id,
       name: 'Permitting Basics',
       description: 'standard permit pipeline',
+      productType: 'adu_pre_approved_program',
       tasks: [
         { name: 'Survey', startDay: 1, endDay: 6 },
         { name: 'Apply', startDay: 6, endDay: 16 },
@@ -31,6 +32,7 @@ describe('workflowTemplateService', () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
       createdById: owner.id, name: 'a',
+      productType: 'adu_pre_approved_program',
       tasks: [{ name: 't', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
 
@@ -53,6 +55,7 @@ describe('workflowTemplateService', () => {
     const owner = await seedOwner()
     const tpl = await workflowTemplateService.create({
       createdById: owner.id, name: 'a',
+      productType: 'adu_pre_approved_program',
       tasks: [{ name: 't', startDay: 1, endDay: 2 }], deps: [],
     }, testDb)
     await workflowTemplateService.archive(tpl.id, testDb)

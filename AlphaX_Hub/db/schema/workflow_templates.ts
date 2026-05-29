@@ -1,10 +1,12 @@
 import { pgTable, uuid, text, boolean, timestamp, integer } from 'drizzle-orm/pg-core'
 import { users } from './users'
+import { PRODUCT_TYPES } from '@/lib/workflows/product-types'
 
 export const workflowTemplates = pgTable('workflow_templates', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
   description: text('description'),
+  productType: text('product_type', { enum: PRODUCT_TYPES }),
   createdById: uuid('created_by_id').notNull().references(() => users.id),
   isArchived: boolean('is_archived').notNull().default(false),
   totalStartDay: integer('total_start_day').notNull().default(0),

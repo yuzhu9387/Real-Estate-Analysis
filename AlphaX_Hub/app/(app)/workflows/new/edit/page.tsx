@@ -10,7 +10,11 @@ export default async function NewWorkflowEditorPage() {
       mode="new"
       templateId={null}
       initial={{
-        name: '', description: '', tasks: [], deps: [],
+        name: '',
+        description: '',
+        productType: null,
+        tasks: [],
+        deps: [],
         savedAt: new Date().toISOString(),
       }}
       serverUpdatedAt={null}

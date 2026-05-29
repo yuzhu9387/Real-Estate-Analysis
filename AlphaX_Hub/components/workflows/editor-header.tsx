@@ -2,8 +2,15 @@
 import Link from 'next/link'
 
 export function EditorHeader({
-  mode, isArchived, isDirty, isSaving, errorBanner,
-  onSave, onCancel, onArchive, onRestore,
+  mode,
+  isArchived,
+  isDirty,
+  isSaving,
+  errorBanner,
+  onSave,
+  onCancel,
+  onArchive,
+  onRestore,
 }: {
   mode: 'new' | 'edit'
   isArchived: boolean
@@ -17,34 +24,62 @@ export function EditorHeader({
 }) {
   return (
     <div>
-      <div className="flex items-center mb-3">
-        <Link href="/workflows" className="text-blue-600 text-sm hover:underline">← Back to list</Link>
-        <div className="ml-auto flex gap-2">
-          <button onClick={onCancel}
-            className="px-3 py-1.5 border border-zinc-300 rounded text-sm hover:bg-zinc-50">
+      <div className="flex flex-col gap-sm md:flex-row md:items-center mb-md">
+        <Link
+          href="/workflows"
+          className="inline-flex items-center gap-xs text-body-sm font-semibold text-primary hover:underline"
+        >
+          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to Workflow Templates
+        </Link>
+        <div className="md:ml-auto flex flex-wrap items-center gap-xs">
+          {isDirty && (
+            <span className="inline-flex items-center gap-xs text-body-sm text-on-surface-variant">
+              <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+              Unsaved changes
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="inline-flex h-9 items-center gap-xs rounded-lg border border-outline-variant/40 bg-white px-sm text-body-sm font-semibold text-on-surface-variant hover:border-primary hover:text-primary transition-colors"
+          >
             Cancel
           </button>
           {mode === 'edit' && !isArchived && (
-            <button onClick={onArchive}
-              className="px-3 py-1.5 border border-red-200 text-red-700 rounded text-sm hover:bg-red-50">
+            <button
+              type="button"
+              onClick={onArchive}
+              className="inline-flex h-9 items-center gap-xs rounded-lg border border-error/30 bg-white px-sm text-body-sm font-semibold text-error hover:bg-error/5 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">archive</span>
               Archive
             </button>
           )}
           {mode === 'edit' && isArchived && (
-            <button onClick={onRestore}
-              className="px-3 py-1.5 border border-zinc-300 text-zinc-700 rounded text-sm hover:bg-zinc-50">
+            <button
+              type="button"
+              onClick={onRestore}
+              className="inline-flex h-9 items-center gap-xs rounded-lg border border-outline-variant/40 bg-white px-sm text-body-sm font-semibold text-on-surface hover:border-primary hover:text-primary transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">restore</span>
               Restore
             </button>
           )}
-          <button onClick={onSave}
-            disabled={isSaving || !isDirty}
-            className="px-4 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded text-sm hover:opacity-90 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={isSaving}
+            className="inline-flex h-9 items-center gap-xs rounded-lg bg-primary px-md text-body-sm font-bold text-white shadow-sm shadow-primary/10 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="material-symbols-outlined text-[16px]">save</span>
             {isSaving ? 'Saving…' : 'Save'}
           </button>
         </div>
       </div>
       {errorBanner && (
-        <div className="rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm px-3 py-2 mb-3">
+        <div className="flex items-center gap-xs rounded-lg border border-error/20 bg-error/5 px-md py-sm text-body-sm text-error mb-md">
+          <span className="material-symbols-outlined text-[18px]">error</span>
           {errorBanner}
         </div>
       )}

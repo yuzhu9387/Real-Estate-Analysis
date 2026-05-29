@@ -4,6 +4,7 @@ import { workflowTemplates, workflowTemplateTasks, workflowTemplateTaskDeps } fr
 import { NotFoundError, ValidationError } from '@/lib/server/errors'
 import { hasCycle } from '@/lib/workflow-editor/has-cycle'
 import { computeTotals } from '@/lib/workflow-editor/compute-totals'
+import type { ProductType } from '@/lib/workflows/product-types'
 
 type TaskInput = {
   name: string
@@ -30,6 +31,7 @@ export const workflowTemplateService = {
     createdById: string
     name: string
     description?: string | null
+    productType: ProductType
     tasks: TaskInput[]
     deps: DepInput[]
   }, db: DB) {
@@ -48,6 +50,7 @@ export const workflowTemplateService = {
       const [tpl] = await tx.insert(workflowTemplates).values({
         name: input.name,
         description: input.description ?? null,
+        productType: input.productType,
         createdById: input.createdById,
         totalStartDay: totals.totalStartDay,
         totalEndDay: totals.totalEndDay,
@@ -86,6 +89,7 @@ export const workflowTemplateService = {
   async update(id: string, input: {
     name?: string
     description?: string | null
+    productType?: ProductType | null
     tasks: TaskInput[]
     deps: DepInput[]
   }, db: DB) {
@@ -106,6 +110,8 @@ export const workflowTemplateService = {
       await tx.update(workflowTemplates).set({
         name: input.name ?? existing[0].name,
         description: input.description ?? existing[0].description,
+        productType:
+          input.productType === undefined ? existing[0].productType : input.productType,
         totalStartDay: totals.totalStartDay,
         totalEndDay: totals.totalEndDay,
         totalDurationDays: totals.totalDurationDays,
@@ -171,6 +177,7 @@ export const workflowTemplateService = {
       const [newTpl] = await tx.insert(workflowTemplates).values({
         name: input.newName,
         description: sourceRows[0].description,
+        productType: sourceRows[0].productType,
         createdById: input.createdById,
         totalStartDay: sourceRows[0].totalStartDay,
         totalEndDay: sourceRows[0].totalEndDay,
