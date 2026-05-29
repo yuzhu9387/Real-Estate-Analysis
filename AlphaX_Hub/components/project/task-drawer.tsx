@@ -117,10 +117,10 @@ export function TaskDrawer({
         <DrawerComments taskId={task.id} />
 
         <div className="mt-6 pt-4 border-t border-zinc-200 text-xs">
-          <a href={`/projects/${projectId}/tasks/${task.id}`} className="text-blue-600 hover:underline">
-            Open full task detail →
+          <a href={`/tasks/${task.id}`} className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+            Open in full page
           </a>
-          <span className="text-zinc-400 ml-2">(future spec)</span>
         </div>
       </div>
     </div>
