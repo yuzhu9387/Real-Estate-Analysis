@@ -1,0 +1,447 @@
+<!--
+  Reference mockup for /tasks/[taskId] — see 2026-05-28-task-detail-page-design.md §5.
+
+  This file is the LAYOUT and INFORMATION ARCHITECTURE reference only.
+  The implementation uses the project's theme (tailwind.config.ts + globals.css):
+    - Colors: tokens listed in spec §5.6 (NOT the inline CSS vars below)
+    - Fonts:  Inter + JetBrains Mono per project font scale
+    - Icons:  Material Symbols Outlined (NOT the emoji glyphs below)
+    - Panels: glacier-panel class for the four section cards
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlphaX Hub - Task Detail</title>
+
+  <style>
+    :root {
+      --bg: #f7f9fb;
+      --panel: #ffffff;
+      --line: #e5eaf0;
+      --text: #101828;
+      --muted: #667085;
+      --teal: #007c78;
+      --teal-soft: #e7f5f3;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --red: #ef4444;
+      --red-soft: #fee2e2;
+      --orange: #f97316;
+      --orange-soft: #ffedd5;
+      --gray-soft: #f1f5f9;
+      --shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: var(--blue); text-decoration: none; font-weight: 700; }
+    a:hover { text-decoration: underline; }
+
+    .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar { background: #ffffff; border-right: 1px solid var(--line); padding: 28px 20px; display: flex; flex-direction: column; }
+    .brand { margin-bottom: 40px; }
+    .brand-name { font-size: 32px; line-height: 0.95; font-weight: 850; color: var(--teal); letter-spacing: -0.04em; }
+    .brand-subtitle { margin-top: 12px; color: #475467; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .nav { display: flex; flex-direction: column; gap: 6px; }
+    .nav-item { height: 48px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-radius: 10px; color: #344054; font-size: 14px; font-weight: 500; }
+    .nav-item.active { color: var(--teal); background: var(--teal-soft); font-weight: 800; border-right: 4px solid var(--teal); }
+    .profile { margin-top: auto; padding-top: 22px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #0f766e, #1f2937); color: white; display: grid; place-items: center; font-weight: 850; font-size: 14px; flex-shrink: 0; }
+    .mini-avatar { width: 30px; height: 30px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; display: grid; place-items: center; font-size: 12px; font-weight: 850; flex-shrink: 0; }
+    .profile-name { font-size: 14px; font-weight: 850; }
+    .profile-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Main */
+    .main { min-width: 0; }
+    .topbar { height: 76px; background: #ffffff; border-bottom: 1px solid var(--line); display: flex; align-items: center; padding: 0 36px; gap: 24px; }
+    .global-search { max-width: 720px; flex: 1; position: relative; }
+    .global-search input { width: 100%; height: 44px; border: 1px solid var(--line); border-radius: 12px; padding: 0 52px 0 44px; font-size: 14px; outline: none; background: white; }
+    .global-search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0, 124, 120, 0.1); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .shortcut { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); background: #f2f4f7; border-radius: 6px; padding: 3px 7px; }
+    .top-user { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+    .bell { position: relative; font-size: 20px; }
+    .bell::after { content: "8"; position: absolute; top: -8px; right: -8px; width: 18px; height: 18px; border-radius: 999px; background: #dc2626; color: white; font-size: 11px; display: grid; place-items: center; font-weight: 850; }
+    .top-avatar { width: 34px; height: 34px; border-radius: 999px; background: #d9f1f0; color: var(--teal); display: grid; place-items: center; font-weight: 850; font-size: 13px; }
+    .top-role { font-size: 12px; color: #475467; font-weight: 850; text-transform: uppercase; }
+
+    .content { padding: 28px 40px 64px; max-width: 1360px; }
+    .page-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .back-link { color: #344054; font-size: 14px; font-weight: 700; display: inline-flex; gap: 8px; align-items: center; }
+    .page-nav { display: flex; align-items: center; gap: 16px; color: #344054; font-size: 14px; font-weight: 700; }
+
+    .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+    .task-title { font-size: 36px; line-height: 1.1; letter-spacing: -0.04em; font-weight: 850; margin: 0 0 12px; }
+    .status-line { display: flex; gap: 16px; align-items: center; font-size: 14px; font-weight: 700; }
+    .health { display: flex; align-items: center; gap: 7px; }
+    .health-dot { width: 12px; height: 12px; border-radius: 999px; background: var(--green); box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.14); }
+    .health-dot.red { background: var(--red); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14); }
+    .critical { color: var(--red); }
+    .actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; padding-top: 6px; }
+    .btn { height: 38px; border-radius: 10px; border: 1px solid var(--line); background: #ffffff; color: #344054; font-size: 13px; font-weight: 850; padding: 0 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn:hover { border-color: var(--teal); color: var(--teal); }
+    .btn.danger { color: var(--red); }
+    .btn.danger:hover { border-color: var(--red); background: #fff7f7; }
+
+    .section { background: white; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 2px 10px rgba(16, 24, 40, 0.03); margin-bottom: 16px; }
+    .section-header { padding: 18px 20px 0; font-size: 18px; font-weight: 850; }
+    .section-body { padding: 18px 20px 22px; }
+
+    /* Summary */
+    .summary-grid { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr 1fr; gap: 20px; align-items: center; }
+    .label { color: var(--muted); font-size: 12px; font-weight: 750; margin-bottom: 8px; }
+    .value { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 800; color: #101828; min-height: 34px; }
+    .person-value { font-size: 16px; font-weight: 850; }
+    .empty-avatar { width: 30px; height: 30px; border-radius: 999px; background: #f2f4f7; color: #667085; display: grid; place-items: center; font-weight: 850; }
+    .select-pill { height: 38px; min-width: 150px; border: 1px solid var(--line); border-radius: 10px; background: white; padding: 0 12px; font-size: 14px; font-weight: 800; color: #344054; outline: none; }
+    .select-pill:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0, 124, 120, 0.1); }
+    .project-link { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+
+    /* Details */
+    .details-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
+    .status-flow { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 20px; }
+    .flow-title { font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 12px; }
+    .flow-steps { display: grid; grid-template-columns: 1fr 32px 1fr 32px 1fr; align-items: center; gap: 8px; }
+    .flow-step { display: flex; align-items: center; gap: 10px; }
+    .circle { width: 34px; height: 34px; border-radius: 999px; border: 2px solid #d0d5dd; background: #ffffff; display: grid; place-items: center; font-size: 14px; font-weight: 850; color: #667085; }
+    .circle.active { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12); color: var(--blue); }
+    .flow-name { font-size: 13px; font-weight: 850; }
+    .flow-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .arrow { color: #98a2b3; font-size: 22px; text-align: center; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; border-top: 1px solid var(--line); padding-top: 18px; }
+    .info-item { min-height: 44px; }
+    .description { font-size: 14px; line-height: 1.6; color: #344054; margin-top: 4px; }
+
+    .subtasks { margin-top: 18px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .subtasks-head, .subtask-row { display: grid; grid-template-columns: 1fr 120px 120px; gap: 14px; align-items: center; padding: 12px 14px; }
+    .subtasks-head { background: #fbfcfe; color: var(--muted); font-size: 12px; font-weight: 850; border-bottom: 1px solid var(--line); }
+    .subtask-row { border-bottom: 1px solid var(--line); font-size: 13px; color: #344054; }
+    .subtask-row:last-child { border-bottom: none; }
+    .checkline { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .checkbox { width: 16px; height: 16px; border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff; }
+    .small-tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); font-size: 11px; font-weight: 850; white-space: nowrap; }
+    .add-subtask { display: inline-flex; align-items: center; margin-top: 12px; font-weight: 850; color: var(--blue); font-size: 14px; cursor: pointer; }
+
+    /* Comments */
+    .comment-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+    .comment { display: grid; grid-template-columns: 34px 1fr; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .comment:last-child { border-bottom: none; }
+    .comment-meta { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .comment-name { font-size: 13px; font-weight: 850; }
+    .comment-time { font-size: 12px; color: var(--muted); }
+    .comment-text { font-size: 14px; color: #344054; line-height: 1.5; }
+    .comment-box { display: grid; grid-template-columns: 1fr 80px; gap: 12px; align-items: center; }
+    .comment-input { height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; font-size: 14px; outline: none; }
+    .post-btn { height: 42px; border: none; border-radius: 10px; background: var(--blue); color: white; font-size: 14px; font-weight: 850; cursor: pointer; }
+
+    /* Attachments */
+    .attachment-layout { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
+    .upload-box { border: 1px dashed #98a2b3; border-radius: 14px; height: 116px; display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 13px; }
+    .upload-box strong { color: var(--blue); font-weight: 850; }
+    .file-list { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .file-row { display: grid; grid-template-columns: 1fr 100px 140px 70px; gap: 16px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .file-row:last-child { border-bottom: none; }
+    .file-name { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .file-icon { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: white; font-size: 12px; font-weight: 850; }
+    .file-icon.pdf { background: var(--red); }
+    .file-icon.xls { background: var(--green); }
+    .file-action { color: #344054; text-align: right; font-size: 18px; }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .summary-grid, .details-grid, .attachment-layout { grid-template-columns: 1fr; }
+      .flow-steps { grid-template-columns: 1fr; }
+      .arrow { display: none; }
+      .file-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-name">AlphaX<br />Hub</div>
+        <div class="brand-subtitle">Tech Management</div>
+      </div>
+      <nav class="nav">
+        <div class="nav-item">▦ Dashboard</div>
+        <div class="nav-item">▣ Projects</div>
+        <div class="nav-item">▧ Workflow Templates</div>
+        <div class="nav-item active">✓ My Tasks</div>
+        <div class="nav-item">👥 Team</div>
+        <div class="nav-item">▥ Performance Review</div>
+        <div class="nav-item">♙ Members</div>
+        <div class="nav-item">↺ Audit Logs</div>
+        <div class="nav-item">⚙ Settings</div>
+      </nav>
+      <div class="profile">
+        <div class="avatar">AR</div>
+        <div>
+          <div class="profile-name">Alex Rivera</div>
+          <div class="profile-role">Lead Developer</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="global-search">
+          <span class="search-icon">⌕</span>
+          <input type="text" placeholder="Search projects, tasks, teams..." />
+          <span class="shortcut">⌘ K</span>
+        </div>
+        <div class="top-user">
+          <div class="bell">🔔</div>
+          <div class="top-avatar">AR</div>
+          <div class="top-role">Owner ▾</div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="page-top">
+          <a class="back-link" href="#">← Back to My Tasks</a>
+          <div class="page-nav">
+            <span>‹ Previous</span>
+            <span>|</span>
+            <span>Next ›</span>
+            <span>•••</span>
+          </div>
+        </div>
+
+        <div class="title-row">
+          <div>
+            <h1 class="task-title">Feasibility Studies</h1>
+            <div class="status-line">
+              <span class="health"><span class="health-dot"></span>On track</span>
+              <span class="health critical"><span class="health-dot red"></span>On critical path</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn">✎ Edit</button>
+            <button class="btn danger">🗑 Delete</button>
+            <button class="btn">⊘ Won't do</button>
+          </div>
+        </div>
+
+        <!-- 1. Summary -->
+        <section class="section">
+          <div class="section-header">1. Summary</div>
+          <div class="section-body">
+            <div class="summary-grid">
+              <div>
+                <div class="label">Project</div>
+                <div class="value"><a class="project-link" href="#">▣ Project Alpha Core 2.0</a></div>
+              </div>
+              <div>
+                <div class="label">Owner</div>
+                <div class="value person-value"><span class="mini-avatar">LG</span>Leona Guo</div>
+              </div>
+              <div>
+                <div class="label">Reviewer</div>
+                <div class="value person-value"><span class="empty-avatar">—</span>—</div>
+              </div>
+              <div>
+                <div class="label">Due date</div>
+                <div class="value">📅 May 24, 2024</div>
+              </div>
+              <div>
+                <div class="label">Priority</div>
+                <select class="select-pill">
+                  <option>High</option>
+                  <option selected>Normal</option>
+                  <option>Low</option>
+                </select>
+              </div>
+              <div>
+                <div class="label">Status</div>
+                <select class="select-pill">
+                  <option selected>Not started</option>
+                  <option>In progress</option>
+                  <option>Submitted</option>
+                  <option>Completed</option>
+                  <option>Won't do</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Details -->
+        <section class="section">
+          <div class="section-header">2. Details</div>
+          <div class="section-body">
+            <div class="details-grid">
+              <div>
+                <div class="status-flow">
+                  <div class="flow-title">Update status</div>
+                  <div class="flow-steps">
+                    <div class="flow-step">
+                      <div class="circle active">▶</div>
+                      <div>
+                        <div class="flow-name">Start</div>
+                        <div class="flow-sub">Not started</div>
+                      </div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="flow-step">
+                      <div class="circle">○</div>
+                      <div>
+                        <div class="flow-name">Submit to review</div>
+                        <div class="flow-sub">In progress</div>
+                      </div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="flow-step">
+                      <div class="circle">✓</div>
+                      <div>
+                        <div class="flow-name">Complete</div>
+                        <div class="flow-sub">Completed</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="info-grid">
+                  <div class="info-item">
+                    <div class="label">Target start date</div>
+                    <div class="value">📅 May 20, 2024</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="label">Target end date</div>
+                    <div class="value">📅 May 24, 2024</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="label">Parent task</div>
+                    <div class="value"><a href="#">🔗 Project Setup</a></div>
+                  </div>
+                  <div class="info-item">
+                    <div class="label">Depends on</div>
+                    <div class="value">—</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="label">Description</div>
+                <div class="description">
+                  Conduct initial research and analysis to determine the technical viability and business value of the Alpha Core 2.0 initiative.
+                </div>
+
+                <div class="subtasks">
+                  <div class="subtasks-head">
+                    <div>Subtasks (3)</div>
+                    <div>Assignee</div>
+                    <div>Status</div>
+                  </div>
+                  <div class="subtask-row">
+                    <div class="checkline"><span class="checkbox"></span> Review business requirements</div>
+                    <div><span class="mini-avatar">AR</span></div>
+                    <div><span class="small-tag">Not started</span></div>
+                  </div>
+                  <div class="subtask-row">
+                    <div class="checkline"><span class="checkbox"></span> Evaluate technical constraints</div>
+                    <div><span class="mini-avatar">LG</span></div>
+                    <div><span class="small-tag">Not started</span></div>
+                  </div>
+                  <div class="subtask-row">
+                    <div class="checkline"><span class="checkbox"></span> Compile feasibility report</div>
+                    <div><span class="mini-avatar">AR</span></div>
+                    <div><span class="small-tag">Not started</span></div>
+                  </div>
+                </div>
+
+                <div class="add-subtask">＋ Add subtask</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Comments / Notes -->
+        <section class="section">
+          <div class="section-header">3. Comments / Notes</div>
+          <div class="section-body">
+            <div class="comment-list">
+              <div class="comment">
+                <div class="mini-avatar">LG</div>
+                <div>
+                  <div class="comment-meta">
+                    <span class="comment-name">Leona Guo</span>
+                    <span class="comment-time">May 16, 2024, 9:41 AM</span>
+                  </div>
+                  <div class="comment-text">Let's focus on the technical risks in this phase.</div>
+                </div>
+              </div>
+              <div class="comment">
+                <div class="mini-avatar">AR</div>
+                <div>
+                  <div class="comment-meta">
+                    <span class="comment-name">Alex Rivera</span>
+                    <span class="comment-time">May 16, 2024, 10:15 AM</span>
+                  </div>
+                  <div class="comment-text">Sounds good. I'll draft the outline today.</div>
+                </div>
+              </div>
+            </div>
+            <div class="comment-box">
+              <input class="comment-input" type="text" placeholder="Write a comment..." />
+              <button class="post-btn">Post</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Attachments -->
+        <section class="section">
+          <div class="section-header">4. Attachments</div>
+          <div class="section-body">
+            <div class="attachment-layout">
+              <div class="upload-box">
+                <div>
+                  ⬆<br />
+                  Drag files here or <strong>click to upload</strong><br />
+                  <span>Supports: PDF, Doc, Excel, PNG, JPG (Max 50MB)</span>
+                </div>
+              </div>
+              <div class="file-list">
+                <div class="file-row">
+                  <div class="file-name">
+                    <span class="file-icon pdf">PDF</span>
+                    Feasibility_Study_Outline.pdf
+                  </div>
+                  <div>256 KB</div>
+                  <div>May 15, 2024</div>
+                  <div class="file-action">↓ ⋯</div>
+                </div>
+                <div class="file-row">
+                  <div class="file-name">
+                    <span class="file-icon xls">XLS</span>
+                    Preliminary_Analysis.xlsx
+                  </div>
+                  <div>42 KB</div>
+                  <div>May 14, 2024</div>
+                  <div class="file-action">↓ ⋯</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
