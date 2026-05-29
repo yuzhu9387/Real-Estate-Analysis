@@ -363,6 +363,59 @@ export const taskService = {
       .where(eq(tasks.id, input.taskId))
   },
 
+  async updateMetadata(input: {
+    taskId: string
+    actorId: string
+    name?: string
+    description?: string | null
+    reviewerId?: string | null
+    targetStartDate?: string  // YYYY-MM-DD
+    targetEndDate?: string    // YYYY-MM-DD
+  }, db: DB) {
+    return db.transaction(async (tx) => {
+      const rows = await tx.select().from(tasks).where(eq(tasks.id, input.taskId))
+      if (rows.length === 0) throw new NotFoundError('Task')
+      const before = rows[0]
+
+      const patch: Partial<typeof before> = { updatedAt: new Date() }
+      const changes: Record<string, { from: unknown; to: unknown }> = {}
+
+      if (input.name !== undefined && input.name !== before.name) {
+        patch.name = input.name
+        changes.name = { from: before.name, to: input.name }
+      }
+      if (input.description !== undefined && input.description !== before.description) {
+        patch.description = input.description
+        changes.description = { from: before.description, to: input.description }
+      }
+      if (input.reviewerId !== undefined && input.reviewerId !== before.reviewerId) {
+        patch.reviewerId = input.reviewerId
+        changes.reviewerId = { from: before.reviewerId, to: input.reviewerId }
+      }
+      if (input.targetStartDate !== undefined && input.targetStartDate !== before.targetStartDate) {
+        patch.targetStartDate = input.targetStartDate
+        changes.targetStartDate = { from: before.targetStartDate, to: input.targetStartDate }
+      }
+      if (input.targetEndDate !== undefined && input.targetEndDate !== before.targetEndDate) {
+        patch.targetEndDate = input.targetEndDate
+        changes.targetEndDate = { from: before.targetEndDate, to: input.targetEndDate }
+      }
+
+      if (Object.keys(changes).length === 0) return  // no-op
+
+      await tx.update(tasks).set(patch).where(eq(tasks.id, before.id))
+
+      if (before.projectId) {
+        await tx.insert(activities).values({
+          projectId: before.projectId,
+          actorId: input.actorId,
+          type: 'task.metadata_updated',
+          payload: { taskId: before.id, changes },
+        })
+      }
+    })
+  },
+
   async setPriority(input: { taskId: string; priority: 'low'|'normal'|'high'; actorId: string }, db: DB) {
     return db.transaction(async (tx) => {
       const rows = await tx.select().from(tasks).where(eq(tasks.id, input.taskId))
