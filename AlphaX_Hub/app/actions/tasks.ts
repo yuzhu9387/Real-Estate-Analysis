@@ -263,3 +263,28 @@ export async function deleteTaskInDraft(raw: unknown) {
   revalidatePath('/my-tasks')
   return { ok: true }
 }
+
+export async function updateTaskMetadata(raw: unknown) {
+  const input = z.object({
+    taskId: z.string().uuid(),
+    name: z.string().min(1).optional(),
+    description: z.string().optional().nullable(),
+    reviewerId: z.string().uuid().nullable().optional(),
+    targetStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    targetEndDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  }).refine(
+    v => !v.targetStartDate || !v.targetEndDate || v.targetEndDate >= v.targetStartDate,
+    { message: 'targetEndDate must be on or after targetStartDate' },
+  ).parse(raw)
+
+  const { task, project } = await loadTaskCtx(input.taskId)
+  assertProjectTask(project)
+  const user = await requirePermission({
+    type: 'task.update_structure',
+    project: { pmId: project.pmId, status: project.status },
+  })
+  await taskService.updateMetadata({ ...input, actorId: user.id }, db)
+  revalidatePath(`/tasks/${input.taskId}`)
+  revalidatePath(`/projects/${project.id}`)
+  return { ok: true }
+}
