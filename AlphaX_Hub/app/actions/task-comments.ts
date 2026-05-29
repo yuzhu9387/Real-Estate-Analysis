@@ -31,5 +31,6 @@ export async function addTaskComment(raw: unknown) {
     taskId: input.taskId, authorId: user.id, body: input.body, kind: input.kind,
   })
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }

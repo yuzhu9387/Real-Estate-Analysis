@@ -27,10 +27,12 @@ export function DetailsSection({ detail, me }: {
   me: { id: string; role: 'owner' | 'pm' | 'ic' }
 }) {
   const { task, project, parent, upstreamDeps, subtasks } = detail
-  const canEditDescription =
+  const projectMutable = project.status !== 'archived' && project.status !== 'complete'
+  const canEditDescription = projectMutable && (
     task.ownerId === me.id ||
     me.role === 'owner' ||
     (me.role === 'pm' && project.pmId === me.id)
+  )
   const canAddSubtask = canEditDescription
 
   return (

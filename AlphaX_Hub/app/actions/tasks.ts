@@ -55,6 +55,7 @@ export async function setTaskStatus(raw: unknown) {
 
   await taskService.setStatus({ taskId: input.taskId, status: input.status, actorId }, db)
   if (project) revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   revalidatePath('/my-tasks')
   return { ok: true }
 }
@@ -70,6 +71,7 @@ export async function submitTaskForReview(raw: unknown) {
   })
   await taskService.submitForReview({ taskId: input.taskId, actorId: user.id, body: input.body }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }
 
@@ -84,6 +86,7 @@ export async function approveTask(raw: unknown) {
   })
   await taskService.approve({ taskId: input.taskId, actorId: user.id, body: input.body }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }
 
@@ -98,6 +101,7 @@ export async function requestTaskRevision(raw: unknown) {
   })
   await taskService.requestRevision({ taskId: input.taskId, actorId: user.id, body: input.body }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }
 
@@ -201,6 +205,7 @@ export async function addSubtask(raw: unknown) {
   })
   const sub = await taskService.addSubtask({ ...input, actorId: user.id }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.parentTaskId}`)
   return { ok: true, subtaskId: sub.id }
 }
 
@@ -215,6 +220,7 @@ export async function reassignTask(raw: unknown) {
   })
   await taskService.reassign({ taskId: input.taskId, toUserId: input.toUserId, actorId: user.id }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }
 
@@ -229,6 +235,7 @@ export async function updateTaskNotes(raw: unknown) {
   })
   await taskService.updateNotes({ ...input, actorId: user.id }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   return { ok: true }
 }
 
@@ -246,6 +253,7 @@ export async function setTaskPriority(raw: unknown) {
   })
   await taskService.setPriority({ taskId: input.taskId, priority: input.priority, actorId: user.id }, db)
   revalidatePath(`/projects/${project.id}`)
+  revalidatePath(`/tasks/${input.taskId}`)
   revalidatePath('/my-tasks')
   return { ok: true }
 }

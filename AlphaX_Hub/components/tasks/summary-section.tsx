@@ -30,11 +30,12 @@ export function SummarySection({ detail, me }: {
   me: { id: string; role: 'owner' | 'pm' | 'ic' }
 }) {
   const { task, project, owner, reviewer } = detail
-  const canSetStatus =
+  const projectMutable = project.status !== 'archived' && project.status !== 'complete'
+  const canSetStatus = projectMutable && (
     me.role === 'owner' ||
     (me.role === 'pm' && project.pmId === me.id) ||
-    task.ownerId === me.id ||
-    task.reviewerId === me.id
+    task.ownerId === me.id
+  )
   const canSetPriority = canSetStatus
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
