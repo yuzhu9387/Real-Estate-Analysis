@@ -1,1 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "lark_digest_opted_out" boolean DEFAULT false NOT NULL;
