@@ -26,12 +26,11 @@ export function ReviewCard({
   const router = useRouter()
   const { task, project, phase } = item
   // Personal tasks should never end up here (pending_review only exists in project context),
-  // but guard anyway: link to the project task drawer when both are present, otherwise just
+  // but guard anyway: link to the task detail page when a project is present, otherwise just
   // navigate within the my-tasks page.
-  const taskHref =
-    project && phase
-      ? `/projects/${project.id}?tab=${phase.name.toLowerCase()}&task=${task.id}`
-      : '/my-tasks?tab=pending_review'
+  const taskHref = project
+    ? `/tasks/${task.id}`
+    : '/my-tasks?tab=pending_review'
   const due = {
     targetEndDate: task.targetEndDate ?? null,
     plannedEndDay: task.plannedEndDay,

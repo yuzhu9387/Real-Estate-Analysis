@@ -24,11 +24,10 @@ function dueInputs(item: TaskWithContext, todayDayOffset: number): DueInputs {
   }
 }
 
-/** Returns null for personal tasks (no project to deep-link into). */
+/** Returns null for personal tasks (no detail page; getTaskDetail returns null for projectless tasks). */
 function taskHref(item: TaskWithContext): string | null {
-  if (!item.project || !item.phase) return null
-  const phaseSlug = item.phase.name.toLowerCase()
-  return `/projects/${item.project.id}?tab=${phaseSlug}&task=${item.task.id}`
+  if (!item.project) return null
+  return `/tasks/${item.task.id}`
 }
 
 /** Small chip shown in place of ProjectChip when the task isn't attached to a project. */
