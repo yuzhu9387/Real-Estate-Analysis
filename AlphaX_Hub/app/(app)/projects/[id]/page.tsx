@@ -44,7 +44,7 @@ export default async function ProjectDetailPage({
       )}
 
       {searchParams.task && (
-        <TaskDrawer projectId={data.project.id} taskId={searchParams.task} initialData={data} />
+        <TaskDrawer taskId={searchParams.task} initialData={data} />
       )}
     </div>
   )

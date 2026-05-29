@@ -325,16 +325,3 @@ export function CompletedCard({ item }: { item: TaskWithContext }) {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="min-w-0">
-      <div className="text-label-caps font-label-caps text-outline tracking-widest mb-xs">{label}</div>
-      <div className="text-body-sm text-on-surface-variant font-semibold">{children}</div>
-    </div>
-  )
-}
-

@@ -277,7 +277,7 @@ export async function updateTaskMetadata(raw: unknown) {
     { message: 'targetEndDate must be on or after targetStartDate' },
   ).parse(raw)
 
-  const { task, project } = await loadTaskCtx(input.taskId)
+  const { project } = await loadTaskCtx(input.taskId)
   assertProjectTask(project)
   const user = await requirePermission({
     type: 'task.update_structure',

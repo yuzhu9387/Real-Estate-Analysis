@@ -11,9 +11,8 @@ import { currentTaskStatus } from '@/lib/project-page/current-task-status'
 import type { ProjectPageData } from '@/db/queries/project-page'
 
 export function TaskDrawer({
-  projectId, taskId, initialData,
+  taskId, initialData,
 }: {
-  projectId: string
   taskId: string
   initialData: ProjectPageData
 }) {
