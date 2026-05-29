@@ -33,7 +33,7 @@ describe('taskService.updateMetadata', () => {
     }, testDb)
     const [updated] = await testDb.select().from(tasks).where(eq(tasks.id, task.id))
     expect(updated.name).toBe('Survey + Title')
-    const acts = await testDb.select().from(activities).where(eq(activities.projectId, task.projectId))
+    const acts = await testDb.select().from(activities).where(eq(activities.projectId, task.projectId!))
     expect(acts.some(a => a.type === 'task.metadata_updated')).toBe(true)
   })
 
