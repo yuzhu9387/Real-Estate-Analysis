@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AlphaX Hub — Dashboard</title>
+<style>
+  :root {
+    --teal: #0d7a73;
+    --teal-dark: #0a5a55;
+    --teal-light: #e6f4f3;
+    --teal-50: #f0faf9;
+    --bg: #f6f8fa;
+    --card: #ffffff;
+    --border: #e8ecef;
+    --border-strong: #d1d5db;
+    --text: #0f172a;
+    --text-soft: #334155;
+    --muted: #64748b;
+    --soft: #94a3b8;
+    --red: #dc2626;
+    --red-dark: #b91c1c;
+    --red-light: #fee2e2;
+    --red-50: #fef5f5;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --green: #059669;
+    --green-light: #d1fae5;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-focus: 0 0 0 3px rgba(13, 122, 115, 0.12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app { display: flex; min-height: 100vh; }
+
+  /* ============ Sidebar ============ */
+  .sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    flex-shrink: 0;
+  }
+  .brand { padding: 4px 8px 24px; }
+  .brand h1 { margin: 0; font-size: 20px; color: var(--teal); font-weight: 700; letter-spacing: -0.01em; }
+  .brand .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .nav-section-label {
+    font-size: 11px;
+    color: var(--soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 18px 8px 6px;
+    font-weight: 600;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: var(--text-soft);
+    cursor: pointer;
+    margin-bottom: 2px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.12s;
+  }
+  .nav-item:hover { background: #f1f5f9; }
+  .nav-item.active {
+    background: var(--teal-light);
+    color: var(--teal);
+    font-weight: 600;
+  }
+  .sidebar-footer { margin-top: auto; }
+  .btn-create {
+    background: var(--teal);
+    color: #fff;
+    border: 0;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 16px;
+    font-size: 14px;
+    transition: background 0.12s;
+  }
+  .btn-create:hover { background: var(--teal-dark); }
+
+  /* ============ Main ============ */
+  .main { flex: 1; min-width: 0; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .search {
+    position: relative;
+    flex: 1;
+    max-width: 420px;
+  }
+  .search input {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.12s;
+  }
+  .search input:focus { border-color: var(--teal); background: #fff; box-shadow: var(--shadow-focus); }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--soft);
+  }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted); cursor: pointer; border: 0; background: transparent;
+    transition: background 0.12s;
+  }
+  .icon-btn:hover { background: var(--bg); }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--teal); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+  .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+  .user-name { font-weight: 600; font-size: 13px; }
+  .user-role { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .content { padding: 28px 32px 48px; max-width: 1600px; }
+
+  /* ============ Brand Dropdown ============ */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .brand-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .brand-dropdown-trigger {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 10px 14px 10px 16px;
+    border-radius: 12px;
+    font-size: 22px; font-weight: 700;
+    cursor: pointer;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.12s;
+    letter-spacing: -0.01em;
+  }
+  .brand-dropdown-trigger:hover { border-color: var(--border-strong); }
+  .brand-dropdown-trigger .chev {
+    color: var(--muted); font-size: 14px; margin-left: 2px;
+    transition: transform 0.18s;
+  }
+  .brand-dropdown.open .brand-dropdown-trigger .chev { transform: rotate(180deg); }
+  .brand-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 220px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+    display: none;
+    z-index: 20;
+  }
+  .brand-dropdown.open .brand-dropdown-menu { display: block; }
+  .brand-option {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px; font-weight: 500;
+    color: var(--text-soft);
+  }
+  .brand-option:hover { background: var(--bg); }
+  .brand-option.selected { background: var(--teal-light); color: var(--teal); font-weight: 600; }
+  .brand-option .check { color: var(--teal); opacity: 0; }
+  .brand-option.selected .check { opacity: 1; }
+
+  .page-subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .header-meta { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; }
+  .header-meta .sep { width: 1px; height: 16px; background: var(--border); }
+
+  /* ============ Filter Cards (Summary) ============ */
+  .filter-cards-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 8px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .filter-cards-label .hint {
+    font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--soft);
+    font-size: 12px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .filter-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .filter-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .filter-card.active {
+    border-color: var(--teal);
+    background: var(--teal-50);
+    box-shadow: 0 0 0 3px rgba(13, 122, 115, 0.1);
+  }
+  .filter-card.at-risk.active { border-color: var(--red); background: var(--red-50); box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+  .filter-card .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .filter-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .filter-card .icon-circle {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    background: var(--teal-light); color: var(--teal);
+  }
+  .filter-card.at-risk .icon-circle { background: var(--red-light); color: var(--red); }
+  .filter-card.permitting .icon-circle { background: var(--amber-light); color: var(--amber); }
+  .filter-card.construction .icon-circle { background: var(--green-light); color: var(--green); }
+  .filter-card.sale .icon-circle { background: var(--blue-light); color: var(--blue); }
+  .filter-card .value {
+    font-size: 32px; font-weight: 700;
+    line-height: 1;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .filter-card.at-risk .value { color: var(--red); }
+  .filter-card .meta { font-size: 12px; color: var(--muted); }
+  .filter-card .check-pill {
+    position: absolute; top: 12px; right: 12px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--teal); color: #fff;
+    display: none; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .filter-card.at-risk .check-pill { background: var(--red); }
+  .filter-card.active .check-pill { display: flex; }
+  .filter-card.active .icon-circle { display: none; }
+
+  /* ============ Section ============ */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 24px 8px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .section.at-risk-section {
+    border-color: rgba(220, 38, 38, 0.25);
+    background: linear-gradient(180deg, #fff8f8 0%, #ffffff 80px);
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .section-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 17px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-title .icon-box {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: var(--teal-light); color: var(--teal);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .section-title .badge {
+    background: var(--bg); color: var(--text-soft);
+    padding: 2px 9px; border-radius: 12px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--border);
+  }
+  .at-risk-section .section-title .icon-box { background: var(--red-light); color: var(--red); }
+  .at-risk-section .section-title .badge { background: var(--red-light); color: var(--red-dark); border-color: rgba(220,38,38,0.2); }
+  .section-desc { color: var(--muted); font-size: 13px; margin: -8px 0 16px; }
+
+  /* ============ Sub Filters (city / owner) ============ */
+  .filters-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-soft);
+    transition: all 0.1s;
+  }
+  .filter-pill:hover { border-color: var(--border-strong); }
+  .filter-pill select {
+    border: 0; background: transparent; outline: none;
+    font-size: 13px; cursor: pointer; color: var(--text-soft);
+    appearance: none; -webkit-appearance: none;
+    padding-right: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2364748b' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    font-family: inherit;
+  }
+  .filter-pill .pill-label { color: var(--muted); font-weight: 500; }
+  .active-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 8px 5px 10px;
+    background: var(--teal-light);
+    color: var(--teal);
+    border-radius: 14px;
+    font-size: 12px; font-weight: 600;
+  }
+  .active-chip .x {
+    cursor: pointer; opacity: 0.7;
+    width: 14px; height: 14px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(13, 122, 115, 0.15);
+  }
+  .active-chip .x:hover { opacity: 1; }
+  .clear-btn {
+    margin-left: auto;
+    color: var(--teal); background: none; border: 0;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+  }
+  .clear-btn:hover { text-decoration: underline; }
+
+  /* ============ Project table ============ */
+  .project-table { width: 100%; border-collapse: collapse; }
+  .project-table thead th {
+    text-align: left;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    background: #fcfcfd;
+  }
+  .project-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.1s;
+  }
+  .project-table tbody tr:last-child { border-bottom: 0; }
+  .project-table tbody tr:hover { background: var(--bg); }
+  .project-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  .project-name { font-weight: 600; color: var(--text); }
+  .project-id { font-size: 12px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .project-brand {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 1px 6px; border-radius: 4px;
+    margin-left: 6px;
+    background: var(--bg); color: var(--muted);
+    vertical-align: middle;
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .status-pill.at-risk { background: var(--red-light); color: var(--red); }
+  .status-pill.permitting { background: var(--amber-light); color: var(--amber); }
+  .status-pill.construction { background: var(--green-light); color: var(--green); }
+  .status-pill.sale { background: var(--blue-light); color: var(--blue); }
+  .status-pill.active { background: var(--teal-light); color: var(--teal); }
+  .status-pill.draft { background: #f1f5f9; color: var(--muted); }
+
+  .owner-cell { display: flex; align-items: center; gap: 8px; }
+  .owner-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    color: #fff; font-size: 11px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .city-cell { color: var(--text-soft); }
+  .exit-cell { font-weight: 600; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+  .risk-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--red-dark);
+    background: var(--red-light);
+    padding: 3px 9px; border-radius: 10px;
+    font-weight: 500;
+  }
+
+  /* ============ Team groups ============ */
+  .team-group { margin-bottom: 18px; }
+  .team-group:last-child { margin-bottom: 0; }
+  .team-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+  .team-header.design { background: linear-gradient(90deg, var(--purple-light), #f8f4ff); }
+  .team-header.development { background: linear-gradient(90deg, var(--blue-light), #f0f5fe); }
+  .team-header.construction { background: linear-gradient(90deg, var(--green-light), #f0fbf5); }
+  .team-header.sales { background: linear-gradient(90deg, var(--amber-light), #fef9ee); }
+  .team-name {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 14px;
+  }
+  .team-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .team-header.design .team-name { color: var(--purple); }
+  .team-header.design .team-dot { background: var(--purple); }
+  .team-header.development .team-name { color: var(--blue); }
+  .team-header.development .team-dot { background: var(--blue); }
+  .team-header.construction .team-name { color: var(--green); }
+  .team-header.construction .team-dot { background: var(--green); }
+  .team-header.sales .team-name { color: var(--amber); }
+  .team-header.sales .team-dot { background: var(--amber); }
+  .team-count {
+    background: rgba(255,255,255,0.8);
+    padding: 2px 9px; border-radius: 10px;
+    font-size: 12px; font-weight: 600;
+    color: var(--text-soft);
+  }
+
+  /* ============ Quarter group ============ */
+  .quarter-group { margin-bottom: 18px; }
+  .quarter-group:last-child { margin-bottom: 0; }
+  .quarter-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: linear-gradient(90deg, var(--teal-light), var(--teal-50));
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+  .quarter-label { font-weight: 700; font-size: 14px; color: var(--teal); }
+  .quarter-meta { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .quarter-pill {
+    background: rgba(255,255,255,0.8);
+    padding: 2px 9px; border-radius: 10px;
+    font-size: 12px; font-weight: 600;
+    color: var(--text-soft);
+  }
+
+  .empty-row td { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* ============ Group-by Tabs ============ */
+  .group-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .group-tabs-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 8px 0 10px;
+  }
+  .group-tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 0;
+    background: transparent;
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 13px; font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: inherit;
+  }
+  .group-tab:hover { color: var(--text-soft); }
+  .group-tab.active {
+    background: #fff;
+    color: var(--teal);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  }
+  .group-tab .tab-icon { font-size: 13px; }
+
+  /* Scoped to focus filter row */
+  .focus-indicator {
+    display: none;
+    align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--teal-light);
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--teal);
+  }
+  .focus-indicator.show { display: flex; }
+  .focus-indicator.red { background: var(--red-light); color: var(--red-dark); }
+  .focus-indicator .x {
+    margin-left: auto;
+    cursor: pointer;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    width: 18px; height: 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+
+  @media (max-width: 1180px) {
+    .summary-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>AlphaX Hub</h1>
+      <div class="sub">Management Dashboard</div>
+    </div>
+    <a class="nav-item active"><span>▦</span> Dashboard</a>
+    <a class="nav-item"><span>▤</span> Projects</a>
+    <a class="nav-item"><span>⇄</span> Workflow</a>
+    <a class="nav-item"><span>☰</span> My Tasks</a>
+    <a class="nav-item"><span>◉</span> Team</a>
+    <a class="nav-item"><span>▥</span> Performance Review</a>
+
+    <div class="nav-section-label">Settings</div>
+    <a class="nav-item"><span>＋</span> Members</a>
+    <a class="nav-item"><span>⟳</span> Audit Logs</a>
+    <a class="nav-item"><span>⚙</span> Settings</a>
+
+    <div class="sidebar-footer">
+      <button class="btn-create">+ Create New Project</button>
+      <a class="nav-item" style="margin-top:16px"><span>?</span> Support</a>
+      <a class="nav-item"><span>↪</span> Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <div class="search">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search projects, owners, cities..." />
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn">🔔</button>
+        <button class="icon-btn">?</button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="avatar">LG</div>
+          <div class="user-info">
+            <span class="user-name">Leona Guo</span>
+            <span class="user-role">Owner</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- Page Header with brand dropdown -->
+      <div class="page-header">
+        <div>
+          <div class="brand-dropdown" id="brandDropdown">
+            <button class="brand-dropdown-trigger" onclick="toggleBrandMenu(event)">
+              <span id="brandLabel">All Brands</span>
+              <span class="chev">▾</span>
+            </button>
+            <div class="brand-dropdown-menu">
+              <div class="brand-option selected" data-brand="all">
+                <span>All Brands</span><span class="check">✓</span>
+              </div>
+              <div class="brand-option" data-brand="al-homes">
+                <span>AL Homes</span><span class="check">✓</span>
+              </div>
+              <div class="brand-option" data-brand="alera">
+                <span>Alera</span><span class="check">✓</span>
+              </div>
+              <div class="brand-option" data-brand="apex">
+                <span>Apex</span><span class="check">✓</span>
+              </div>
+            </div>
+          </div>
+          <div class="page-subtitle">Overview across pipeline — updated 2 min ago</div>
+        </div>
+        <div class="header-meta">
+          <span>📅 Q2 2026</span>
+          <span class="sep"></span>
+          <span>👁 Last viewed: today</span>
+        </div>
+      </div>
+
+      <!-- Summary cards as filters -->
+      <div class="filter-cards-label">
+        Quick filters <span class="hint">— click a card to filter projects below</span>
+      </div>
+      <div class="summary-grid">
+        <button class="filter-card" data-status="active" type="button">
+          <div class="top-row">
+            <span class="label">Active Pipeline</span>
+            <span class="icon-circle">↗</span>
+            <span class="check-pill">✓</span>
+          </div>
+          <div class="value">12</div>
+          <div class="meta">Current live ops</div>
+        </button>
+        <button class="filter-card at-risk" data-status="at-risk" type="button">
+          <div class="top-row">
+            <span class="label">At Risk</span>
+            <span class="icon-circle">⚠</span>
+            <span class="check-pill">✓</span>
+          </div>
+          <div class="value">4</div>
+          <div class="meta">Needs attention</div>
+        </button>
+        <button class="filter-card permitting" data-status="permitting" type="button">
+          <div class="top-row">
+            <span class="label">Under Permitting</span>
+            <span class="icon-circle">📋</span>
+            <span class="check-pill">✓</span>
+          </div>
+          <div class="value">3</div>
+          <div class="meta">Awaiting approval</div>
+        </button>
+        <button class="filter-card construction" data-status="construction" type="button">
+          <div class="top-row">
+            <span class="label">Under Construction</span>
+            <span class="icon-circle">🔧</span>
+            <span class="check-pill">✓</span>
+          </div>
+          <div class="value">5</div>
+          <div class="meta">In progress</div>
+        </button>
+        <button class="filter-card sale" data-status="sale" type="button">
+          <div class="top-row">
+            <span class="label">On Sale</span>
+            <span class="icon-circle">🏷</span>
+            <span class="check-pill">✓</span>
+          </div>
+          <div class="value">2</div>
+          <div class="meta">Market active</div>
+        </button>
+      </div>
+
+      <!-- Status focus indicator (when filter card is active) -->
+      <div class="focus-indicator" id="focusIndicator">
+        <span>🎯</span>
+        <span>Showing only <strong id="focusLabel"></strong> projects across all sections below</span>
+        <span class="x" onclick="clearStatusFilter()">✕</span>
+      </div>
+
+      <!-- ============ AT RISK Priority Section ============ -->
+      <section class="section at-risk-section">
+        <div class="section-header">
+          <div class="section-title">
+            <span class="icon-box">⚠</span>
+            At Risk — Priority Watch
+            <span class="badge" id="atRiskCount">4 projects</span>
+          </div>
+        </div>
+        <div class="section-desc">Projects flagged as needing immediate attention. Review owner, timeline, and blockers.</div>
+
+        <div class="filters-row">
+          <span style="color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Filter</span>
+          <label class="filter-pill">
+            <span class="pill-label">City:</span>
+            <select id="risk-filter-city">
+              <option value="">All</option>
+              <option>Cupertino</option>
+              <option>San Jose</option>
+              <option>Palo Alto</option>
+              <option>Mountain View</option>
+              <option>Sunnyvale</option>
+            </select>
+          </label>
+          <label class="filter-pill">
+            <span class="pill-label">Owner:</span>
+            <select id="risk-filter-owner">
+              <option value="">All</option>
+              <option>Leona Guo</option>
+              <option>Marcus Chen</option>
+              <option>Aisha Patel</option>
+              <option>Diego Ramos</option>
+            </select>
+          </label>
+          <button class="clear-btn" onclick="clearRiskFilters()">Clear</button>
+        </div>
+
+        <table class="project-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>City</th>
+              <th>Stage</th>
+              <th>Owner</th>
+              <th>Exit Quarter</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-at-risk"></tbody>
+        </table>
+      </section>
+
+      <!-- ============ All Projects (Group By tabs) ============ -->
+      <section class="section">
+        <div class="section-header">
+          <div class="section-title">
+            <span class="icon-box">▦</span>
+            All Projects
+            <span class="badge" id="pipelineCount">14 projects</span>
+          </div>
+          <div class="group-tabs" role="tablist">
+            <span class="group-tabs-label">Group by</span>
+            <button class="group-tab active" data-group="team" role="tab" aria-selected="true">
+              <span class="tab-icon">◉</span> Team
+            </button>
+            <button class="group-tab" data-group="quarter" role="tab" aria-selected="false">
+              <span class="tab-icon">📅</span> Exit Quarter
+            </button>
+          </div>
+        </div>
+        <div class="section-desc" id="groupDesc">Pipeline grouped by responsible team. Use filters to narrow scope.</div>
+
+        <div class="filters-row">
+          <span style="color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Filter</span>
+          <label class="filter-pill">
+            <span class="pill-label">City:</span>
+            <select id="pipeline-filter-city">
+              <option value="">All</option>
+              <option>Cupertino</option>
+              <option>San Jose</option>
+              <option>Palo Alto</option>
+              <option>Mountain View</option>
+              <option>Sunnyvale</option>
+            </select>
+          </label>
+          <label class="filter-pill">
+            <span class="pill-label">Owner:</span>
+            <select id="pipeline-filter-owner">
+              <option value="">All</option>
+              <option>Leona Guo</option>
+              <option>Marcus Chen</option>
+              <option>Aisha Patel</option>
+              <option>Diego Ramos</option>
+            </select>
+          </label>
+          <button class="clear-btn" onclick="clearPipelineFilters()">Clear</button>
+        </div>
+
+        <div id="pipeline-groups"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ Sample data ============
+const projects = [
+  // At Risk
+  { id: 'AX-A3AE9C', name: '10050 N Foothill Ave', brand: 'al-homes', city: 'Cupertino',  team: 'design',       owner: 'Leona Guo',    ownerColor: '#0d7a73', exit: '2027 Q3', status: 'at-risk', risk: 'Design delays' },
+  { id: 'AX-CA6937', name: '11111 S Boulevard',    brand: 'alera',   city: 'San Jose',   team: 'development',  owner: 'Marcus Chen',  ownerColor: '#2563eb', exit: '2027 Q1', status: 'at-risk', risk: 'Budget overrun' },
+  { id: 'AX-93EF00', name: '450 Hamilton Ave',     brand: 'apex',     city: 'Palo Alto',  team: 'construction', owner: 'Aisha Patel',  ownerColor: '#7c3aed', exit: '2026 Q4', status: 'at-risk', risk: 'Behind schedule' },
+  { id: 'AX-78BD12', name: '2200 Bryant St',       brand: 'al-homes', city: 'Mountain View', team: 'sales',     owner: 'Diego Ramos',  ownerColor: '#d97706', exit: '2026 Q3', status: 'at-risk', risk: 'Low buyer interest' },
+
+  // Permitting
+  { id: 'AX-55C201', name: '3050 El Camino Real',  brand: 'alera',   city: 'Sunnyvale',  team: 'development',  owner: 'Marcus Chen',  ownerColor: '#2563eb', exit: '2027 Q2', status: 'permitting', risk: '' },
+  { id: 'AX-44D310', name: '801 Foster Ln',        brand: 'apex',     city: 'Palo Alto',  team: 'design',       owner: 'Aisha Patel',  ownerColor: '#7c3aed', exit: '2027 Q4', status: 'permitting', risk: '' },
+  { id: 'AX-22A881', name: '9 Oak Park Dr',        brand: 'al-homes', city: 'Cupertino',  team: 'development',  owner: 'Leona Guo',    ownerColor: '#0d7a73', exit: '2028 Q1', status: 'permitting', risk: '' },
+
+  // Construction
+  { id: 'AX-67D419', name: '1500 Park Place',      brand: 'al-homes', city: 'San Jose',   team: 'construction', owner: 'Diego Ramos',  ownerColor: '#d97706', exit: '2026 Q4', status: 'construction', risk: '' },
+  { id: 'AX-67D420', name: '20 Cedar Hills',       brand: 'apex',     city: 'Cupertino',  team: 'construction', owner: 'Aisha Patel',  ownerColor: '#7c3aed', exit: '2027 Q1', status: 'construction', risk: '' },
+  { id: 'AX-67D421', name: '88 Highland Way',      brand: 'alera',   city: 'Mountain View', team: 'construction', owner: 'Marcus Chen', ownerColor: '#2563eb', exit: '2027 Q2', status: 'construction', risk: '' },
+  { id: 'AX-67D422', name: '405 Lakefront Blvd',   brand: 'al-homes', city: 'Sunnyvale',  team: 'construction', owner: 'Leona Guo',    ownerColor: '#0d7a73', exit: '2026 Q4', status: 'construction', risk: '' },
+  { id: 'AX-67D423', name: '7 Maple Crossing',     brand: 'apex',     city: 'Palo Alto',  team: 'construction', owner: 'Aisha Patel',  ownerColor: '#7c3aed', exit: '2027 Q3', status: 'construction', risk: '' },
+
+  // On Sale
+  { id: 'AX-88E700', name: '12 Willow Ridge',      brand: 'alera',   city: 'Cupertino',  team: 'sales',        owner: 'Diego Ramos',  ownerColor: '#d97706', exit: '2026 Q3', status: 'sale', risk: '' },
+  { id: 'AX-88E701', name: '500 Crestview',        brand: 'al-homes', city: 'San Jose',   team: 'sales',        owner: 'Diego Ramos',  ownerColor: '#d97706', exit: '2026 Q3', status: 'sale', risk: '' },
+];
+
+const teamOrder = ['design', 'development', 'construction', 'sales'];
+const teamLabels = {
+  design: 'Design Team',
+  development: 'Development Team',
+  construction: 'Construction Team',
+  sales: 'Sales Team',
+};
+const statusLabel = {
+  'active': 'Active',
+  'at-risk': 'At Risk',
+  'permitting': 'Permitting',
+  'construction': 'Construction',
+  'sale': 'On Sale',
+  'draft': 'Draft',
+};
+const brandLabels = {
+  'all': 'All Brands',
+  'al-homes': 'AL Homes',
+  'alera': 'Alera',
+  'apex': 'Apex',
+};
+
+// ============ State ============
+const state = {
+  brand: 'all',
+  statusFilter: null, // 'active' | 'at-risk' | 'permitting' | 'construction' | 'sale'
+  risk: { city: '', owner: '' },
+  pipeline: { city: '', owner: '', groupBy: 'team' }, // groupBy: 'team' | 'quarter'
+};
+
+// ============ Helpers ============
+function initials(name) {
+  return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase();
+}
+function applyBrand(list) {
+  return state.brand === 'all' ? list : list.filter(p => p.brand === state.brand);
+}
+function applyStatus(list) {
+  if (!state.statusFilter) return list;
+  if (state.statusFilter === 'active') return list; // "Active" = everything in pipeline
+  return list.filter(p => p.status === state.statusFilter);
+}
+function getFiltered(scope) {
+  let list = applyBrand(projects);
+  list = applyStatus(list);
+  const f = state[scope];
+  if (f.city) list = list.filter(p => p.city === f.city);
+  if (f.owner) list = list.filter(p => p.owner === f.owner);
+  return list;
+}
+function projectRow(p, { showTeam = false } = {}) {
+  const brandTag = p.brand !== 'all' ? `<span class="project-brand">${brandLabels[p.brand]}</span>` : '';
+  const teamCell = showTeam ? `<td>${teamLabels[p.team]}</td>` : '';
+  const stageCell = `<td><span class="status-pill ${p.status}">${statusLabel[p.status]}</span></td>`;
+  const riskCell = p.risk
+    ? `<td><span class="risk-tag">⚠ ${p.risk}</span></td>`
+    : `<td><span style="color:var(--soft);font-size:12px">—</span></td>`;
+  return `
+    <tr>
+      <td>
+        <div class="project-name">${p.name}${brandTag}</div>
+        <div class="project-id">#${p.id}</div>
+      </td>
+      <td class="city-cell">${p.city}</td>
+      ${stageCell}
+      <td>
+        <div class="owner-cell">
+          <span class="owner-avatar" style="background:${p.ownerColor}">${initials(p.owner)}</span>
+          <span>${p.owner}</span>
+        </div>
+      </td>
+      ${showTeam ? teamCell : `<td class="exit-cell">${p.exit}</td>`}
+      ${riskCell}
+    </tr>
+  `;
+}
+
+// ============ At Risk render ============
+function renderAtRisk() {
+  // At-risk section is always at-risk projects only (overrides status filter to at-risk subset)
+  let list = applyBrand(projects).filter(p => p.status === 'at-risk');
+  const f = state.risk;
+  if (f.city) list = list.filter(p => p.city === f.city);
+  if (f.owner) list = list.filter(p => p.owner === f.owner);
+  const tbody = document.getElementById('tbody-at-risk');
+  tbody.innerHTML = list.length
+    ? list.map(p => projectRow(p)).join('')
+    : `<tr class="empty-row"><td colspan="6">No at-risk projects match the current filters</td></tr>`;
+  document.getElementById('atRiskCount').textContent = `${list.length} project${list.length === 1 ? '' : 's'}`;
+}
+
+// ============ Pipeline render (tabs: by team / by quarter) ============
+function renderPipeline() {
+  const filtered = getFiltered('pipeline');
+  document.getElementById('pipelineCount').textContent = `${filtered.length} project${filtered.length === 1 ? '' : 's'}`;
+  const container = document.getElementById('pipeline-groups');
+  const desc = document.getElementById('groupDesc');
+
+  if (state.pipeline.groupBy === 'team') {
+    desc.textContent = 'Pipeline grouped by responsible team. Use filters to narrow scope.';
+    container.innerHTML = teamOrder.map(team => {
+      const rows = filtered.filter(p => p.team === team);
+      return `
+        <div class="team-group">
+          <div class="team-header ${team}">
+            <div class="team-name"><span class="team-dot"></span>${teamLabels[team]}</div>
+            <span class="team-count">${rows.length} project${rows.length === 1 ? '' : 's'}</span>
+          </div>
+          <table class="project-table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>City</th>
+                <th>Stage</th>
+                <th>Owner</th>
+                <th>Exit Quarter</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.length
+                ? rows.map(p => projectRow(p)).join('')
+                : `<tr class="empty-row"><td colspan="6">No projects in this team match the current filters</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }).join('');
+  } else {
+    desc.textContent = 'Timeline view — projects sorted by their planned exit quarter.';
+    const byQuarter = {};
+    filtered.forEach(p => { (byQuarter[p.exit] ||= []).push(p); });
+    const sortedQuarters = Object.keys(byQuarter).sort();
+    if (!sortedQuarters.length) {
+      container.innerHTML = `<div style="padding:32px;text-align:center;color:var(--muted)">No projects match the current filters</div>`;
+      return;
+    }
+    container.innerHTML = sortedQuarters.map(q => `
+      <div class="quarter-group">
+        <div class="quarter-header">
+          <span style="color:var(--teal);font-weight:700">▸</span>
+          <span class="quarter-label">${q}</span>
+          <span class="quarter-pill">${byQuarter[q].length} project${byQuarter[q].length === 1 ? '' : 's'}</span>
+        </div>
+        <table class="project-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>City</th>
+              <th>Stage</th>
+              <th>Owner</th>
+              <th>Team</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${byQuarter[q].map(p => projectRow(p, { showTeam: true })).join('')}
+          </tbody>
+        </table>
+      </div>
+    `).join('');
+  }
+}
+
+function renderAll() {
+  renderAtRisk();
+  renderPipeline();
+  renderFocusIndicator();
+}
+
+// ============ Focus indicator ============
+function renderFocusIndicator() {
+  const el = document.getElementById('focusIndicator');
+  if (state.statusFilter) {
+    el.classList.add('show');
+    el.classList.toggle('red', state.statusFilter === 'at-risk');
+    document.getElementById('focusLabel').textContent = statusLabel[state.statusFilter];
+  } else {
+    el.classList.remove('show', 'red');
+  }
+}
+function clearStatusFilter() {
+  state.statusFilter = null;
+  document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active'));
+  renderAll();
+}
+
+// ============ Filter card toggles ============
+document.querySelectorAll('.filter-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const status = card.dataset.status;
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('active'));
+    if (wasActive) {
+      state.statusFilter = null;
+    } else {
+      card.classList.add('active');
+      state.statusFilter = status;
+    }
+    renderAll();
+  });
+});
+
+// ============ Sub-section filter listeners ============
+function bindFilter(scope, idCity, idOwner) {
+  document.getElementById(idCity).addEventListener('change', e => {
+    state[scope].city = e.target.value;
+    renderAll();
+  });
+  document.getElementById(idOwner).addEventListener('change', e => {
+    state[scope].owner = e.target.value;
+    renderAll();
+  });
+}
+bindFilter('risk', 'risk-filter-city', 'risk-filter-owner');
+bindFilter('pipeline', 'pipeline-filter-city', 'pipeline-filter-owner');
+
+function clearRiskFilters() {
+  state.risk = { city: '', owner: '' };
+  document.getElementById('risk-filter-city').value = '';
+  document.getElementById('risk-filter-owner').value = '';
+  renderAll();
+}
+function clearPipelineFilters() {
+  state.pipeline.city = '';
+  state.pipeline.owner = '';
+  document.getElementById('pipeline-filter-city').value = '';
+  document.getElementById('pipeline-filter-owner').value = '';
+  renderAll();
+}
+
+// ============ Group-by tabs ============
+document.querySelectorAll('.group-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.group-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    state.pipeline.groupBy = tab.dataset.group;
+    renderPipeline();
+  });
+});
+
+// ============ Brand dropdown ============
+function toggleBrandMenu(e) {
+  e.stopPropagation();
+  document.getElementById('brandDropdown').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('brandDropdown');
+  if (!dd.contains(e.target)) dd.classList.remove('open');
+});
+document.querySelectorAll('.brand-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const brand = opt.dataset.brand;
+    state.brand = brand;
+    document.querySelectorAll('.brand-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('brandLabel').textContent = brandLabels[brand];
+    document.getElementById('brandDropdown').classList.remove('open');
+    renderAll();
+  });
+});
+
+renderAll();
+</script>
+</body>
+</html>
