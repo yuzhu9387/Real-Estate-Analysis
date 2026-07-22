@@ -17,3 +17,5 @@ Welcome to the Real Estate Analysis dashboards and reports. Below are the availa
 ### 🚀 Demos
 - [**BuildFlow Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/buildflow-demo.html) - BuildFlow demonstration
 - [**AlphaX Hub Dashboard Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/alpha%20x%20dashboard.html) - AlphaX Hub dashboard demonstration
+- [**AlphaX System Documentation**](https://yuzhu9387.github.io/Real-Estate-Analysis/AlphaX_System_Documentation.html) - AlphaX System documentation
+- [**AlphaX System Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/alphax-system-demo.html) - AlphaX System demonstration
