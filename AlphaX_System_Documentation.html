@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaX Project Management System — Documentation</title>
+<style>
+  :root{
+    --navy:#1f3a5f; --blue:#2f5c8a; --accent:#3b82f6; --light:#eef3f9;
+    --ink:#1f2937; --muted:#6b7280; --line:#e3e8ef; --bg:#f6f8fb;
+    --chip:#eaf1fb; --ok:#22c55e; --warn:#f97316; --code:#f3f4f6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.55;font-size:15px}
+  /* layout */
+  .wrap{display:flex;min-height:100vh}
+  nav{position:sticky;top:0;align-self:flex-start;width:248px;height:100vh;overflow-y:auto;
+    background:var(--navy);color:#cdd8e6;padding:22px 0;flex-shrink:0}
+  nav .brand{padding:0 22px 16px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:12px}
+  nav .brand b{color:#fff;font-size:19px;display:block;letter-spacing:.3px}
+  nav .brand span{font-size:11.5px;color:#8fa6c0}
+  nav a{display:block;color:#cdd8e6;text-decoration:none;padding:8px 22px;font-size:13.5px;
+    border-left:3px solid transparent}
+  nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+  nav a.grp{margin-top:10px;font-size:11px;text-transform:uppercase;letter-spacing:.8px;
+    color:#7e96b3;pointer-events:none;padding-bottom:2px}
+  main{flex:1;max-width:1080px;margin:0 auto;padding:40px 48px 80px}
+  /* hero */
+  .hero{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:14px;
+    padding:34px 38px;margin-bottom:34px}
+  .hero h1{margin:0 0 8px;font-size:28px}
+  .hero p{margin:0;color:#d7e3f2;max-width:760px}
+  .hero .tags{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+  .hero .tags span{background:rgba(255,255,255,.16);padding:5px 12px;border-radius:20px;font-size:12.5px}
+  /* sections */
+  section{margin-bottom:46px;scroll-margin-top:20px}
+  h2{font-size:21px;color:var(--navy);border-bottom:2px solid var(--line);padding-bottom:8px;
+    margin:0 0 6px;display:flex;align-items:center;gap:10px}
+  h2 .n{background:var(--accent);color:#fff;font-size:13px;width:26px;height:26px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+  .lead{color:var(--muted);margin:0 0 18px;font-size:14px}
+  h3{font-size:16px;color:var(--blue);margin:26px 0 10px}
+  /* tables */
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;
+    box-shadow:0 1px 3px rgba(20,40,80,.06);font-size:13.5px;margin:10px 0}
+  th{background:var(--blue);color:#fff;text-align:left;padding:10px 13px;font-weight:600;font-size:12.5px}
+  td{padding:9px 13px;border-top:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafcfe}
+  td code,.mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;background:var(--code);
+    padding:1px 6px;border-radius:4px;color:#b4316b}
+  td b{color:var(--navy)}
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px;margin:12px 0}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px 17px;
+    box-shadow:0 1px 2px rgba(20,40,80,.04)}
+  .card h4{margin:0 0 6px;font-size:14.5px;color:var(--navy)}
+  .card p{margin:0;font-size:13px;color:#4b5563}
+  .card .badge{font-size:10.5px;background:var(--chip);color:var(--blue);padding:2px 8px;
+    border-radius:12px;float:right;font-weight:600}
+  /* pill / flow */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0}
+  .flow .step{background:var(--chip);color:var(--blue);padding:7px 15px;border-radius:8px;
+    font-weight:600;font-size:13.5px}
+  .flow .arr{color:var(--muted);font-weight:700}
+  .note{background:#fff7ed;border-left:4px solid var(--warn);padding:11px 15px;border-radius:6px;
+    margin:14px 0;font-size:13px;color:#7c4a12}
+  .tip{background:#eff6ff;border-left:4px solid var(--accent);padding:11px 15px;border-radius:6px;
+    margin:14px 0;font-size:13px;color:#1e40af}
+  /* color chips */
+  .chip{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;
+    margin-right:7px;border:1px solid rgba(0,0,0,.1)}
+  .src{color:var(--muted);font-size:11.5px;font-family:monospace}
+  footer{color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--line);
+    padding-top:20px;margin-top:30px}
+  @media(max-width:820px){nav{display:none}main{padding:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <div class="brand"><b>AlphaX</b><span>Project Management System</span></div>
+  <a href="#overview">Overview</a>
+  <a class="grp">Using the system</a>
+  <a href="#pages">1 · Pages &amp; Navigation</a>
+  <a href="#features">2 · Features &amp; Functions</a>
+  <a class="grp">Data model</a>
+  <a href="#objects">3 · Domain Objects</a>
+  <a href="#tables">4 · Database Tables</a>
+  <a class="grp">Reference</a>
+  <a href="#dropdowns">5 · Dropdowns &amp; Options</a>
+  <a href="#roles">6 · Roles &amp; Permissions</a>
+  <a href="#glossary">7 · Glossary</a>
+  <a href="#colors">8 · Colors &amp; Config</a>
+</nav>
+
+<main>
+<div class="hero" id="overview">
+  <h1>AlphaX Project Management System</h1>
+  <p>A platform to manage residential development projects across their full lifecycle — from land acquisition
+  through entitlement, permitting, construction and sales — with workflows, tasks, financial pro formas,
+  team coordination and a Lark data integration. This document explains how every page, feature and object works.</p>
+  <div class="tags">
+    <span>4 Business Lines</span><span>5 Lifecycle Phases</span><span>Project → Stage → Unit hierarchy</span>
+    <span>Template-driven workflows</span><span>Pro forma financials</span><span>California in-fill housing</span>
+  </div>
+</div>
+
+<!-- KEY CONCEPTS -->
+<section>
+  <h2><span class="n">★</span> Key Concepts (read first)</h2>
+  <p class="lead">Five ideas underpin everything else in the system.</p>
+
+  <h3>1. Business Lines (the 4 brands)</h3>
+  <p>Every project belongs to one business line. The list is the single source of truth — every dropdown reads from it.</p>
+  <div class="flow">
+    <span class="step">AL Homes SFH</span><span class="step">AL Homes Community</span>
+    <span class="step">Alera</span><span class="step">Apex</span>
+  </div>
+
+  <h3>2. The 5 Lifecycle Phases</h3>
+  <p>A project moves sequentially through five phases. Financials live in a separate <b>Investment</b> tab shown alongside them.</p>
+  <div class="flow">
+    <span class="step">Acquisition</span><span class="arr">→</span>
+    <span class="step">Entitlement</span><span class="arr">→</span>
+    <span class="step">Permitting</span><span class="arr">→</span>
+    <span class="step">Construction</span><span class="arr">→</span>
+    <span class="step">Sales</span>
+    <span class="arr" style="margin:0 4px">+</span><span class="step" style="background:#fef3c7;color:#92400e">Investment</span>
+  </div>
+  <div class="note"><b>Phase vs Display Phase:</b> internally the database uses a larger "FSM" vocabulary
+  (evaluation, purchase, government, final, closeout…). These are <i>collapsed</i> into the 5 display phases for the UI.
+  An <code>ON_HOLD</code> project shows its previous phase and is colored orange.</div>
+
+  <h3>3. Project Hierarchy: Project → Stage → Unit</h3>
+  <p>A project can be broken into child nodes. The <code>node_level</code> field marks each node.</p>
+  <div class="grid">
+    <div class="card"><h4>Project</h4><p>The root node — the overall development.</p></div>
+    <div class="card"><h4>Stage</h4><p>A phase-level sub-division of a project (e.g. a sub-phase or split).</p></div>
+    <div class="card"><h4>Unit</h4><p>An individual sellable building. SB9 lot-splits create several unit rows.</p></div>
+  </div>
+
+  <h3>4. Workflows: Template → Project Workflow → Task</h3>
+  <p>Repeatable processes are authored once as templates, then snapshotted onto a project's phase as live tasks.</p>
+  <div class="flow">
+    <span class="step">Workflow Template</span><span class="arr">→ assign to phase →</span>
+    <span class="step">Project Workflow</span><span class="arr">→ becomes →</span>
+    <span class="step">Tasks (with owners, dates, dependencies, reviews)</span>
+  </div>
+
+  <h3>5. Roles control what you can do</h3>
+  <p>Three global roles plus per-project role assignments and per-table permission grants.</p>
+  <div class="flow">
+    <span class="step">admin</span><span class="step">manager</span><span class="step">viewer</span>
+  </div>
+</section>
+
+<!-- 1. PAGES -->
+<section id="pages">
+  <h2><span class="n">1</span> Pages &amp; Navigation</h2>
+  <p class="lead">Routing is hash-based (<code>#/...</code>). The left sidebar has two groups: <b>Primary</b>
+  (Dashboard, Portfolio, Teams, My Tasks, Workflow Templates) and <b>System &amp; Setup</b>
+  (Reminders, Integration, DB Admin*, User Mgmt*). * = admin only.</p>
+  <table>
+    <tr><th>Page</th><th>Route</th><th>Access</th><th>What it does</th></tr>
+    <tr><td><b>Dashboard</b><br><span class="src">(Business Plan)</span></td><td><code>#/dashboard</code></td><td>All</td>
+      <td>Executive view. A pipeline matrix pivots leaf units by <b>exit year × business group</b> with unit / revenue / gross-profit totals; plus exit-pipeline buckets.</td></tr>
+    <tr><td><b>Project Portfolio</b></td><td><code>#/projects</code></td><td>All</td>
+      <td>Table of all projects with phase filter, search, CSV export and a <b>Portfolio Gantt</b>. Expandable parent → stage → unit rows. Click a row to open the project.</td></tr>
+    <tr><td><b>Project Detail</b></td><td><code>#/projects/{id}</code></td><td>All</td>
+      <td>The full project page: summary, schedule progress, the 5 phase tabs + Investment tab, per-phase workflows / tasks / documents / activity, project-role assignment, duplicate &amp; delete.</td></tr>
+    <tr><td><b>New Project</b></td><td><code>#/projects/new</code></td><td>manager+</td>
+      <td>Create a project (name, address, business line, pipeline category, phase, PM, budget). Can create with workflows or with child stages/units. Draft auto-saved locally.</td></tr>
+    <tr><td><b>Teams</b></td><td><code>#/teams/{view}/{phase}</code></td><td>All</td>
+      <td>Cross-functional team board with Gantt or List mode, brand filter and sort. Shows team assignments per phase plus rollup metrics.</td></tr>
+    <tr><td><b>My Tasks</b></td><td><code>#/my-tasks</code></td><td>All</td>
+      <td>Personal task hub. Tabs Open / Under Review / Completed; List or Kanban; priority focus; workflow progress cards; task detail drawer.</td></tr>
+    <tr><td><b>Workflow Templates</b></td><td><code>#/workflow-templates</code></td><td>manager+</td>
+      <td>Library + editor for reusable workflow templates. Search/archive filter, duplicate, categorize by product type / city / phase / department, variant matrix.</td></tr>
+    <tr><td><b>Reminders &amp; Alerts</b></td><td><code>#/reminders</code></td><td>All</td>
+      <td>Alert-rule builder (target, condition field, operator, threshold, channels) + a fired-events log.</td></tr>
+    <tr><td><b>Integration Settings</b></td><td><code>#/integration</code></td><td>manager+</td>
+      <td>Lark (Feishu) sync credentials &amp; field mapping, Bitable/Sheet/Doc import, Google Drive/Sheets linking.</td></tr>
+    <tr><td><b>Database Admin</b></td><td><code>#/db-admin</code></td><td>admin</td>
+      <td>Schema browser &amp; editor, paginated row CRUD, truncate/seed, schema diagram.</td></tr>
+    <tr><td><b>User Management</b></td><td><code>#/user-admin</code></td><td>admin</td>
+      <td>User roster, role assignment, team membership, invites, and per-user table-level permission grants.</td></tr>
+    <tr><td><b>Login / Accept Invite</b></td><td>pre-auth</td><td>Public</td>
+      <td>Email/password login &amp; registration; invite acceptance with password setup.</td></tr>
+  </table>
+</section>
+
+<!-- 2. FEATURES -->
+<section id="features">
+  <h2><span class="n">2</span> Features &amp; Functions</h2>
+  <p class="lead">Grouped by area. Each is a capability available inside one or more pages.</p>
+
+  <h3>Project &amp; Hierarchy</h3>
+  <div class="grid">
+    <div class="card"><h4>Create Project</h4><p>Form-based creation; optionally with workflows or with child stages/units.</p></div>
+    <div class="card"><h4>Project Hierarchy</h4><p>Navigate the Project → Stage → Unit tree via breadcrumb + sibling tabs; create/delete children.</p></div>
+    <div class="card"><h4>Break into sub-projects</h4><p>Split a project into stages or units (relation: split / sub_phase / sub_project).</p></div>
+    <div class="card"><h4>Inline Phase Edit</h4><p>Toggle edit mode, batch field changes into a draft, Save commits all at once.</p></div>
+    <div class="card"><h4>Kick Off</h4><p>Set the phase start date, which locks in the schedule/timeline engine (reversible).</p></div>
+    <div class="card"><h4>Duplicate Project</h4><p>Clone a project incl. workflows, retargeting all dates.</p></div>
+    <div class="card"><h4>Schedule Progress</h4><p>Phase timeline 0–100% with days-remaining and on-schedule / at-risk indicator.</p></div>
+  </div>
+
+  <h3>Workflows &amp; Tasks</h3>
+  <div class="grid">
+    <div class="card"><h4>Assign Workflow</h4><p>Attach a template to a phase; optional city / product-type override; set owner &amp; critical path.</p></div>
+    <div class="card"><h4>Custom Workflow</h4><p>Author a non-template workflow for a phase (tasks, deps, durations).</p></div>
+    <div class="card"><h4>Template Editor</h4><p>Drag-drop task rows, dependency picker (finish-to-start + lag), day/duration inputs, archive/duplicate.</p></div>
+    <div class="card"><h4>Variant / Flow Matrix</h4><p>Phase × Product-Type grid of templates; city override with base inheritance.</p></div>
+    <div class="card"><h4>Task Management</h4><p>Quick-add, edit metadata, set status, submit / approve / request revision.</p></div>
+    <div class="card"><h4>Subtasks</h4><p>Hierarchical nesting of tasks.</p></div>
+    <div class="card"><h4>Comments &amp; Activity</h4><p>Discussion / review comments + an activity feed of every change.</p></div>
+    <div class="card"><h4>Kanban Board</h4><p>Columns by display status: Not Started, In Progress, Under Review, Approved, Blocked.</p></div>
+  </div>
+
+  <h3>Finance</h3>
+  <div class="grid">
+    <div class="card"><h4>Proforma / Investment</h4><p>Multi-version pro forma: cost line items, loan terms, sale economics → auto outputs (gross/net profit, IRR, EM, ROI).</p></div>
+    <div class="card"><h4>Ledger</h4><p>Actual spend/revenue posted per phase &amp; category, rolled up against the plan.</p></div>
+    <div class="card"><h4>Item Standards</h4><p>Reference cost rates used to seed line items.</p></div>
+  </div>
+
+  <h3>Visuals &amp; Export</h3>
+  <div class="grid">
+    <div class="card"><h4>Project Gantt</h4><p>Pan/zoom (week/month/quarter/year), drag bars, milestone markers, dependency arrows.</p></div>
+    <div class="card"><h4>Portfolio Gantt</h4><p>Multi-project Gantt; segments colored by milestone type; monthly sales forecast.</p></div>
+    <div class="card"><h4>Documents</h4><p>Upload/link per phase &amp; category; version history, set-current, preview, download.</p></div>
+    <div class="card"><h4>Export</h4><p>CSV export of project columns.</p></div>
+  </div>
+
+  <h3>Admin &amp; Integration</h3>
+  <div class="grid">
+    <div class="card"><h4>Alert Rule Builder</h4><p>CRUD alert rules; toggle active.</p></div>
+    <div class="card"><h4>Lark Integration</h4><p>Credentials, Bitable/Sheet browser, field mapping, full/delta sync, doc import.</p></div>
+    <div class="card"><h4>Permission Grants</h4><p>Per-user table-level read / write / view_only; column-scoped read for sensitive fields.</p></div>
+    <div class="card"><h4>DB Admin Tools</h4><p>Schema editing, row CRUD, truncate/seed, schema diagram.</p></div>
+  </div>
+</section>
+
+<!-- 3. OBJECTS -->
+<section id="objects">
+  <h2><span class="n">3</span> Domain Objects</h2>
+  <p class="lead">The business entities the system manipulates, with their key fields.</p>
+
+  <h3>Core Project Model</h3>
+  <table>
+    <tr><th>Object</th><th>Represents</th><th>Key fields</th></tr>
+    <tr><td><b>Project</b></td><td>Root/stage/unit node in the hierarchy; has phase, timeline &amp; budget.</td>
+      <td>name, address, city, business_line, product_type, pipeline_category, current_phase, phase_start_date, budget, spend_to_date, completion_percent, parent_id, <code>node_level</code> (project|stage|unit), units_count, sale_status, risk_flag, target_exit_price, target_gross_profit</td></tr>
+    <tr><td><b>AcquisitionData</b></td><td>1:1 satellite for the Acquisition phase.</td>
+      <td>offer_price, purchase_price, purchase_date, closing_date, due_diligence_end, entity_holding_title, escrow_number, under_contract, acquisition_lead_id</td></tr>
+    <tr><td><b>PermittingData</b></td><td>1:1 satellite for the Permitting phase.</td><td>jurisdiction, permit_lead_id, notes</td></tr>
+    <tr><td><b>SalesData</b></td><td>1:1 satellite for the Sales phase.</td><td>sales_lead_id, presale_phase_1/2/3_date, contract_date</td></tr>
+    <tr><td><b>AuditLogEntry</b></td><td>Immutable record of a project change.</td><td>action, entity_type, entity_id, old_value, new_value, created_at</td></tr>
+  </table>
+
+  <h3>Product Types</h3>
+  <p>What is being built on a project. The 8 <b>selectable</b> types below are offered in every picker;
+  16 older <b>legacy</b> codes remain valid in old data but are hidden from new selections. A product type's
+  business line (brand) is derived automatically (Alera/Apex by prefix; community types → AL Homes Community; else AL Homes SFH).</p>
+  <table>
+    <tr><th>Code</th><th>Label</th><th>Short</th><th>Brand</th></tr>
+    <tr><td><code>single_family_house</code></td><td>Single Family House</td><td>SFH</td><td>AL Homes SFH</td></tr>
+    <tr><td><code>sb9_no_lot_split</code></td><td>SB9 No Lot Split</td><td>SB9</td><td>AL Homes SFH</td></tr>
+    <tr><td><code>sb9_lot_split</code></td><td>SB9 Lot Split</td><td>SB9 LS</td><td>AL Homes SFH</td></tr>
+    <tr><td><code>sb_684</code></td><td>SB 684</td><td>SB 684</td><td>AL Homes SFH</td></tr>
+    <tr><td><code>sb_1123</code></td><td>SB 1123</td><td>SB 1123</td><td>AL Homes SFH</td></tr>
+    <tr><td><code>mini_community</code></td><td>Mini Community</td><td>Mini Comm</td><td>AL Homes Community</td></tr>
+    <tr><td><code>community</code></td><td>Community</td><td>Community</td><td>AL Homes Community</td></tr>
+    <tr><td><code>starter_homes</code></td><td>Starter Homes</td><td>Starter</td><td>AL Homes Community</td></tr>
+  </table>
+  <div class="note"><b>16 legacy product types</b> (still valid, hidden from pickers): ADU programs
+  (<code>adu_pre_approved_program</code>, <code>adu_site_specific_custom</code>, +2 masterfile variants),
+  Alera remodel/addition variants (<code>alera_remodel_addition_*</code> — over-the-counter, San Jose 5-day,
+  expedited, regular ±planning), and AL Homes legacy codes (<code>al_homes_sfh_with_planning</code>,
+  <code>al_homes_sb9_no_lot_split</code>, <code>al_homes_sb9_with_lot_split</code>, <code>al_homes_lot_subdivision</code>,
+  <code>al_homes_duplex</code>, <code>al_homes_townhouses</code>, <code>al_homes_single_lot_sfh_no_planning</code>).</div>
+
+  <h3>Workflow &amp; Task Model</h3>
+  <table>
+    <tr><th>Object</th><th>Represents</th><th>Key fields</th></tr>
+    <tr><td><b>WorkflowTemplate</b></td><td>Reusable process definition for a product type/phase.</td>
+      <td>name, product_type, is_archived, total_start/end_day, total_duration_days, city, project_phase, category, owner_department_id</td></tr>
+    <tr><td><b>WorkflowTemplateTask</b></td><td>A task inside a template, positioned by day-of-phase.</td>
+      <td>name, default_start_day, default_end_day, default_owner_role_label, sort_order</td></tr>
+    <tr><td><b>WorkflowTemplateDep</b></td><td>Finish-to-start dependency between template tasks.</td>
+      <td>from_task_id, to_task_id, dependency_type (finish_to_start), lag_days</td></tr>
+    <tr><td><b>ProjectWorkflow</b></td><td>Instance of a template snapshotted onto a project phase.</td>
+      <td>project_phase, source_workflow_template_id, status (pending|in_progress|complete)</td></tr>
+    <tr><td><b>Task</b></td><td>A live task in a project workflow.</td>
+      <td>name, status, priority, owner_user_id, reviewer_user_id, is_blocked, is_unplanned, is_critical_path, planned/target/actual start &amp; end dates, parent_task_id</td></tr>
+    <tr><td><b>TaskComment</b></td><td>Discussion / review note.</td><td>body, kind (discussion|review_request|review_approve|review_revision), author_id</td></tr>
+    <tr><td><b>TaskActivity</b></td><td>Logged task transition.</td><td>kind (status_change|submit_review|approve|request_revision), from_status, to_status</td></tr>
+  </table>
+
+  <h3>Finance Model</h3>
+  <table>
+    <tr><th>Object</th><th>Represents</th><th>Key fields</th></tr>
+    <tr><td><b>ProformaVersion</b></td><td>A financial-model snapshot (inputs → outputs).</td>
+      <td>version_no, trigger_type (initial|phase_end|manual_refresh), phase, status (draft|locked), inputs_json, outputs_json, lineItems</td></tr>
+    <tr><td><b>ProformaLineItem</b></td><td>One cost/revenue row.</td>
+      <td>category, calc_method (per_sf|pct_of_base|per_year|manual), qty_or_sf, rate, amount, source (standard|manual)</td></tr>
+    <tr><td><b>ProformaStandard</b></td><td>A reference cost/rate seeding line items.</td><td>key, label, value, unit (per_sf|pct|per_year|flat), base</td></tr>
+    <tr><td><b>LedgerEntry</b></td><td>Actual posted spend/revenue.</td><td>phase, category, amount, tx_date, description</td></tr>
+  </table>
+
+  <h3>Teams (functional departments)</h3>
+  <p>A <b>Team</b> is a <code>departments</code> row flagged <code>is_team = true</code>. Teams own workflows
+  (a workflow template/instance has an <code>owner_department_id</code>) and appear on the Teams board, the
+  milestone color legend and the project-role pickers. The 9 default teams, in order:</p>
+  <table>
+    <tr><th>#</th><th>Team</th><th>Owns / typically responsible for</th></tr>
+    <tr><td>1</td><td><b>Acquisition</b></td><td>Land sourcing, offers, due diligence, closing</td></tr>
+    <tr><td>2</td><td><b>Arch</b></td><td>Architectural design &amp; entitlement/building packages</td></tr>
+    <tr><td>3</td><td><b>Civil</b></td><td>Civil engineering &amp; jurisdiction approvals</td></tr>
+    <tr><td>4</td><td><b>Interior Design</b></td><td>Interior design (ID/ID-CD packages, material lists)</td></tr>
+    <tr><td>5</td><td><b>Utility</b></td><td>Utility coordination</td></tr>
+    <tr><td>6</td><td><b>Exterior Package</b></td><td>Exterior &amp; landscape package</td></tr>
+    <tr><td>7</td><td><b>Construction</b></td><td>Build execution &amp; construction milestones</td></tr>
+    <tr><td>8</td><td><b>Sales</b></td><td>Presales, listing &amp; closing</td></tr>
+    <tr><td>9</td><td><b>Project Management</b></td><td>Overall coordination across teams</td></tr>
+  </table>
+  <div class="tip"><b>Teams vs Departments vs Project Roles:</b> Departments are the org units; those flagged
+  <code>is_team</code> become assignable Teams. <b>Project Roles</b> (Acquisition Lead, Arch Lead…) are the
+  per-project people assignments and largely mirror the teams.</div>
+
+  <h3>People, Teams &amp; Reporting</h3>
+  <table>
+    <tr><th>Object</th><th>Represents</th><th>Key fields</th></tr>
+    <tr><td><b>UserRecord / AuthUser</b></td><td>A user of the system.</td><td>email, name, role (admin|manager|viewer), team_id, avatar_url, default_landing_tab</td></tr>
+    <tr><td><b>Team</b></td><td>Organizational unit for assignment &amp; board display.</td><td>name, description</td></tr>
+    <tr><td><b>Department</b></td><td>Org unit; <code>is_team</code> marks assignable workflow teams.</td><td>name, is_team, sort_order, default_role_label</td></tr>
+    <tr><td><b>ProjectRole</b></td><td>A user assigned to a named role on a project.</td><td>roleName, user{name,email}, assignedAt</td></tr>
+    <tr><td><b>Rollup</b></td><td>Aggregated metrics for a node (leaf or parent).</td>
+      <td>totalUnits, unitsLeftToBuild, unitsLeftToSell, targetPermit/Construction/Exit dates, budget, targetExitPrice, targetProfit, atRisk</td></tr>
+    <tr><td><b>PlanUnit</b></td><td>A leaf row for the Business Plan matrix.</td>
+      <td>name, businessLine, group, year, total, displayPhase, product, exitDate, revenue, grossProfit</td></tr>
+    <tr><td><b>Unit</b></td><td>A sellable unit within a project.</td>
+      <td>unit_id, unit_type, area_sqft, asking/sold_price, status (available|reserved|under_offer|sold|withdrawn), buyer_name</td></tr>
+    <tr><td><b>Document</b></td><td>A versioned file linked to a phase.</td><td>phase, name, version, is_current, source, mime_type, note</td></tr>
+    <tr><td><b>AlertRule / AlertEvent</b></td><td>Trigger config / fired instance.</td><td>target_object, condition_field, operator, threshold, channels, active; message, resolved</td></tr>
+  </table>
+</section>
+
+<!-- 4. TABLES -->
+<section id="tables">
+  <h2><span class="n">4</span> Database Tables</h2>
+  <p class="lead">~77 tables. <code>schema.sql</code> is the idempotent base (run every boot);
+  <code>schema_vN.sql</code> are incremental migrations applied once each (tracked in <code>schema_migrations</code>).</p>
+  <table>
+    <tr><th>Area</th><th>Tables</th></tr>
+    <tr><td><b>Auth &amp; Users</b></td><td>users · refresh_tokens · user_invite_tokens · teams · user_permissions · departments · user_department_roles · project_roles</td></tr>
+    <tr><td><b>Configuration</b></td><td>business_lines · pipeline_categories · project_phase_configs · phase_transition_rules · project_types · unit_types · milestone_types · target_durations · strategies · transaction_statuses · role_data_policies · platform_settings · cities</td></tr>
+    <tr><td><b>Projects</b></td><td>projects · project_members · project_assignees · project_addresses · project_splits · phase_transitions · project_evaluations · project_purchases · project_closeouts · milestones · permits · contractors · units · project_unit_types</td></tr>
+    <tr><td><b>Finance</b></td><td>budget_line_items · transactions · change_orders · proforma_versions · proforma_line_items · proforma_item_standards · proforma_templates · proforma_ledger_entries</td></tr>
+    <tr><td><b>Tasks &amp; Workflows</b></td><td>task_categories · project_tasks · task_dependencies · task_comments · task_activity · workflow_templates · workflow_template_tasks · workflow_template_deps · project_workflows · project_workflow_deps</td></tr>
+    <tr><td><b>Permit Timeline</b></td><td>permit_stages · permit_stage_departments · permit_stage_department_deps · project_permit_stages · project_permit_stage_departments</td></tr>
+    <tr><td><b>ETL &amp; Sync</b></td><td>field_mappings · lark_import_files · lark_custom_tables · lark_contacts · project_contacts · lark_opt_cache · etl_sources · etl_sync_runs · etl_staging_rows · sync_logs · etl_mapping_templates</td></tr>
+    <tr><td><b>Monitoring &amp; Docs</b></td><td>alert_rules · alert_events · notifications · documents · project_document_folders · audit_logs · schema_migrations</td></tr>
+  </table>
+</section>
+
+<!-- 5. DROPDOWNS -->
+<section id="dropdowns">
+  <h2><span class="n">5</span> Dropdowns &amp; Options</h2>
+  <p class="lead">Every enumerated choice in the system. <b>Codes</b> = stored values; <b>Labels</b> = the
+  human-facing text where one exists.</p>
+
+  <h3>Tasks</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th><th>Labels</th><th>Default</th></tr>
+    <tr><td><b>Task Status</b> (DB)</td><td>not_started, started, pending_review, approved, complete, wont_do</td>
+      <td>To Do, In Progress, In Review, Approved, Done, Won't Do</td><td>not_started</td></tr>
+    <tr><td><b>Display Status</b> (UI/Kanban)</td><td>not_started, in_progress, under_review, approved, blocked, completed</td>
+      <td>Not Started, In Progress, Under Review, Approved, Blocked, Completed</td><td>derived</td></tr>
+    <tr><td><b>Task Priority</b></td><td>low, normal, high</td><td>Low, Normal/Medium, High</td><td>normal</td></tr>
+    <tr><td><b>Dependency Type</b></td><td>finish_to_start</td><td>Finish-to-Start (only type)</td><td>finish_to_start</td></tr>
+    <tr><td><b>Task flags</b></td><td>is_blocked, is_unplanned, is_critical_path</td><td>Blocked / Unplanned / Critical Path</td><td>false</td></tr>
+    <tr><td><b>Workflow status</b></td><td>pending, in_progress, complete</td><td>—</td><td>pending</td></tr>
+  </table>
+  <div class="tip"><b>Why two status sets?</b> The database stores 6 raw task states. The UI derives a friendlier
+  "display status" that folds <code>complete</code>+<code>wont_do</code> into <b>Completed</b> and surfaces the
+  <code>is_blocked</code> flag as its own <b>Blocked</b> state.</div>
+
+  <h3>Project &amp; Phase</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th><th>Labels</th></tr>
+    <tr><td><b>Business Line</b></td><td colspan="2">AL Homes SFH · AL Homes Community · Alera · Apex</td></tr>
+    <tr><td><b>Display Phase</b> (5)</td><td>acquisition, entitlement, permitting, construction, sales</td>
+      <td>Acquisition, Entitlement, Permitting, Construction, Sales</td></tr>
+    <tr><td><b>Detail tabs</b></td><td>+ investment</td><td>5 phases + Investment (financials)</td></tr>
+    <tr><td><b>Phase sub-tab</b></td><td>timeline, activity</td><td>Timeline, Activity Log</td></tr>
+    <tr><td><b>Phase FSM</b> (DB legacy)</td><td>evaluation, purchase, acquisition, entitlement, government, permitting, construction, sales, final, closeout, closed, on_hold</td>
+      <td>collapse → the 5 display phases</td></tr>
+    <tr><td><b>Product Type</b> (selectable)</td><td>single_family_house, sb9_no_lot_split, sb9_lot_split, sb_684, sb_1123, mini_community, community, starter_homes</td>
+      <td>Single Family House, SB9 No Lot Split, SB9 Lot Split, SB 684, SB 1123, Mini Community, Community, Starter Homes</td></tr>
+    <tr><td><b>Product Type</b> (legacy)</td><td>16 legacy codes (adu_*, alera_remodel_*, al_homes_*)</td><td>render as-is, hidden from pickers</td></tr>
+    <tr><td><b>Node level</b></td><td>project, stage, unit</td><td>Project / Stage / Unit</td></tr>
+    <tr><td><b>Parent relation</b></td><td>split, sub_phase, sub_project</td><td>—</td></tr>
+    <tr><td><b>Sale status</b></td><td>not_started, presale, listing, sold</td><td>unit market state</td></tr>
+  </table>
+
+  <h3>Business Plan &amp; Dashboard</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th><th>Labels</th></tr>
+    <tr><td><b>Plan group</b></td><td>sfh-luxury, sfh-standard, community, alera, apex, other</td>
+      <td>AL Homes SFH · Luxury (&gt;$7M), · Standard (≤$7M), AL Homes Community, Alera, Apex, Other</td></tr>
+    <tr><td><b>Exit bucket</b></td><td>toExit, atRisk, inPermitting, underConstruction, onSale</td><td>—</td></tr>
+  </table>
+
+  <h3>Milestones &amp; Gantt</h3>
+  <table>
+    <tr><th>Field</th><th>Codes / values</th></tr>
+    <tr><td><b>Milestone status</b> (DB)</td><td>pending, active, completed, blocked</td></tr>
+    <tr><td><b>Milestone board state</b></td><td>complete, blocked, overdue, due-soon, in-progress, planned</td></tr>
+    <tr><td><b>Milestone category</b></td><td>Critical Items, Jurisdiction Approvals, Utility, Construction Milestones</td></tr>
+    <tr><td><b>Team (color)</b></td><td>Arch, Interior Design, Exterior Design, Sales, Construction, Utility, Civil</td></tr>
+    <tr><td><b>Gantt zoom</b></td><td>week, month, quarter, year (+ fiveyear for buckets)</td></tr>
+    <tr><td><b>Milestone segments</b></td><td>start, entitlement, permit, presale, construction, exit</td></tr>
+  </table>
+
+  <h3>Finance &amp; Proforma</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th></tr>
+    <tr><td><b>Calc method</b></td><td>per_sf, pct_of_base, per_year, manual</td></tr>
+    <tr><td><b>Proforma category</b></td><td>acquisition, soft, construction, contingency, holding, misc</td></tr>
+    <tr><td><b>Curve method</b></td><td>bell, steady_growth, steady_decrease</td></tr>
+    <tr><td><b>Version trigger / status</b></td><td>initial, phase_end, manual_refresh / draft, locked</td></tr>
+    <tr><td><b>Budget cost type</b></td><td>hard, soft, contingency</td></tr>
+    <tr><td><b>Transaction type</b></td><td>invoice, draw_request, payment, adjustment, refund</td></tr>
+    <tr><td><b>Transaction / Change-order status</b></td><td>pending, approved, paid, rejected, voided</td></tr>
+  </table>
+
+  <h3>Permits &amp; Units</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th></tr>
+    <tr><td><b>Permit status</b></td><td>pending, submitted, under_review, approved, rejected, expired</td></tr>
+    <tr><td><b>Permit stage flow</b></td><td>Milestone, Parallel, Sequential</td></tr>
+    <tr><td><b>Project permit stage status</b></td><td>pending, not_started, in_progress, completed, blocked, skipped</td></tr>
+    <tr><td><b>Contractor status</b></td><td>active, inactive, terminated</td></tr>
+    <tr><td><b>Unit status</b></td><td>available, reserved, under_offer, sold, withdrawn</td></tr>
+  </table>
+
+  <h3>Integration / ETL / System</h3>
+  <table>
+    <tr><th>Field</th><th>Codes</th><th>Labels / default</th></tr>
+    <tr><td><b>Settings tab</b></td><td>integrations, phases, departments</td><td>Data &amp; Integrations, Phase &amp; Stages, Departments</td></tr>
+    <tr><td><b>Lark transform</b></td><td>(none), toString, toNumber, toDate</td><td>toDate → YYYY-MM-DD</td></tr>
+    <tr><td><b>Lark import steps</b></td><td>browse, tables, subtables, preview, mapping, importing, staging, batch</td><td>start: browse</td></tr>
+    <tr><td><b>ETL source type</b></td><td>lark, google_sheet, csv, webhook</td><td>—</td></tr>
+    <tr><td><b>ETL sync status</b></td><td>running, staged, approved, rejected, error</td><td>start: running</td></tr>
+    <tr><td><b>ETL staging</b></td><td>action: create/update/skip · decision: approved/rejected</td><td>action default: create</td></tr>
+    <tr><td><b>Alert operator</b></td><td>&gt;, &lt;, ==, !=</td><td>—</td></tr>
+    <tr><td><b>Alert channel</b></td><td>lark, email, in_app</td><td>Lark (Instant DM), Email (Daily Digest), In-App; default in_app</td></tr>
+    <tr><td><b>Notification type</b></td><td>info, warning, error, success</td><td>default info</td></tr>
+  </table>
+
+  <h3>View Modes &amp; Sorting</h3>
+  <table>
+    <tr><th>Toggle</th><th>Options</th><th>Default</th></tr>
+    <tr><td><b>My Tasks tab</b></td><td>Open, Under Review, Completed</td><td>Open</td></tr>
+    <tr><td><b>My Tasks view</b></td><td>List, Kanban (Kanban only on Open tab)</td><td>List</td></tr>
+    <tr><td><b>Teams view</b></td><td>Gantt, List</td><td>Gantt</td></tr>
+    <tr><td><b>Teams sort</b></td><td>Construction, Exit Date, Units, Project</td><td>Construction</td></tr>
+    <tr><td><b>Teams brand filter</b></td><td>All + the 4 business lines</td><td>All</td></tr>
+    <tr><td><b>Workflow filter</b></td><td>Active, Archived</td><td>Active</td></tr>
+  </table>
+
+  <h3>Document Categories (per phase)</h3>
+  <table>
+    <tr><th>Phase</th><th>Categories</th></tr>
+    <tr><td><b>Acquisition</b></td><td>Due Diligence Report · Purchase Agreement · Title Report</td></tr>
+    <tr><td><b>Entitlement</b></td><td>Survey · Site Plan</td></tr>
+    <tr><td><b>Permitting</b></td><td>Building Permit Set · Structural Calculations · Plan Check Responses</td></tr>
+    <tr><td><b>Construction</b></td><td>Floor Plan · Inspection Report · Site Progress Photos</td></tr>
+    <tr><td><b>Sales</b></td><td>Sales Package · Listing Photos</td></tr>
+    <tr><td><b>Investment</b></td><td>Proforma · Investor Report</td></tr>
+    <tr><td><b>Every phase</b></td><td>Other / Misc</td></tr>
+  </table>
+</section>
+
+<!-- 6. ROLES -->
+<section id="roles">
+  <h2><span class="n">6</span> Roles &amp; Permissions</h2>
+  <p class="lead">Access is controlled at three levels: global role, per-project role, and per-table grant.</p>
+
+  <h3>Global User Roles</h3>
+  <div class="grid">
+    <div class="card"><span class="badge">full</span><h4>admin</h4><p>Full system access including Database Admin &amp; User Management. All writes.</p></div>
+    <div class="card"><span class="badge">write</span><h4>manager</h4><p>Create/update projects, workflows and planned tasks.</p></div>
+    <div class="card"><span class="badge">read</span><h4>viewer</h4><p>Read-only; no mutations.</p></div>
+  </div>
+
+  <h3>Table-Level Permission (per user)</h3>
+  <table>
+    <tr><th>Level</th><th>Meaning</th></tr>
+    <tr><td><b>read</b></td><td>SELECT only, with optional column scoping for sensitive fields</td></tr>
+    <tr><td><b>write</b></td><td>Read &amp; write (CRUD)</td></tr>
+    <tr><td><b>view_only</b></td><td>Used for column-level hiding</td></tr>
+  </table>
+
+  <h3>Project Roles (assignable on a project)</h3>
+  <div class="flow">
+    <span class="step">Acquisition Lead</span><span class="step">Arch Lead</span><span class="step">Civil Lead</span>
+    <span class="step">Interior Design Lead</span><span class="step">Sales Lead</span><span class="step">Utility Lead</span>
+    <span class="step">Construction Lead</span><span class="step">Exterior Package Lead</span><span class="step">Project Manager</span>
+  </div>
+
+  <h3>Permission Actions</h3>
+  <table>
+    <tr><th>Action</th><th>Who can do it</th></tr>
+    <tr><td>workflow.create / update / delete</td><td>admin · manager</td></tr>
+    <tr><td>project.create / update_meta</td><td>admin · manager · PM</td></tr>
+    <tr><td>task.add_planned / add_unplanned</td><td>admin · manager · PM</td></tr>
+    <tr><td>task.quick_add</td><td>any authenticated user (for self)</td></tr>
+    <tr><td>task.set_status / submit_review</td><td>admin · manager · PM · task owner · workflow owner</td></tr>
+    <tr><td>task.review_decision</td><td>admin · manager · PM · task reviewer (no self-review)</td></tr>
+    <tr><td>task.delete</td><td>admin · manager · PM · task owner (not workflow owner)</td></tr>
+  </table>
+
+  <h3>Phase-Advance Guards</h3>
+  <p>Conditions that must be met before a project can move to the next phase:</p>
+  <table>
+    <tr><th>Guard</th><th>Condition</th></tr>
+    <tr><td>eval.go_no_go</td><td>Evaluation decision must = "go"</td></tr>
+    <tr><td>purchase.closing_date</td><td>A closing date must be set</td></tr>
+    <tr><td>government.permit_approved</td><td>At least one permit with status "approved"</td></tr>
+    <tr><td>construction.milestones_done</td><td>All construction milestones "completed"</td></tr>
+    <tr><td>sales.units_finalized</td><td>All units "sold" or "withdrawn"</td></tr>
+  </table>
+</section>
+
+<!-- 7. GLOSSARY -->
+<section id="glossary">
+  <h2><span class="n">7</span> Glossary</h2>
+  <p class="lead">Definitions for the domain terminology used throughout the system.</p>
+
+  <h3>General &amp; Lifecycle</h3>
+  <table>
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td><b>Business Line (Brand)</b></td><td>Top-level division a project belongs to: AL Homes SFH, AL Homes Community, Alera, Apex. "Brand" is an alias used by the workflow library.</td></tr>
+    <tr><td><b>Pipeline Category</b></td><td>A sub-classification under a business line; can carry its own phase overrides.</td></tr>
+    <tr><td><b>Display Phase</b></td><td>The phase shown in the UI: the edited override if valid, else derived from the DB phase.</td></tr>
+    <tr><td><b>FSM</b></td><td>The DB phase state machine — a larger legacy vocabulary collapsed into the 5 display phases.</td></tr>
+    <tr><td><b>ON_HOLD</b></td><td>An orthogonal state; for display it resolves via the previous phase and renders orange.</td></tr>
+    <tr><td><b>Product Type</b></td><td>What is being built (SB9 Lot Split, SB 684, Community…). 8 selectable + 16 legacy codes.</td></tr>
+    <tr><td><b>SB9 / SB 684 / SB 1123</b></td><td>California housing statutes enabling lot splits / multi-unit infill — used as product types.</td></tr>
+    <tr><td><b>Kick Off</b></td><td>Setting the phase start date, which locks the schedule/timeline engine.</td></tr>
+    <tr><td><b>Pipeline Matrix</b></td><td>Dashboard pivot of leaf units by exit year × business group.</td></tr>
+    <tr><td><b>Luxury threshold</b></td><td>$7,000,000 target exit price — splits AL Homes SFH into Luxury vs Standard.</td></tr>
+  </table>
+
+  <h3>Scheduling &amp; Workflows</h3>
+  <table>
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td><b>Planned / Target / Actual</b></td><td>Day offsets from kick-off (planned), the calendar plan (target), and recorded dates (actual).</td></tr>
+    <tr><td><b>Phase cascade</b></td><td>Sequential schedule derived from start date + per-phase durations.</td></tr>
+    <tr><td><b>Critical Path</b></td><td>Tasks flagged as driving the overall timeline.</td></tr>
+    <tr><td><b>Dependency (finish-to-start)</b></td><td>Task B starts after Task A finishes + lag days. The only dependency type.</td></tr>
+    <tr><td><b>Slip / Phase delta</b></td><td>Lateness: a phase's actual end vs the next phase's planned start.</td></tr>
+    <tr><td><b>Workflow Template</b></td><td>A reusable task sequence with dependencies, snapshotted onto projects.</td></tr>
+    <tr><td><b>Unplanned / Blocked task</b></td><td>Added outside the template / user-flagged as blocked.</td></tr>
+    <tr><td><b>Review flow</b></td><td>Owner submits → reviewer approves or requests revision.</td></tr>
+  </table>
+
+  <h3>Finance / Proforma</h3>
+  <table>
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td><b>Proforma</b></td><td>A versioned financial model of a project: cost/revenue inputs → computed returns.</td></tr>
+    <tr><td><b>Line item</b></td><td>One cost/revenue row, computed via per_sf, pct_of_base, per_year or manual.</td></tr>
+    <tr><td><b>Hard / Soft / Contingency</b></td><td>Cost types: physical construction / design-permits-legal / reserve.</td></tr>
+    <tr><td><b>Holding costs</b></td><td>Carrying costs (property tax, insurance, HOA) spread over the holding period.</td></tr>
+    <tr><td><b>Cost curve</b></td><td>How a cost spreads across months: bell, steady_growth, steady_decrease.</td></tr>
+    <tr><td><b>Gross Profit</b></td><td>Net sale revenue − total cost.</td></tr>
+    <tr><td><b>Net Profit (levered)</b></td><td>Unlevered net profit − loan fees − interest.</td></tr>
+    <tr><td><b>IRR</b></td><td>Internal Rate of Return (levered &amp; unlevered).</td></tr>
+    <tr><td><b>EM (Equity Multiple)</b></td><td>Total inflows ÷ total outflows.</td></tr>
+    <tr><td><b>ROI</b></td><td>Unlevered net profit ÷ pre-interest cost.</td></tr>
+    <tr><td><b>Loan terms</b></td><td>Acquisition &amp; construction loans (rate, amount) plus points (origination fee %).</td></tr>
+    <tr><td><b>Sale economics</b></td><td>Sale price, flat listing fee, selling commission %, closing/title %.</td></tr>
+    <tr><td><b>Ledger</b></td><td>Actual posted spend/revenue per phase/category, rolled up against the plan.</td></tr>
+  </table>
+
+  <h3>Permits &amp; Integration</h3>
+  <table>
+    <tr><th>Term</th><th>Definition</th></tr>
+    <tr><td><b>Permit Stage</b></td><td>A named permit-workflow step scoped to a business line + pipeline category.</td></tr>
+    <tr><td><b>Stage flow</b></td><td>How a stage runs: Milestone (single date), Parallel (together), Sequential (ordered).</td></tr>
+    <tr><td><b>Lark (Feishu)</b></td><td>Collaboration platform integrated for Bitable/Sheet/Doc import &amp; contact sync.</td></tr>
+    <tr><td><b>Bitable</b></td><td>Lark's structured multi-dimensional table; a primary import source.</td></tr>
+    <tr><td><b>Field mapping</b></td><td>A rule mapping a source column → a target DB field, with an optional transform.</td></tr>
+    <tr><td><b>Full vs Delta sync</b></td><td>Full re-import vs only-changed-rows import.</td></tr>
+    <tr><td><b>Staging</b></td><td>Imported rows held for review (create/update/skip; approve/reject) before commit.</td></tr>
+  </table>
+</section>
+
+<!-- 8. COLORS -->
+<section id="colors">
+  <h2><span class="n">8</span> Colors &amp; Config</h2>
+
+  <h3>Dynamic (DB-driven) config — not fixed enums</h3>
+  <p>These lists are managed by users in the database, not hardcoded:</p>
+  <table>
+    <tr><th>Item</th><th>Notes</th></tr>
+    <tr><td><b>Cities</b></td><td>User-managed jurisdictions (<code>/v1/config/cities</code>) — not a fixed list.</td></tr>
+    <tr><td><b>Pipeline categories</b></td><td>User-managed per business line.</td></tr>
+    <tr><td><b>Project phase configs</b></td><td>The 5 canonical phases, editable (code/label/order/fields).</td></tr>
+    <tr><td><b>Departments / Teams</b></td><td>User-managed; <code>is_team</code> marks workflow teams.</td></tr>
+    <tr><td><b>Strategies / Transaction statuses</b></td><td>Lark-imported lookups (e.g. Active, Under Contract, Closed, On Hold, In Escrow, Listed).</td></tr>
+    <tr><td><b>Item standards</b></td><td>User-managed cost rates for pro formas.</td></tr>
+  </table>
+
+  <h3>Team Colors</h3>
+  <table>
+    <tr><th>Team</th><th>Accent</th><th>Tint background</th></tr>
+    <tr><td>Arch</td><td><span class="chip" style="background:#378ADD"></span>#378ADD (blue)</td><td><span class="chip" style="background:#E6F1FB"></span>#E6F1FB</td></tr>
+    <tr><td>Civil</td><td><span class="chip" style="background:#639922"></span>#639922 (green)</td><td><span class="chip" style="background:#EAF3DE"></span>#EAF3DE</td></tr>
+    <tr><td>Sales</td><td><span class="chip" style="background:#D4537E"></span>#D4537E (pink)</td><td><span class="chip" style="background:#FBEAF0"></span>#FBEAF0</td></tr>
+    <tr><td>Utility</td><td><span class="chip" style="background:#7F77DD"></span>#7F77DD (purple)</td><td><span class="chip" style="background:#EEEDFE"></span>#EEEDFE</td></tr>
+    <tr><td>Construction</td><td><span class="chip" style="background:#C99A06"></span>#C99A06 (yellow)</td><td><span class="chip" style="background:#FBF4CC"></span>#FBF4CC</td></tr>
+    <tr><td>Interior Design</td><td><span class="chip" style="background:#1D9E75"></span>#1D9E75 (teal)</td><td><span class="chip" style="background:#E1F5EE"></span>#E1F5EE</td></tr>
+    <tr><td>Exterior Design</td><td><span class="chip" style="background:#BA7517"></span>#BA7517 (amber)</td><td><span class="chip" style="background:#FAEEDA"></span>#FAEEDA</td></tr>
+  </table>
+
+  <h3>Gantt Segment Colors (by destination milestone)</h3>
+  <table>
+    <tr><th>Segment</th><th>Color</th><th>Meaning</th></tr>
+    <tr><td>entitlement</td><td><span class="chip" style="background:#ED93B1"></span>#ED93B1</td><td>pink</td></tr>
+    <tr><td>permit</td><td><span class="chip" style="background:#FAC775"></span>#FAC775</td><td>yellow</td></tr>
+    <tr><td>presale</td><td><span class="chip" style="background:#D85A30"></span>#D85A30</td><td>orange — construction without sale</td></tr>
+    <tr><td>construction</td><td><span class="chip" style="background:#97C459"></span>#97C459</td><td>green — construction with sale</td></tr>
+    <tr><td>exit</td><td><span class="chip" style="background:#85B7EB"></span>#85B7EB</td><td>blue — closing</td></tr>
+  </table>
+
+  <h3>Unit Cell Colors</h3>
+  <table>
+    <tr><th>State</th><th>Color</th></tr>
+    <tr><td>not_started</td><td><span class="chip" style="background:#B4B2A9"></span>#B4B2A9 (gray)</td></tr>
+    <tr><td>permitting</td><td><span class="chip" style="background:#AFA9EC"></span>#AFA9EC (purple)</td></tr>
+    <tr><td>construction</td><td><span class="chip" style="background:#F0997B"></span>#F0997B (orange)</td></tr>
+    <tr><td>sales</td><td><span class="chip" style="background:#85B7EB"></span>#85B7EB (blue)</td></tr>
+    <tr><td>sold</td><td><span class="chip" style="background:#5DCAA5"></span>#5DCAA5 (teal)</td></tr>
+  </table>
+</section>
+
+<footer>
+  AlphaX Project Management System — Documentation · generated from the codebase (<span class="mono">src/</span> + <span class="mono">server/</span>).
+  Companion spreadsheet: <span class="mono">docs/AlphaX_System_Terminology_Reference.xlsx</span>
+</footer>
+</main>
+</div>
+</body>
+</html>
