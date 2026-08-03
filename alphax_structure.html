@@ -1041,6 +1041,92 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 .tk-add button:hover{border-color:var(--primary);color:var(--primary)}
 .tk-add .material-symbols-outlined{font-size:16px}
 @media(max-width:860px){.tk-grid{grid-template-columns:1fr}}
+/* ---------- inv — system design canvas ---------- */
+.sd{--mono:ui-monospace,SFMono-Regular,Menlo,"SF Mono",monospace;--mut:#6b7c83;
+  position:relative;margin-top:26px;border:1px solid #ccd8dc;border-radius:14px;overflow:hidden;
+  background:radial-gradient(1000px 480px at 50% -10%,#f0f8fb,#e2edf2 78%)}
+.sd::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(14,106,132,.14) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+.sd>*{position:relative;z-index:1}
+.sd-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid #dbe3e6;background:rgba(255,255,255,.88)}
+.sd-legend{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+.sd-legend i{font-style:normal;display:flex;align-items:center;gap:6px;font:700 9px/1 var(--mono);letter-spacing:.08em;color:var(--mut);white-space:nowrap}
+.sd-mini{width:17px;height:12px;flex:none;background:#fff;border:1.5px solid #0e9cb8;border-radius:3px}
+.sd-mini.db{border-color:#168362;background:#e2f6ee;border-radius:4px 4px 8px 8px/3px 3px 6px 6px}
+.sd-mini.doc{border-color:#d8b25f;background:#fff8e6;border-radius:2px 6px 2px 2px}
+.sd-mini.hum{border-color:#c05252;background:#fdf0f0;border-radius:50%;width:12px;height:12px}
+.sd-mini.cloud{border-color:#4a90a8;background:#eef6fa;border-radius:8px 10px 4px 4px}
+.sd-grid{display:grid;grid-template-columns:112px 30px 128px 34px 128px 34px minmax(0,1fr);align-items:center;padding:26px 18px;gap:0}
+.sd-cap{font:800 8.5px/1 var(--mono);letter-spacing:.15em;color:#7d8d94;margin-bottom:9px;text-align:center}
+.sd-cell{min-width:0}
+.sd-feeds{display:grid;gap:6px}
+.sd-feeds span{border:1px solid rgba(14,156,184,.45);background:#fff;border-radius:7px;padding:5px 7px;font:800 9px/1.2 Inter,sans-serif;color:var(--primary-dark);text-align:center}
+.sd-col3{display:grid;gap:9px}
+.sd-svc{border:1.5px solid #0e9cb8;border-radius:11px;background:#fff;padding:9px 10px;display:grid;gap:3px;justify-items:center;text-align:center;box-shadow:var(--shadow);min-width:0}
+.sd-svc .bot{width:26px;height:23px}
+.sd-svc b{font:800 10.5px/1.25 Manrope,Inter,sans-serif;color:var(--ink)}
+.sd-svc em{font-style:normal;font:700 8px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sd-db{position:relative;background:linear-gradient(#f2fbf7,#e2f6ee);border:1.5px solid #168362;border-top:0;border-radius:0 0 60px 60px/0 0 18px 18px;padding:20px 8px 13px;text-align:center;margin-top:10px}
+.sd-db::before{content:"";position:absolute;top:-10px;left:-1.5px;right:-1.5px;height:20px;background:#f7fdfa;border:1.5px solid #168362;border-radius:50%}
+.sd-db b{position:relative;display:block;font:800 11.5px/1.2 Manrope,Inter,sans-serif;color:#0e6a4d}
+.sd-db em{position:relative;font-style:normal;font:700 7.5px/1 Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#4d9377;display:block;margin-top:4px}
+.sd-ar{position:relative;align-self:center;height:2px;width:calc(100% + 8px);margin-left:-4px;background:repeating-linear-gradient(90deg,#0e9cb8 0 5px,transparent 5px 11px)}
+.sd-ar::after{content:"";position:absolute;right:-2px;top:-3px;border-left:6px solid #0e9cb8;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.sd-ar i{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);font:700 8.5px/1.3 Inter,sans-serif;font-style:normal;color:var(--primary);white-space:nowrap;background:rgba(255,255,255,.92);border:1px solid var(--line-soft);border-radius:6px;padding:3px 7px}
+.sd-ar.hum{background:repeating-linear-gradient(90deg,#d98c8c 0 5px,transparent 5px 11px)}
+.sd-ar.hum::after{border-left-color:#d98c8c}
+.sd-ar.hum i{display:flex;align-items:center;gap:4px;color:#a34040;border-color:#eccfcf}
+.sd-ar.hum i .p-ic{width:10px;height:10px;fill:#c05252}
+.sd-right{position:relative;display:grid;gap:24px}
+.sd-right::before{content:"";position:absolute;left:-2px;top:18%;bottom:18%;width:2px;background:repeating-linear-gradient(180deg,#0e9cb8 0 5px,transparent 5px 11px)}
+.sd-branch{display:grid;align-items:center;gap:0;min-width:0}
+.sd-branch.b1{grid-template-columns:118px 34px 108px 26px 132px 46px minmax(96px,1fr)}
+.sd-branch.b2{grid-template-columns:118px 34px minmax(0,1fr) 46px 132px}
+.sd-doc{position:relative;background:#fff8e6;border:1.5px solid #d8b25f;border-radius:6px 13px 6px 6px;padding:8px 9px;font:800 9.5px/1.3 Manrope,Inter,sans-serif;color:#6e5000;box-shadow:var(--shadow)}
+.sd-doc::after{content:"";position:absolute;top:-1.5px;right:-1.5px;width:12px;height:12px;border-radius:0 13px 0 6px;background:linear-gradient(225deg,#fdfdfb 0 47%,rgba(0,0,0,.15) 50%,transparent 53%)}
+.sd-doc small{display:block;font:600 7.5px/1.3 Inter,sans-serif;color:#9a7b1e;margin-top:2px}
+.sd-doc .sd-dot{position:absolute;left:-3px;top:-3px;width:8px;height:8px;border-radius:50%;background:#22d3ee}
+.sd-stack{position:relative;margin-right:10px}
+.sd-stack::before,.sd-stack::after{content:"";position:absolute;inset:0;background:#fbf1cf;border:1.5px solid #e2c886;border-radius:6px 13px 6px 6px}
+.sd-stack::before{transform:translate(5px,5px);z-index:-1;opacity:.8}
+.sd-stack::after{transform:translate(10px,10px);z-index:-2;opacity:.5}
+.sd-docs{display:grid;gap:7px}
+.sd-docs.row{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.sd-hum{border:1.5px solid #d98c8c;background:#fdf7f7;border-radius:12px;padding:10px;display:grid;gap:4px;justify-items:center;text-align:center;box-shadow:var(--shadow)}
+.sd-hum .hum-b{width:26px;height:26px}
+.sd-hum b{font:800 10.5px/1.25 Manrope,Inter,sans-serif;color:#a34040}
+.sd-hum em{font-style:normal;font:700 7.5px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#b98080}
+.sd-cloudwrap{position:relative;display:grid;place-items:center;justify-self:center}
+.sd-cloudsvg{width:132px;height:auto;display:block;filter:drop-shadow(0 8px 16px rgba(74,144,168,.28))}
+.sd-cloudlab{position:absolute;inset:16px 0 0;display:grid;place-items:center;text-align:center;pointer-events:none}
+.sd-cloudlab b{display:block;font:800 11px/1.2 Manrope,Inter,sans-serif;color:#2c5d70}
+.sd-cloudlab em{display:block;font-style:normal;font:700 7px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5c8ba0;margin-top:3px}
+@media (prefers-reduced-motion:no-preference){
+  .sd-ar{animation:fxFlow .7s linear infinite}
+  .sd-db{animation:sdDbGlow 3s ease-in-out infinite}
+  .sd-cloudwrap{animation:sdBob 3.6s ease-in-out infinite}
+  .sd-doc .sd-dot{animation:dotGlow 2.4s ease-in-out infinite}
+  .sd-feeds span{animation:sdPing 3.2s ease-in-out infinite}
+  .sd-feeds span:nth-child(2){animation-delay:.35s}
+  .sd-feeds span:nth-child(3){animation-delay:.7s}
+  .sd-feeds span:nth-child(4){animation-delay:1.05s}
+  .sd-feeds span:nth-child(5){animation-delay:1.4s}
+  @keyframes sdDbGlow{0%,100%{box-shadow:0 0 10px rgba(22,131,98,.15)}50%{box-shadow:0 0 26px rgba(22,131,98,.42)}}
+  @keyframes sdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes sdPing{0%,100%{opacity:.5}12%{opacity:1}}
+}
+@media(max-width:1080px){
+  .sd-grid{grid-template-columns:1fr;row-gap:16px;justify-items:stretch}
+  .sd-ar{width:2px;height:26px;margin:0 auto;background:repeating-linear-gradient(180deg,#0e9cb8 0 5px,transparent 5px 11px)}
+  .sd-ar.hum{background:repeating-linear-gradient(180deg,#d98c8c 0 5px,transparent 5px 11px)}
+  .sd-ar::after{right:auto;left:-3px;top:auto;bottom:-2px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #0e9cb8}
+  .sd-ar.hum::after{border-top-color:#d98c8c}
+  .sd-ar i{left:14px;bottom:auto;top:50%;transform:translate(0,-50%)}
+  .sd-branch.b1,.sd-branch.b2{grid-template-columns:1fr;row-gap:14px;justify-items:stretch}
+  .sd-right::before{display:none}
+  .sd-col3{grid-template-columns:repeat(3,1fr)}
+  .sd-feeds{grid-template-columns:repeat(3,1fr)}
+  .sd-stack{margin-right:0}
+}
 @media(max-width:1180px){.ai-cmp{grid-template-columns:1fr}.ai-vs-col{padding:10px 0}}
 @media(max-width:860px){
   .ai-orbit{display:none}
@@ -3235,98 +3321,68 @@ function aiInvHTML(){
   </div>
   ${invSoftwareHTML()}`;
 }
-const INV_FEEDS=[
- {name:'Team Spend & Contracts', tag:'UPSTREAM', ic:'hub',
-  items:['Acq','Permit','Construction','Marketing & Sales','Contracts'],
-  use:'Every team’s spend and contracts flow in — nothing is typed into the books by hand.',
-  h:'Teams work; the ledger listens.'},
- {name:'Procore · Sage · Ramp', tag:'SYSTEMS', ic:'database',
-  items:['Procore — contracts','Sage — accounting','Ramp — corporate spend'],
-  use:'The systems where contracts and spend already live. Their entries stream straight through.',
-  h:'No one re-keys an invoice.'}
-];
+const SD_CLOUD='<svg viewBox="0 0 640 512" class="sd-cloudsvg" aria-hidden="true"><path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z" fill="#eef6fa" stroke="#4a90a8" stroke-width="22"/></svg>';
 function invSoftwareHTML(){
-  return `<div class="sws">
-    <div class="sws-top">
+  const doc=(t,sub,dot)=>`<div class="sd-doc">${dot?'<span class="sd-dot"></span>':''}${t}${sub?`<small>${sub}</small>`:''}</div>`;
+  return `<div class="sd">
+    <div class="sd-top">
       <span class="sws-badge">SYSTEMS</span>
-      <h4 class="sws-h1">Software systems — Investment &amp; Accounting
-        <span>feeds → journal entries → proforma engine → reports → human gate</span></h4>
-      <div class="sws-legend">
-        <i><span class="sws-key d"></span>DATA SOURCE</i>
-        <i><span class="sws-key a"></span>AI AGENT</i>
-        <i><span class="sws-key g"></span>DECISION</i>
-        <i><span class="sws-key h"></span>HUMAN</i>
+      <h4 class="sws-h1">System design — Investment &amp; Accounting
+        <span>feeds → ledger → engines → reports → portal · money moves only by hand</span></h4>
+      <div class="sd-legend">
+        <i><span class="sd-mini"></span>SERVICE</i>
+        <i><span class="sd-mini db"></span>DATABASE</i>
+        <i><span class="sd-mini doc"></span>REPORT / FILE</i>
+        <i><span class="sd-mini hum"></span>HUMAN</i>
+        <i><span class="sd-mini cloud"></span>CLOUD</i>
       </div>
     </div>
-
-    <div class="sws-rail">
-      <div class="sws-col">
-        <div class="sws-cap">DATA SOURCE</div>
-        <div class="sws-grp">${INV_FEEDS.map(f=>swsNode(f,'data')).join('')}</div>
+    <div class="sd-grid">
+      <div class="sd-cell">
+        <div class="sd-cap">TEAM FEEDS</div>
+        <div class="sd-feeds"><span>Acq</span><span>Permit</span><span>Construction</span><span>M&amp;S</span><span>Contracts</span></div>
       </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">LEDGER</div>
-        ${swsNode({name:'Journal Entries',tag:'SYSTEM OF RECORD',
-          sub:['Auto entry per contract / spend event','Tagged to project · team · cost code','Nightly reconciliation — exception queue'],
-          use:'One ledger both engines read — the single source of truth for actuals.',
-          h:'The accountant reviews exceptions, not entries.'})}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">PROFORMA</div>
-        ${swsNode({name:'Proforma Calculator Engine',tag:'AI AGENT',
-          sub:['Reads actuals from the ledger','Re-versions proforma v1 → v2 → …','Forecast financial statements per project'],
-          use:'Every version is kept — plan-vs-actual drift is visible per project, per month.',
-          h:'The Investment PM overrides assumptions; the math runs itself.'})}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">REPORTS</div>
-        ${swsNode({name:'Report Generator',tag:'AI AGENT',
-          sub:['Monthly budget report','Investor report','P&L · transaction tracking · company structure'],
-          use:'Every report written from the same ledger and proforma — one set of numbers everywhere.',
-          h:'Nothing publishes until a person approves.'})}
-        ${swsNode({name:'Investor Portal',tag:'PORTAL',ic:'database',
-          use:'Approved budget and investor reports publish here — investors self-serve the numbers.',
-          h:'IR answers questions, not report requests.'},'data')}
-      </div>
-    </div>
-
-    <div class="sws-div"><i>${P_ICON}HUMAN INVOLVED</i><span></span></div>
-
-    <div class="sws-rail2">
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate">
-          <div class="sws-dia"><b>Report approved?</b></div>
-          <div class="sws-vbr"><i class="sws-lab">NO</i><span class="sws-vline"></span>
-            <div class="sws-end">REDRAFT</div></div>
+      <span class="sd-ar" aria-hidden="true"></span>
+      <div class="sd-cell">
+        <div class="sd-cap">SYSTEMS</div>
+        <div class="sd-col3">
+          <div class="sd-svc">${BOT}<b>Procore</b><em>contracts</em></div>
+          <div class="sd-svc">${BOT}<b>Sage</b><em>accounting</em></div>
+          <div class="sd-svc">${BOT}<b>Ramp</b><em>spend</em></div>
         </div>
       </div>
-      <span class="sws-ar" aria-hidden="true"><i class="sws-lab yes">YES</i></span>
-      <div class="sws-col">
-        <div class="sws-cap">PUBLISH &amp; PAY</div>
-        ${swsNode({name:'Approve reports · Execute payments',tag:'HUMAN',
-          use:'Reports are cleared for the portal; payment runs prepared by the agent are wired by a person.',
-          h:'Investment lead + accountant. The WIRE gate is human — always.'},'hum')}
+      <span class="sd-ar" aria-hidden="true"><i>auto journal entry</i></span>
+      <div class="sd-cell">
+        <div class="sd-cap">LEDGER</div>
+        <div class="sd-db"><b>Journal Entries</b><em>system of record</em></div>
       </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate"><div class="sws-dia"><b>Project exited?</b></div></div>
-      </div>
-      <span class="sws-ar fork" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">OUTCOME</div>
-        <div class="sws-forkwrap">
-          <span class="sws-spine" aria-hidden="true"></span>
-          <div class="sws-outrow"><i class="sws-lab yes">YES</i><span class="sws-hline"></span>
-            <div class="sws-end go">CAPITAL RECYCLED → ACQUISITION</div></div>
-          <div class="sws-outrow"><i class="sws-lab">NO</i><span class="sws-hline"></span>
-            ${swsNode({name:'Next cycle',tag:'AI AGENT',
-              use:'The ledger keeps booking, the proforma keeps re-versioning, next month’s reports draft themselves.',
-              h:'The books never wait for month-end.'})}</div>
+      <span class="sd-ar" aria-hidden="true"><i>read</i></span>
+      <div class="sd-right">
+        <div class="sd-branch b1">
+          <div class="sd-svc">${BOT}<b>Proforma Calculator Engine</b></div>
+          <span class="sd-ar" aria-hidden="true"><i>v1 → v2 → …</i></span>
+          <div class="sd-stack">${doc('Proforma v2','every version kept',1)}</div>
+          <span class="sd-ar" aria-hidden="true"></span>
+          <div class="sd-docs">
+            ${doc('Monthly Budget Report')}
+            ${doc('Investor Report')}
+          </div>
+          <span class="sd-ar hum" aria-hidden="true"><i>${P_ICON}approve</i></span>
+          <div class="sd-cloudwrap">
+            ${SD_CLOUD}
+            <div class="sd-cloudlab"><b>Investor Portal</b><em>self-serve</em></div>
+          </div>
+        </div>
+        <div class="sd-branch b2">
+          <div class="sd-svc">${BOT}<b>Accounting Tool</b></div>
+          <span class="sd-ar" aria-hidden="true"><i>report</i></span>
+          <div class="sd-docs row">
+            ${doc('P&amp;L')}
+            ${doc('Transaction tracking')}
+            ${doc('Company structure')}
+          </div>
+          <span class="sd-ar hum" aria-hidden="true"><i>${P_ICON}action</i></span>
+          <div class="sd-hum"><span class="hum-b">${P_ICON}</span><b>Transaction Execution</b><em>wire — never automated</em></div>
         </div>
       </div>
     </div>
