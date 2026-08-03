@@ -1069,19 +1069,26 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 .sd-db::before{content:"";position:absolute;top:-10px;left:-1.5px;right:-1.5px;height:20px;background:#f7fdfa;border:1.5px solid #168362;border-radius:50%}
 .sd-db b{position:relative;display:block;font:800 11.5px/1.2 Manrope,Inter,sans-serif;color:#0e6a4d}
 .sd-db em{position:relative;font-style:normal;font:700 7.5px/1 Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#4d9377;display:block;margin-top:4px}
-.sd-ar{position:relative;align-self:center;height:2px;width:calc(100% + 8px);margin-left:-4px;background:repeating-linear-gradient(90deg,#0e9cb8 0 5px,transparent 5px 11px)}
+.sd-ar{position:relative;z-index:3;align-self:center;height:2px;width:calc(100% + 8px);margin-left:-4px;background:repeating-linear-gradient(90deg,#0e9cb8 0 5px,transparent 5px 11px)}
 .sd-ar::after{content:"";position:absolute;right:-2px;top:-3px;border-left:6px solid #0e9cb8;border-top:4px solid transparent;border-bottom:4px solid transparent}
-.sd-ar i{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);font:700 8.5px/1.3 Inter,sans-serif;font-style:normal;color:var(--primary);white-space:nowrap;background:rgba(255,255,255,.92);border:1px solid var(--line-soft);border-radius:6px;padding:3px 7px}
+.sd-ar i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;font:700 8.5px/1.25 Inter,sans-serif;font-style:normal;color:var(--primary);white-space:normal;width:max-content;max-width:64px;text-align:center;background:#fff;border:1px solid var(--line-soft);border-radius:6px;padding:3px 7px;box-shadow:0 1px 5px rgba(0,67,84,.14)}
 .sd-ar.hum{background:repeating-linear-gradient(90deg,#d98c8c 0 5px,transparent 5px 11px)}
 .sd-ar.hum::after{border-left-color:#d98c8c}
 .sd-ar.hum i{display:flex;align-items:center;gap:4px;color:#a34040;border-color:#eccfcf}
 .sd-ar.hum i .p-ic{width:10px;height:10px;fill:#c05252}
-.sd-right{position:relative;display:grid;gap:24px}
-.sd-right::before{content:"";position:absolute;left:-2px;top:18%;bottom:18%;width:2px;background:repeating-linear-gradient(180deg,#0e9cb8 0 5px,transparent 5px 11px)}
+.sd-right{position:relative;display:grid;gap:26px}
+.sd-right::before{content:"";position:absolute;left:-2px;top:10%;bottom:10%;width:2px;background:repeating-linear-gradient(180deg,#0e9cb8 0 5px,transparent 5px 11px)}
 .sd-branch{display:grid;align-items:center;gap:0;min-width:0}
 .sd-branch.b1{grid-template-columns:118px 34px 108px 26px 132px 46px minmax(96px,1fr)}
 .sd-branch.b2{grid-template-columns:118px 34px minmax(0,1fr) 46px 132px}
-.sd-doc{position:relative;background:#fff8e6;border:1.5px solid #d8b25f;border-radius:6px 13px 6px 6px;padding:8px 9px;font:800 9.5px/1.3 Manrope,Inter,sans-serif;color:#6e5000;box-shadow:var(--shadow)}
+.sd-branch.a1{grid-template-columns:104px 24px 100px 24px 118px 44px 104px 24px minmax(72px,1fr)}
+.sd-branch.a2{grid-template-columns:104px 24px minmax(0,1fr) 44px 132px}
+.sd-branch.p1{grid-template-columns:132px 46px minmax(110px,1fr)}
+.sd-branch.p2{grid-template-columns:118px 24px 124px 24px 112px 44px minmax(84px,1fr)}
+.sd-branch.p3{grid-template-columns:118px 24px minmax(120px,230px)}
+.sd-go{border:1.5px solid #0b5d74;color:#0b5d74;background:#eef7f9;border-radius:9px;padding:9px 10px;font:800 9.5px/1.35 var(--mono);letter-spacing:.06em;text-align:center;box-shadow:var(--shadow)}
+.sd-cap.mt{margin-top:12px}
+.sd-doc{position:relative;background:#fff8e6;border:1.5px solid #d8b25f;border-radius:6px 13px 6px 6px;padding:8px 9px;font:800 9.5px/1.3 Manrope,Inter,sans-serif;color:#6e5000;box-shadow:var(--shadow);text-align:center}
 .sd-doc::after{content:"";position:absolute;top:-1.5px;right:-1.5px;width:12px;height:12px;border-radius:0 13px 0 6px;background:linear-gradient(225deg,#fdfdfb 0 47%,rgba(0,0,0,.15) 50%,transparent 53%)}
 .sd-doc small{display:block;font:600 7.5px/1.3 Inter,sans-serif;color:#9a7b1e;margin-top:2px}
 .sd-doc .sd-dot{position:absolute;left:-3px;top:-3px;width:8px;height:8px;border-radius:50%;background:#22d3ee}
@@ -1114,18 +1121,19 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
   @keyframes sdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
   @keyframes sdPing{0%,100%{opacity:.5}12%{opacity:1}}
 }
-@media(max-width:1080px){
+@media(max-width:1280px){
   .sd-grid{grid-template-columns:1fr;row-gap:16px;justify-items:stretch}
   .sd-ar{width:2px;height:26px;margin:0 auto;background:repeating-linear-gradient(180deg,#0e9cb8 0 5px,transparent 5px 11px)}
   .sd-ar.hum{background:repeating-linear-gradient(180deg,#d98c8c 0 5px,transparent 5px 11px)}
   .sd-ar::after{right:auto;left:-3px;top:auto;bottom:-2px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #0e9cb8}
   .sd-ar.hum::after{border-top-color:#d98c8c}
-  .sd-ar i{left:14px;bottom:auto;top:50%;transform:translate(0,-50%)}
-  .sd-branch.b1,.sd-branch.b2{grid-template-columns:1fr;row-gap:14px;justify-items:stretch}
+  .sd-ar i{left:16px;transform:translate(0,-50%)}
+  .sd-branch{grid-template-columns:1fr;row-gap:14px;justify-items:stretch}
   .sd-right::before{display:none}
   .sd-col3{grid-template-columns:repeat(3,1fr)}
   .sd-feeds{grid-template-columns:repeat(3,1fr)}
   .sd-stack{margin-right:0}
+  .sd-cap{text-align:left}
 }
 @media(max-width:1180px){.ai-cmp{grid-template-columns:1fr}.ai-vs-col{padding:10px 0}}
 @media(max-width:860px){
@@ -1136,7 +1144,12 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
   .ai-link::after{right:auto;left:-3px;top:auto;bottom:-1px;border-top:6px solid #0e9cb8;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:none}
   .feeds-in{flex-wrap:wrap;gap:8px}
 }
-@media(max-width:720px){.ai-cta{padding:9px 12px}.ai-cta-txt{font-size:10.5px}}
+.ai-cta-short{display:none}
+@media(max-width:720px){
+  .ai-cta{padding:9px 13px}
+  .ai-cta-txt{display:none}
+  .ai-cta-short{display:inline;font-size:12px}
+}
 .chip-row{display:flex;gap:6px;flex-wrap:wrap}
 .org-chip.mdl{color:var(--gold)}
 .bl{display:block;border:1px solid var(--line-soft);background:var(--surface);border-radius:8px;padding:9px 11px;margin-top:7px}
@@ -1442,7 +1455,7 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
     <a href="#/projects" data-nav="projects"><span class="material-symbols-outlined">account_tree</span><span>Projects</span></a>
     <a href="#/people" data-nav="people"><span class="material-symbols-outlined">groups</span><span>People</span></a>
   </nav>
-  <a class="ai-cta" href="#/ai"><span class="ai-star">✦</span><span class="ai-cta-txt">AI Native Builder Company</span></a>
+  <a class="ai-cta" href="#/ai"><span class="ai-star">✦</span><span class="ai-cta-txt">AI Native Builder Company</span><span class="ai-cta-short">AI</span></a>
 </header>
 <main class="content" id="content"></main>
 <footer class="footer"><span>AlphaX Group · Internal structure demo · July 2026</span><span>Counts and portfolio names are sample placeholders</span></footer>
@@ -2598,111 +2611,51 @@ function aiAcqHTML(){
   </div>
   ${aiSoftwareHTML()}`;
 }
-/* --- Acquisition software systems — the flow, exactly as drawn --- */
-const SWS_FEEDS=[
- {name:'Public Data Source', tag:'FREE / LICENSED', ic:'public',
-  items:['MLS','MLS Coming Soon','Redfin / Zillow','Compass Off Market'],
-  use:'Live listings, coming-soon inventory and public comps. A data source — it stores and serves, it does not decide.',
-  h:'No one on the team browses these. The stack reads them; people see the result.'},
- {name:'Paid Data Source', tag:'PAID SEATS', ic:'database',
-  items:['costar','PropStream','Prop Radar'],
-  use:'Ownership, off-market and submarket data behind paid seats. Also a data source, queried on demand.',
-  h:'Seats sit with Acquisition — the Analyst opens one only to verify what came back.'}
-];
-const SWS_STAGES=[
- {name:'Deal Sourcing Agent', tag:'AI AGENT',
-  use:'The agent that goes and gets the data — reads both sources, filters to the buy box, opens a deal record.',
-  h:'Runs unattended. It hands the team a shortlist instead of a search tab.'},
- {name:'Analysis Agent group', tag:'AI AGENT',
-  sub:['Comps Agent','DD Agent','Pro Forma Engine','Strategy & Feasibility Study','Preliminary Underwriting'],
-  use:'Comps, diligence, pro forma, feasibility and a first underwrite on every deal.',
-  h:'Deal Analyst reads the output and overrides assumptions — never builds it from scratch.'},
- {name:'Scoring Agent group', tag:'AI AGENT',
-  sub:['Market Analysis (Supply & Demand)','Scoring System'],
-  use:'Scores every deal on one yardstick against live supply and demand.',
-  h:'Acquisition Lead sets the threshold; the queue the team reads each morning comes from here.'}
-];
-function swsNode(x,cls){
-  const mark = cls==='data' ? `<span class="sws-ic">${icon(x.ic)}</span>`
-             : cls==='hum'  ? `<span class="hum-b">${P_ICON}</span>` : BOT;
-  return `<div class="sws-node ${cls||''}">
-    <div class="sws-nh">${mark}<b>${x.name}</b><span class="sws-tag">${x.tag}</span></div>
-    ${x.items?`<div class="sws-in">${x.items.map(i=>`<em>${i}</em>`).join('')}</div>`:''}
-    ${x.sub?`<div class="sws-sub">${x.sub.map(i=>`<span>${i}</span>`).join('')}</div>`:''}
-    <p class="sws-use">${x.use}</p>
-    <div class="sws-hu">${P_ICON}<span>${x.h}</span></div>
-  </div>`;
-}
+/* --- sd: shared system-design canvas helpers --- */
+const SD_CLOUD='<svg viewBox="0 0 640 512" class="sd-cloudsvg" aria-hidden="true"><path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z" fill="#eef6fa" stroke="#4a90a8" stroke-width="22"/></svg>';
+const sdAr=(lab,hum)=>`<span class="sd-ar${hum?' hum':''}" aria-hidden="true">${lab?`<i>${hum?P_ICON:''}${lab}</i>`:''}</span>`;
+const sdSvc=(n,em)=>`<div class="sd-svc">${BOT}<b>${n}</b>${em?`<em>${em}</em>`:''}</div>`;
+const sdDb=(n,em)=>`<div class="sd-db"><b>${n}</b>${em?`<em>${em}</em>`:''}</div>`;
+const sdDoc=(t,sub,dot)=>`<div class="sd-doc">${dot?'<span class="sd-dot"></span>':''}${t}${sub?`<small>${sub}</small>`:''}</div>`;
+const sdHum=(n,em)=>`<div class="sd-hum"><span class="hum-b">${P_ICON}</span><b>${n}</b>${em?`<em>${em}</em>`:''}</div>`;
+const sdCloud=(n,em)=>`<div class="sd-cloudwrap">${SD_CLOUD}<div class="sd-cloudlab"><b>${n}</b>${em?`<em>${em}</em>`:''}</div></div>`;
+const sdChips=a=>`<div class="sd-feeds">${a.map(x=>`<span>${x}</span>`).join('')}</div>`;
+const sdGo=t=>`<div class="sd-go">${t}</div>`;
+const sdHead=(title,sub)=>`<div class="sd-top"><span class="sws-badge">SYSTEMS</span><h4 class="sws-h1">${title}<span>${sub}</span></h4><div class="sd-legend"><i><span class="sd-mini"></span>SERVICE</i><i><span class="sd-mini db"></span>DATABASE</i><i><span class="sd-mini doc"></span>REPORT / FILE</i><i><span class="sd-mini hum"></span>HUMAN</i><i><span class="sd-mini cloud"></span>CLOUD</i></div></div>`;
+/* --- Acquisition: system design canvas --- */
 function aiSoftwareHTML(){
-  return `<div class="sws">
-    <div class="sws-top">
-      <span class="sws-badge">SYSTEMS</span>
-      <h4 class="sws-h1">Software systems — Acquisition
-        <span>data source → sourcing agent → analysis → scoring → human gate</span></h4>
-      <div class="sws-legend">
-        <i><span class="sws-key d"></span>DATA SOURCE</i>
-        <i><span class="sws-key a"></span>AI AGENT</i>
-        <i><span class="sws-key g"></span>DECISION</i>
-        <i><span class="sws-key h"></span>HUMAN</i>
+  return `<div class="sd">
+    ${sdHead('System design — Acquisition','data sources → sourcing → pipeline → scoring → people close')}
+    <div class="sd-grid">
+      <div class="sd-cell">
+        <div class="sd-cap">PUBLIC DATA</div>
+        ${sdChips(['MLS','MLS Coming Soon','Redfin / Zillow','Compass Off-market'])}
+        <div class="sd-cap mt">PAID DATA</div>
+        ${sdChips(['CoStar','PropStream','PropertyRadar'])}
       </div>
-    </div>
-
-    <div class="sws-rail">
-      <div class="sws-col">
-        <div class="sws-cap">DATA SOURCE</div>
-        <div class="sws-grp">${SWS_FEEDS.map(f=>swsNode(f,'data')).join('')}</div>
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">SOURCING</div>
-        ${swsNode(SWS_STAGES[0])}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">ANALYSIS</div>
-        ${swsNode(SWS_STAGES[1])}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">SCORING</div>
-        ${swsNode(SWS_STAGES[2])}
-      </div>
-    </div>
-
-    <div class="sws-div"><i>${P_ICON}HUMAN INVOLVED</i><span></span></div>
-
-    <div class="sws-rail2">
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate">
-          <div class="sws-dia"><b>Good deal?</b></div>
-          <div class="sws-vbr"><i class="sws-lab">NO</i><span class="sws-vline"></span>
-            <div class="sws-end">PASS</div></div>
+      ${sdAr('scan')}
+      <div class="sd-cell"><div class="sd-cap">SOURCING</div>${sdSvc('Deal Sourcing Agent','buy-box filter')}</div>
+      ${sdAr('new deal record')}
+      <div class="sd-cell"><div class="sd-cap">PIPELINE</div>${sdDb('Deal Records','one record per deal')}</div>
+      ${sdAr('read')}
+      <div class="sd-right">
+        <div class="sd-branch a1">
+          ${sdSvc('Analysis Agents','comps · dd · pro forma')}
+          ${sdAr()}
+          ${sdSvc('Scoring System','one yardstick')}
+          ${sdAr('rank')}
+          ${sdDoc('Morning Deal Queue','ranked · threshold alerts',1)}
+          ${sdAr('review & vote',1)}
+          ${sdHum('Negotiation','people close')}
+          ${sdAr()}
+          ${sdGo('TC &amp; LOAN')}
         </div>
-      </div>
-      <span class="sws-ar" aria-hidden="true"><i class="sws-lab yes">YES</i></span>
-      <div class="sws-col">
-        <div class="sws-cap">NEGOTIATION</div>
-        ${swsNode({name:'Negotiation · Review & Vote',tag:'HUMAN',
-          use:'The team reviews the scored deal, votes it up or down, and negotiates the terms.',
-          h:'Acquisition Lead + PM. This is the only step in the flow a person owns end to end.'},'hum')}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate"><div class="sws-dia"><b>Seller Replied?</b></div></div>
-      </div>
-      <span class="sws-ar fork" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">OUTCOME</div>
-        <div class="sws-forkwrap">
-          <span class="sws-spine" aria-hidden="true"></span>
-          <div class="sws-outrow"><i class="sws-lab yes">YES</i><span class="sws-hline"></span>
-            <div class="sws-end go">TC &amp; LOAN</div></div>
-          <div class="sws-outrow"><i class="sws-lab">NO</i><span class="sws-hline"></span>
-            ${swsNode({name:'CRM (Auto Campaign)',tag:'AI AGENT',
-              use:'Longterm following and nurture pipeline — the deal stays warm instead of dying.',
-              h:'Agent runs the cadence; the PM takes the thread over the moment a seller replies.'})}</div>
+        <div class="sd-branch a2">
+          ${sdSvc('CRM Auto Campaign','nurture loop')}
+          ${sdAr('until ready')}
+          ${sdDoc('Warm Seller Pipeline','no deal dies')}
+          ${sdAr('seller replies',1)}
+          ${sdHum('Direct to Seller','a person takes the thread')}
         </div>
       </div>
     </div>
@@ -3138,107 +3091,45 @@ function aiDpHTML(){
   </div>
   ${dpSoftwareHTML('dp')}`;
 }
-/* --- shared Permit Ops platform — micro-services and how they connect --- */
-const DP_FEEDS=[
- {name:'Design Tools', tag:'AUTHORING', ic:'architecture',
-  items:['Revit','AutoCAD','Bluebeam'],
-  use:'Models and sheets are authored here. Exports feed the package agent — the tools stay, the collating work goes.',
-  h:'Architects design; nobody hand-assembles sheet sets into PDFs anymore.'},
- {name:'City Channels', tag:'EXTERNAL', ic:'account_balance',
-  items:['City portals','Plan-check email','Submittal checklists','Code & ordinances'],
-  use:'Where applications live and comments come from. Watched continuously, not checked when someone remembers.',
-  h:'The watcher reads them; people only see what changed.'}
-];
+/* --- shared Permit Ops platform: system design canvas --- */
 function dpSoftwareHTML(team){
   const sub = team==='dev'
     ? 'the same platform both teams run on — Development tracks its 25 approvals here'
-    : 'package prep → pipeline tracker → comment loop → human gate — shared with Development';
-  return `<div class="sws">
-    <div class="sws-top">
-      <span class="sws-badge">SYSTEMS</span>
-      <h4 class="sws-h1">Software systems — Permit Ops platform
-        <span>${sub}</span></h4>
-      <div class="sws-legend">
-        <i><span class="sws-key d"></span>DATA SOURCE</i>
-        <i><span class="sws-key a"></span>AI AGENT</i>
-        <i><span class="sws-key g"></span>DECISION</i>
-        <i><span class="sws-key h"></span>HUMAN</i>
+    : 'design tools → package prep → tracker → city loop · shared with Development';
+  return `<div class="sd">
+    ${sdHead('System design — Permit Ops platform',sub)}
+    <div class="sd-grid">
+      <div class="sd-cell">
+        <div class="sd-cap">DESIGN TOOLS</div>
+        ${sdChips(['Revit','AutoCAD','Bluebeam'])}
+        <div class="sd-cap mt">CITY RULES</div>
+        ${sdChips(['Submittal checklists','Code &amp; ordinances'])}
       </div>
-    </div>
-
-    <div class="sws-rail">
-      <div class="sws-col">
-        <div class="sws-cap">DATA SOURCE</div>
-        <div class="sws-grp">${DP_FEEDS.map(f=>swsNode(f,'data')).join('')}</div>
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">PACKAGE PREP</div>
-        ${swsNode({name:'Drawing Package Agent',tag:'AI AGENT',
-          sub:['Sheet-set assembly from Revit / CAD','Submittal checklist gate','Code compliance pre-check'],
-          use:'Builds every ID / LD / CD / permit set and refuses to release an incomplete or non-compliant package.',
-          h:'Designer reviews the set; the licensed pro stamps it.'})}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">PIPELINE TRACKER</div>
-        ${swsNode({name:'Permit Pipeline Tracker',tag:'SYSTEM OF RECORD',
-          sub:['Planned vs actual per application','City review clock & resubmit deadlines','Alerts — what is due, what is late'],
-          use:'One record per application across Development and Design & Permitting — every approval, one board.',
-          h:'The PM reads the board each morning; the board never has to be assembled.'})}
-        ${swsNode({name:'City Portal Watcher',tag:'AI AGENT',
-          use:'Polls portals and inboxes; logs every status change and files every comment letter into the record.',
-          h:'No one refreshes a city portal again.'})}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">COMMENT LOOP</div>
-        ${swsNode({name:'Comment Loop Agents',tag:'AI AGENT',
-          sub:['Comment Intake Parser — letter → items','Discipline router — arch / civil / landscape / MEP','Response Drafter — the response matrix','CV Plan-Check — vision-diff sheets vs comments'],
-          use:'Turns a city comment letter into tracked work, drafts the responses and visually verifies every fix on the revised sheets.',
-          h:'Humans approve every response before it goes back to the city.'})}
-      </div>
-    </div>
-
-    <div class="sws-div"><i>${P_ICON}HUMAN INVOLVED</i><span></span></div>
-
-    <div class="sws-rail2">
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate">
-          <div class="sws-dia"><b>Every comment resolved?</b></div>
-          <div class="sws-vbr"><i class="sws-lab">NO</i><span class="sws-vline"></span>
-            <div class="sws-end">BACK TO DESIGN</div></div>
+      ${sdAr('sheet exports')}
+      <div class="sd-cell"><div class="sd-cap">PACKAGE PREP</div>${sdSvc('Drawing Package Agent','checklist + code pre-check')}</div>
+      ${sdAr('checked set')}
+      <div class="sd-cell"><div class="sd-cap">TRACKER</div>${sdDb('Permit Pipeline Tracker','planned vs actual · city clock')}</div>
+      ${sdAr('file / track')}
+      <div class="sd-right">
+        <div class="sd-branch p1">
+          <div class="sd-stack">${sdDoc('Permit Package','ID · LD · CD · permit set',1)}</div>
+          ${sdAr('stamp &amp; approve',1)}
+          ${sdCloud('City Portal','submit · status · comments')}
         </div>
-      </div>
-      <span class="sws-ar" aria-hidden="true"><i class="sws-lab yes">YES</i></span>
-      <div class="sws-col">
-        <div class="sws-cap">RESUBMIT</div>
-        ${swsNode({name:'Stamp · Approve · Resubmit',tag:'HUMAN',
-          use:'The licensed pro stamps the revised set; the PM approves the response matrix and the resubmittal goes out.',
-          h:'Permit PM + stamping architect / engineer. Signatures are never automated.'},'hum')}
-      </div>
-      <span class="sws-ar" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">GATE</div>
-        <div class="sws-gate"><div class="sws-dia"><b>City approved?</b></div></div>
-      </div>
-      <span class="sws-ar fork" aria-hidden="true"></span>
-      <div class="sws-col">
-        <div class="sws-cap">OUTCOME</div>
-        <div class="sws-forkwrap">
-          <span class="sws-spine" aria-hidden="true"></span>
-          <div class="sws-outrow"><i class="sws-lab yes">YES</i><span class="sws-hline"></span>
-            <div class="sws-end go">PERMIT ISSUED → CONSTRUCTION</div></div>
-          <div class="sws-outrow"><i class="sws-lab">NO</i><span class="sws-hline"></span>
-            ${swsNode({name:'Next review cycle',tag:'AI AGENT',
-              use:'New comments re-enter the loop — parsed, routed, drafted, CV-checked — with the review clock already running.',
-              h:'The tracker logs the cycle; the retro will count it.'})}</div>
+        <div class="sd-branch p2">
+          ${sdDoc('Comment Letter','parsed to items')}
+          ${sdAr('route')}
+          ${sdSvc('Comment Loop Agents','responses drafted')}
+          ${sdAr('verify')}
+          ${sdSvc('CV Plan-Check','vision-diff sheets')}
+          ${sdAr('approve',1)}
+          ${sdGo('RESUBMIT ↺')}
         </div>
-        <div class="sws-cap">RETRO ↺ EVERY APPROVAL</div>
-        ${swsNode({name:'Retro Agent',tag:'AI AGENT',
-          use:'On approval, writes the cycle report — planned vs actual per stage, review-cycle count, which comment categories keep recurring — and updates the SOP + checklists ↺.',
-          h:'The PM reads the retro; the next application starts from the updated playbook.'})}
+        <div class="sd-branch p3">
+          ${sdSvc('Retro Agent','every approval')}
+          ${sdAr('updates')}
+          ${sdDoc('SOP + Checklists','playbook ↺',1)}
+        </div>
       </div>
     </div>
   </div>`;
@@ -3321,68 +3212,41 @@ function aiInvHTML(){
   </div>
   ${invSoftwareHTML()}`;
 }
-const SD_CLOUD='<svg viewBox="0 0 640 512" class="sd-cloudsvg" aria-hidden="true"><path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z" fill="#eef6fa" stroke="#4a90a8" stroke-width="22"/></svg>';
 function invSoftwareHTML(){
-  const doc=(t,sub,dot)=>`<div class="sd-doc">${dot?'<span class="sd-dot"></span>':''}${t}${sub?`<small>${sub}</small>`:''}</div>`;
   return `<div class="sd">
-    <div class="sd-top">
-      <span class="sws-badge">SYSTEMS</span>
-      <h4 class="sws-h1">System design — Investment &amp; Accounting
-        <span>feeds → ledger → engines → reports → portal · money moves only by hand</span></h4>
-      <div class="sd-legend">
-        <i><span class="sd-mini"></span>SERVICE</i>
-        <i><span class="sd-mini db"></span>DATABASE</i>
-        <i><span class="sd-mini doc"></span>REPORT / FILE</i>
-        <i><span class="sd-mini hum"></span>HUMAN</i>
-        <i><span class="sd-mini cloud"></span>CLOUD</i>
-      </div>
-    </div>
+    ${sdHead('System design — Investment &amp; Accounting','feeds → ledger → engines → reports → portal · money moves only by hand')}
     <div class="sd-grid">
       <div class="sd-cell">
         <div class="sd-cap">TEAM FEEDS</div>
-        <div class="sd-feeds"><span>Acq</span><span>Permit</span><span>Construction</span><span>M&amp;S</span><span>Contracts</span></div>
+        ${sdChips(['Acq','Permit','Construction','M&amp;S','Contracts'])}
       </div>
-      <span class="sd-ar" aria-hidden="true"></span>
+      ${sdAr()}
       <div class="sd-cell">
         <div class="sd-cap">SYSTEMS</div>
-        <div class="sd-col3">
-          <div class="sd-svc">${BOT}<b>Procore</b><em>contracts</em></div>
-          <div class="sd-svc">${BOT}<b>Sage</b><em>accounting</em></div>
-          <div class="sd-svc">${BOT}<b>Ramp</b><em>spend</em></div>
-        </div>
+        <div class="sd-col3">${sdSvc('Procore','contracts')}${sdSvc('Sage','accounting')}${sdSvc('Ramp','spend')}</div>
       </div>
-      <span class="sd-ar" aria-hidden="true"><i>auto journal entry</i></span>
+      ${sdAr('auto journal entry')}
       <div class="sd-cell">
         <div class="sd-cap">LEDGER</div>
-        <div class="sd-db"><b>Journal Entries</b><em>system of record</em></div>
+        ${sdDb('Journal Entries','system of record')}
       </div>
-      <span class="sd-ar" aria-hidden="true"><i>read</i></span>
+      ${sdAr('read')}
       <div class="sd-right">
         <div class="sd-branch b1">
-          <div class="sd-svc">${BOT}<b>Proforma Calculator Engine</b></div>
-          <span class="sd-ar" aria-hidden="true"><i>v1 → v2 → …</i></span>
-          <div class="sd-stack">${doc('Proforma v2','every version kept',1)}</div>
-          <span class="sd-ar" aria-hidden="true"></span>
-          <div class="sd-docs">
-            ${doc('Monthly Budget Report')}
-            ${doc('Investor Report')}
-          </div>
-          <span class="sd-ar hum" aria-hidden="true"><i>${P_ICON}approve</i></span>
-          <div class="sd-cloudwrap">
-            ${SD_CLOUD}
-            <div class="sd-cloudlab"><b>Investor Portal</b><em>self-serve</em></div>
-          </div>
+          ${sdSvc('Proforma Calculator Engine')}
+          ${sdAr('v1→v2→…')}
+          <div class="sd-stack">${sdDoc('Proforma v2','every version kept',1)}</div>
+          ${sdAr()}
+          <div class="sd-docs">${sdDoc('Monthly Budget Report')}${sdDoc('Investor Report')}</div>
+          ${sdAr('approve',1)}
+          ${sdCloud('Investor Portal','self-serve')}
         </div>
         <div class="sd-branch b2">
-          <div class="sd-svc">${BOT}<b>Accounting Tool</b></div>
-          <span class="sd-ar" aria-hidden="true"><i>report</i></span>
-          <div class="sd-docs row">
-            ${doc('P&amp;L')}
-            ${doc('Transaction tracking')}
-            ${doc('Company structure')}
-          </div>
-          <span class="sd-ar hum" aria-hidden="true"><i>${P_ICON}action</i></span>
-          <div class="sd-hum"><span class="hum-b">${P_ICON}</span><b>Transaction Execution</b><em>wire — never automated</em></div>
+          ${sdSvc('Accounting Tool')}
+          ${sdAr('report')}
+          <div class="sd-docs row">${sdDoc('P&amp;L')}${sdDoc('Transaction tracking')}${sdDoc('Company structure')}</div>
+          ${sdAr('action',1)}
+          ${sdHum('Transaction Execution','wire — never automated')}
         </div>
       </div>
     </div>
@@ -3409,30 +3273,6 @@ function aiGenericHTML(t){
     <div class="cmp-col">${cmpHeadNew()}${nw}</div>
   </div>`;
 }
-/* align the Seller-Replied fork: spine spans both branch labels, arrow meets its midpoint */
-function swsWire(){
-  const wrap=document.querySelector('.sws-forkwrap');
-  if(!wrap)return;
-  const spine=wrap.querySelector('.sws-spine');
-  const labs=[...wrap.querySelectorAll('.sws-outrow > .sws-lab')];
-  const ar=document.querySelector('.sws-ar.fork');
-  if(!spine||labs.length<2)return;
-  if(window.matchMedia('(max-width:1020px)').matches){
-    spine.style.display='none';
-    if(ar){ar.style.alignSelf='';ar.style.marginTop='';}
-    return;
-  }
-  spine.style.display='';
-  const wr=wrap.getBoundingClientRect();
-  const mid=l=>{const r=l.getBoundingClientRect();return r.top+r.height/2-wr.top;};
-  const top=mid(labs[0]), h=mid(labs[labs.length-1])-top;
-  spine.style.top=top+'px'; spine.style.height=h+'px';
-  if(ar){
-    ar.style.alignSelf='start'; ar.style.marginTop='0px';
-    ar.style.marginTop=(wr.top+top+h/2-ar.getBoundingClientRect().top)+'px';
-  }
-}
-window.addEventListener('resize',()=>{clearTimeout(window.__swsT);window.__swsT=setTimeout(swsWire,120);});
 function aiTeamPanelHTML(i){
   const t=AI_TEAMS[i];
   if(t.custom==='acq')return aiAcqHTML();
@@ -3787,7 +3627,6 @@ function wireAI(){
     if(hubT)hubT.textContent=ORBIT[i].t;
     if(hubG)hubG.textContent=ORBIT[i].g;
     panel.innerHTML=aiTeamPanelHTML(i);
-    swsWire();
   }
   document.querySelectorAll('.ai-orb,.ai-tab').forEach(b=>b.onclick=()=>sel(+b.dataset.i));
   sel(window.__aiteam||0);
