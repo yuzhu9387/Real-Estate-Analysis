@@ -19,3 +19,4 @@ Welcome to the Real Estate Analysis dashboards and reports. Below are the availa
 - [**AlphaX Hub Dashboard Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/alpha%20x%20dashboard.html) - AlphaX Hub dashboard demonstration
 - [**AlphaX System Documentation**](https://yuzhu9387.github.io/Real-Estate-Analysis/AlphaX_System_Documentation.html) - AlphaX System documentation
 - [**AlphaX System Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/alphax-system-demo.html) - AlphaX System demonstration
+- [**AI Native Builder Company**](https://yuzhu9387.github.io/Real-Estate-Analysis/alphax_structure.html#/ai) - AlphaX agent-first structure demo: old vs new per team, platforms in use, and an editable build task list

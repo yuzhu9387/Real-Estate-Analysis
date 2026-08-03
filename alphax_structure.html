@@ -959,6 +959,87 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
   .tl-up::after{color:#c05252}
   .tl-dn i,.tl-up i{position:static;transform:none;white-space:normal;text-align:center}
 }
+/* ---------- projects — integrations map ---------- */
+.pint{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(70px,140px) 185px minmax(70px,140px) minmax(0,1fr);row-gap:30px;align-items:center}
+.pint-cell{min-width:0}
+.pint-box{border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:var(--shadow);padding:10px 12px;font:800 12px/1.3 Manrope,Inter,sans-serif;color:var(--ink)}
+.pint-box small{display:block;margin-top:3px;font:600 9.5px/1.4 Inter,sans-serif;color:var(--muted)}
+.pint-box.ai{border-style:dashed;border-color:#b9a7e8;background:#f7f4fd;color:#5b4a96}
+.pint-box.ai small{color:#8a7bb8}
+.pint-chain{display:flex;align-items:center;gap:0}
+.pint-chain .pint-box{flex:1;min-width:0}
+.pint-mini{position:relative;width:36px;height:2px;background:#9fb0b7;flex:none}
+.pint-mini::after{content:"";position:absolute;right:-1px;top:-3px;border-left:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.pint-mini i{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font:700 8.5px/1 Inter,sans-serif;font-style:normal;color:var(--muted);white-space:nowrap}
+.pint-hub{grid-column:3;grid-row:1/4;align-self:stretch;display:flex;flex-direction:column;justify-content:center;border:2px solid var(--primary);border-radius:13px;background:var(--primary-soft);padding:18px 14px;text-align:center;box-shadow:0 10px 26px rgba(0,67,84,.15)}
+.pint-hub .material-symbols-outlined{font-size:22px;color:var(--primary)}
+.pint-hub b{display:block;font:800 13px/1.25 Manrope,Inter,sans-serif;color:var(--primary);margin-top:4px}
+.pint-hub small{display:block;font-size:9px;color:var(--primary-mid);margin-top:3px;font-weight:700}
+.pint-link{position:relative;height:2px;background:#9fb0b7;width:calc(100% + 6px);margin-left:-3px}
+.pint-link.l::after,.pint-link.bi::after{content:"";position:absolute;right:-1px;top:-3px;border-left:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.pint-link.r::before,.pint-link.bi::before{content:"";position:absolute;left:-1px;top:-3px;border-right:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.pint-link i{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);width:160%;text-align:center;font:700 9px/1.3 Inter,sans-serif;font-style:normal;color:var(--text)}
+.pint .r1{grid-row:1}.pint .r2{grid-row:2}.pint .r3{grid-row:3}
+.pint .pl{grid-column:1}.pint .pintl{grid-column:2}.pint .pintr{grid-column:4}.pint .pr{grid-column:5}
+@media(max-width:900px){
+  .pint{grid-template-columns:1fr;row-gap:12px}
+  .pint>*{grid-column:auto!important;grid-row:auto!important}
+  .pint-link{display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;margin:0;
+    border:1px dashed #b9c4c9;border-radius:9px;background:#fff;padding:7px 11px}
+  .pint-link::before{display:none!important}
+  .pint-link.l::after{content:"↓";position:static;border:0;color:#7d8d94;font:800 12px/1 Inter,sans-serif}
+  .pint-link.r::after{content:"↑";position:static;border:0;color:#7d8d94;font:800 12px/1 Inter,sans-serif}
+  .pint-link.bi::after{content:"⇅";position:static;border:0;color:#7d8d94;font:800 12px/1 Inter,sans-serif}
+  .pint-link i{position:static;transform:none;width:auto;white-space:normal}
+  .pint-chain{flex-wrap:wrap;gap:8px}
+  .pint-mini{display:none}
+}
+/* ---------- ai — platforms in use today ---------- */
+.plat{display:grid;gap:10px}
+.plat-g{display:grid;grid-template-columns:172px 1fr;border:1px solid var(--line-soft);border-radius:11px;overflow:hidden;background:#fff}
+.plat-team{background:var(--surface);border-right:1px solid var(--line-soft);padding:12px;display:flex;align-items:flex-start;gap:8px}
+.plat-team .material-symbols-outlined{font-size:17px;color:var(--primary)}
+.plat-team b{font:800 11.5px/1.3 Manrope,Inter,sans-serif;color:var(--primary)}
+.plat-rows{display:grid}
+.plat-row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:8px 12px;border-bottom:1px solid var(--line-soft);align-items:baseline}
+.plat-row:last-child{border-bottom:0}
+.plat-row b{font:700 11px/1.35 Inter,sans-serif;color:var(--ink)}
+.plat-row span{font-size:10.5px;line-height:1.5;color:var(--text)}
+@media(max-width:760px){
+  .plat-g{grid-template-columns:1fr}
+  .plat-team{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .plat-row{grid-template-columns:1fr}
+}
+/* ---------- ai — editable task list ---------- */
+.tk-bar{display:flex;justify-content:flex-end;margin-bottom:12px}
+.tk-reset{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text);font:700 11px/1 Inter,sans-serif;padding:8px 12px;cursor:pointer}
+.tk-reset:hover{border-color:var(--primary);color:var(--primary)}
+.tk-team{margin-bottom:18px}
+.tk-team-t{display:flex;align-items:center;gap:8px;font:800 12.5px/1 Manrope,Inter,sans-serif;color:var(--primary);
+  letter-spacing:.02em;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--line-soft)}
+.tk-team-t .material-symbols-outlined{font-size:17px}
+.tk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tk-card{border:1px solid var(--line);border-radius:11px;background:#fff;box-shadow:var(--shadow);padding:11px 12px;min-width:0}
+.tk-h{margin-bottom:8px}
+.tk-h b{display:block;font:800 12px/1.3 Manrope,Inter,sans-serif;color:var(--ink)}
+.tk-h small{display:block;font-size:9.5px;line-height:1.45;color:var(--muted);margin-top:2px}
+.tk-list{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.tk-row{display:flex;align-items:center;gap:8px;border:1px solid var(--line-soft);border-radius:7px;background:var(--surface);padding:5px 6px 5px 9px}
+.tk-i{font:800 8.5px/1 Inter,sans-serif;color:#9aa4aa;flex:none;width:12px}
+.tk-t{flex:1;min-width:0;font-size:10.5px;line-height:1.4;color:var(--text);font-weight:600;overflow-wrap:anywhere}
+.tk-btns{display:flex;gap:2px;flex:none;opacity:.35;transition:.15s}
+.tk-row:hover .tk-btns{opacity:1}
+.tk-btns button{border:0;background:transparent;border-radius:5px;width:22px;height:22px;display:grid;place-items:center;cursor:pointer;color:var(--muted);padding:0}
+.tk-btns button:hover{background:var(--primary-soft);color:var(--primary)}
+.tk-btns button.del:hover{background:var(--red-soft);color:var(--red)}
+.tk-btns .material-symbols-outlined{font-size:15px}
+.tk-add{display:flex;gap:6px;margin-top:7px}
+.tk-add input{flex:1;min-width:0;border:1px dashed var(--line);border-radius:7px;background:#fff;padding:7px 9px;font:600 10.5px/1 Inter,sans-serif;color:var(--ink)}
+.tk-add input:focus{outline:none;border-color:var(--primary);border-style:solid}
+.tk-add button{border:1px solid var(--line);border-radius:7px;background:#fff;width:30px;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+.tk-add button:hover{border-color:var(--primary);color:var(--primary)}
+.tk-add .material-symbols-outlined{font-size:16px}
+@media(max-width:860px){.tk-grid{grid-template-columns:1fr}}
 @media(max-width:1180px){.ai-cmp{grid-template-columns:1fr}.ai-vs-col{padding:10px 0}}
 @media(max-width:860px){
   .ai-orbit{display:none}
@@ -2136,7 +2217,9 @@ function projectsView(){
         <div><button class="dict-open" data-guide="${p.key}">open ↗</button></div>
       </div>`).join('')}
     </div>`).join('')}
-  </div></div>`;
+  </div></div>
+
+  ${pintHTML()}`;
 }
 
 let flowTimer=null;
@@ -2853,9 +2936,255 @@ function aiTeamPanelHTML(i){
   if(t.custom==='tl')return aiTlHTML();
   return aiGenericHTML(t);
 }
-function aiView(){
+/* --- projects: integrations around the PM system --- */
+function pintHTML(){
   return `
-  ${pageHead('AlphaX · agent-first','AI Native Builder Company','Same business, rebuilt agent-first. AI agents do the work — people review, decide, negotiate, and keep the relationships.')}
+  <div class="section rise"><div class="section-head"><h2>5 · Integrations</h2><span class="pill">WHAT PLUGS INTO PROJECT MANAGEMENT</span></div>
+  <div class="section-body">
+    <div class="pint">
+      <div class="pint-cell pl r1">
+        <div class="pint-chain">
+          <div class="pint-box">Lark Chat<small>chat history</small></div>
+          <span class="pint-mini" aria-hidden="true"><i>input</i></span>
+          <div class="pint-box ai">✦ AI models<small>analyse &amp; summary</small></div>
+        </div>
+      </div>
+      <span class="pint-link l pintl r1" aria-hidden="true"><i>report</i></span>
+      <div class="pint-cell pl r2"><div class="pint-box">Lark Workspace<small>Sheet, Excel, etc.</small></div></div>
+      <span class="pint-link bi pintl r2" aria-hidden="true"><i>2-way sync data</i></span>
+      <div class="pint-cell pl r3"><div class="pint-box">Dropbox<small>project files</small></div></div>
+      <span class="pint-link l pintl r3" aria-hidden="true"><i>Document Index &amp; version control</i></span>
+      <div class="pint-hub">${icon('database')}<b>Project Management</b><small>SYSTEM OF RECORD</small></div>
+      <span class="pint-link r pintr r1" aria-hidden="true"><i>CashFlow</i></span>
+      <div class="pint-cell pr r1"><div class="pint-box">Ramp &amp; Sage<small>corporate spend · accounting</small></div></div>
+      <span class="pint-link r pintr r2" aria-hidden="true"><i>Forecast Financial Statements</i></span>
+      <div class="pint-cell pr r2"><div class="pint-box">Proforma Calculator Engine<small>per-project financial model</small></div></div>
+      <span class="pint-link r pintr r3" aria-hidden="true"><i>Loan Management</i></span>
+      <div class="pint-cell pr r3"><div class="pint-box">Zeebee<small>loan servicing</small></div></div>
+    </div>
+  </div></div>`;
+}
+/* --- ai: platforms in use today --- */
+const PLATFORMS=[
+ {team:'Cross-Company', ic:'hub', apps:[
+   ['Lark','Company-wide communication, messaging, meetings, and collaboration platform.'],
+   ['Lark Workspace','Central workspace for shared documents, project information, and team collaboration.'],
+   ['Left Main','Salesforce-based CRM used to manage properties, customers, and real estate workflows.'],
+   ['Dropbox','Cloud storage and file-sharing platform for company and project files.'],
+   ['Google Drive','Cloud-based document storage, sharing, and collaboration platform.'],
+   ['Smartphone','Mobile communication and access to company applications while working remotely or on-site.'],
+   ['ChatGPT','AI assistant used for research, writing, analysis, and workflow support.'],
+   ['Claude','AI assistant used for document analysis, writing, research, and problem-solving.']]},
+ {team:'Acquisition', ic:'travel_explore', apps:[
+   ['CoStar','Commercial real estate database used for property research, market data, and deal sourcing.'],
+   ['PropStream','Real estate data platform used to identify properties, owners, and potential acquisition opportunities.'],
+   ['PropertyRadar','Property and owner data platform used for lead generation, market research, and outreach.']]},
+ {team:'Design', ic:'architecture', apps:[
+   ['Revit','Building information modeling software used for architectural design and construction documentation.'],
+   ['AutoCAD','Computer-aided design software used to create and edit technical drawings.'],
+   ['Bluebeam','PDF markup, plan review, measurement, and construction document collaboration software.']]},
+ {team:'Development', ic:'apartment', apps:[
+   ['Bluebeam','Used to review, mark up, compare, and coordinate development and construction documents.']]},
+ {team:'Accounting', ic:'monitoring', apps:[
+   ['Ramp','Corporate card, expense management, bill payment, and spend-control platform.'],
+   ['Sage','Accounting and financial management software used for bookkeeping, reporting, and project financials.']]},
+ {team:'Salesforce', ic:'bolt', apps:[
+   ['Zapier','Workflow automation platform used to connect Salesforce with other applications and automate data transfers.']]},
+ {team:'Sales & Marketing', ic:'sell', apps:[
+   ['Wix','Website-building and content-management platform used for company and project marketing websites.']]}
+];
+function platHTML(){
+  return `
+  <div class="section rise"><div class="section-head"><h2>2 · Platforms in use today</h2><span class="pill">THE CURRENT STACK, TEAM BY TEAM</span><p>What each team already runs on — the starting point the agent-first rebuild plugs into.</p></div>
+  <div class="section-body"><div class="plat">
+    ${PLATFORMS.map(g=>`<div class="plat-g">
+      <div class="plat-team">${icon(g.ic)}<b>${g.team}</b></div>
+      <div class="plat-rows">${g.apps.map(([n,d])=>`<div class="plat-row"><b>${n}</b><span>${d}</span></div>`).join('')}</div>
+    </div>`).join('')}
+  </div></div></div>`;
+}
+/* --- ai: editable micro-service task list --- */
+const TK_KEY='alphax_tasklist_v1';
+const TK_TEAMS=[
+ {team:'Acquisition', ic:'travel_explore', svcs:[
+  {id:'acq-sourcing', n:'Deal Sourcing Agent', d:'Reads every data source, filters to the buy box, opens deal records.', t:[
+    'Connect public feeds — MLS, Redfin / Zillow, Compass off-market',
+    'Connect paid sources — CoStar, PropStream, PropertyRadar',
+    'Buy-box filter, configurable per business line',
+    'Dedupe + normalize into one property record',
+    'Auto-open deal record and post to the review queue']},
+  {id:'acq-analysis', n:'Analysis Agent Group', d:'Comps, DD, pro forma, feasibility and a first underwrite on every deal.', t:[
+    'Comps Agent — pull and rank comparables with confidence score',
+    'DD Agent — title, liens, easement and zoning flags',
+    'Pro Forma Engine — cost and schedule in, margin and IRR out',
+    'Strategy & feasibility scenarios per exit path',
+    'Preliminary underwriting sheet, analyst-overridable']},
+  {id:'acq-scoring', n:'Scoring & Market Loop', d:'One yardstick for every deal, fed back by what actually sold.', t:[
+    'One 0–100 scoring yardstick across deal types',
+    'Supply & demand inputs by submarket',
+    'Sold-results feedback loop re-weights the scoring',
+    'Morning ranked queue + threshold alerts']},
+  {id:'acq-nurture', n:'Seller Nurture CRM', d:'Keeps every not-yet seller warm until they are ready.', t:[
+    'Auto campaign cadences — SMS + email',
+    'Warm-reply detection → hand the thread to the PM',
+    'Long-term follow pipeline and wake-up triggers']}]},
+ {team:'TC & Loan', ic:'account_balance', svcs:[
+  {id:'tl-docs', n:'Document Collection Agent', d:'Every document on both tracks — requested, chased, filed.', t:[
+    'Checklist template per track — transaction / loan',
+    'Request, chase and receive documents automatically',
+    'Auto-file into the doc vault with naming rules',
+    'Status board — what is missing and who owes it']},
+  {id:'tl-prep', n:'Package Prep & Review Agent', d:'Builds the buyer and loan packages; reads contracts and disclosures first.', t:[
+    'Assemble the buyer package — EMD, disclosures, contingencies',
+    'Assemble the loan application package',
+    'Contract & disclosure review — summary plus red flags',
+    'Route findings to the human check gate']},
+  {id:'tl-quote', n:'Loan Quote & Match Engine', d:'Quotes the lenders and scores which package fits this project.', t:[
+    'Lender outreach and quote intake',
+    'Normalize quotes into comparable terms',
+    'Match scoring against the project pro forma',
+    'Ranked shortlist for the DECIDE gate']}]},
+ {team:'Development', ic:'apartment', svcs:[
+  {id:'dev-suite', n:'Entitlement Agent Suite', d:'Zoning, entitlement and pre-construction, run as agents.', t:[
+    'Zoning Research Agent','Entitlement Tracker Agent','Consultant Coordination Agent','Pre-con Schedule Engine']}]},
+ {team:'Design & Permitting', ic:'architecture', svcs:[
+  {id:'dp-suite', n:'Permit Agent Suite', d:'Drawing sets to approved permits, run as agents.', t:[
+    'Permit Package Agent','Comment Response Drafter','Plan-check Status Tracker','Code Compliance Checker']}]},
+ {team:'Construction', ic:'construction', svcs:[
+  {id:'con-vendor', n:'Procore Vendor Pool', d:'The subcontractor bench — bid to signed contract.', t:[
+    'Vendor bench with license and insurance status',
+    'Bid flow — invite, bid, review, sign',
+    'Invoice and deposit-request intake']},
+  {id:'con-bridge', n:'Subcontract → Project Bridge', d:'Signed subcontracts become project records automatically.', t:[
+    'Push signed subcontracts into the project record',
+    'Keep scope, price and schedule in sync']},
+  {id:'con-tasks', n:'Task & Notification Engine', d:'Every phase is a task; finishing one fires the next.', t:[
+    'Phase tasks CM 1–9 and QC 10–11 with owners and dates',
+    'Finish → notify the next task automatically',
+    'Live who-is-doing-what view']},
+  {id:'con-pay', n:'Sage Payment Sync', d:'Approved invoices become stage payments on the ledger.', t:[
+    'Approved invoice → stage payment',
+    'Payment ledger written back to the project record']},
+  {id:'con-feedback', n:'Contract Feedback Service', d:'Scores every contractor so the next bid list picks itself.', t:[
+    'On-time and quality scoring per contractor',
+    'Collaboration score and price history',
+    'Long-term partner list']},
+  {id:'con-care', n:'Customer Care Bridge', d:'Customer issues become tasks the build team actually sees.', t:[
+    'CRM intake → create task in the PM system',
+    'Warranty and punch-list history on the buyer record']}]},
+ {team:'Marketing & Sales', ic:'sell', svcs:[
+  {id:'ms-content', n:'Demand & Content Agents', d:'Always-on marketing across every channel.', t:[
+    'Channel calendar and content generation',
+    'Lead capture into the CRM — one record per lead',
+    'Ad budget optimization loop']},
+  {id:'ms-nurture', n:'Nurture & Convert Engine', d:'Automated follow-up from first touch to routed handoff.', t:[
+    'Instant reply on every new lead',
+    'Drip and re-engage until the buyer is ready',
+    'Lead scoring — who is actually close',
+    'Route to the right agent, with context']},
+  {id:'ms-listing', n:'Listing Operation Feed', d:'Sales materials assembled from the project record.', t:[
+    'Sales package assembled from the project record',
+    'Presale listing published from build status',
+    'Closing documents packaged at contract']},
+  {id:'ms-writeback', n:'Outcome Writeback', d:'Closes the loop from sales results back to campaigns.', t:[
+    'Won / lost / on-hold writes back to the CRM',
+    'Campaign aiming from what actually closed']}]},
+ {team:'Investment & Accounting', ic:'monitoring', svcs:[
+  {id:'inv-suite', n:'Finance Agent Suite', d:'Books, reports and reconciliation, run as agents.', t:[
+    'Pro Forma Sync Engine','Journal Entry Agent','Investor Report Generator','Actuals Reconciliation Agent']}]},
+ {team:'Project Management Platform', ic:'account_tree', svcs:[
+  {id:'pm-lark-ai', n:'Lark Chat AI Reporter', d:'Chat history in, analysed summary report out.', t:[
+    'Chat history intake, permissioned per project',
+    'AI models — analyse and summarize',
+    'Post the report into project management']},
+  {id:'pm-lark-sync', n:'Lark Workspace 2-way Sync', d:'Sheets and Excel stay live in both directions.', t:[
+    'Field mapping — Sheet / Excel ↔ PM system',
+    'Conflict rules and change log']},
+  {id:'pm-dropbox', n:'Dropbox Document Index', d:'Every project file indexed with version control.', t:[
+    'Index every project file',
+    'Version control with a latest-pointer']},
+  {id:'pm-cash', n:'Ramp & Sage CashFlow Feed', d:'Spend and ledger flow into project cashflow.', t:[
+    'Pull spend and ledger into project cashflow']},
+  {id:'pm-proforma', n:'Proforma Calculator Engine', d:'Forecast financial statements per project.', t:[
+    'Forecast financial statements per project']},
+  {id:'pm-zeebee', n:'Zeebee Loan Management', d:'Loan status and draw schedule inside the PM view.', t:[
+    'Loan status and draw schedule into the PM system']}]}
+];
+const tkEsc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function tkDefault(){const o={};TK_TEAMS.forEach(g=>g.svcs.forEach(s=>o[s.id]=s.t.slice()));return o;}
+function tkLoad(){
+  try{const raw=localStorage.getItem(TK_KEY);
+    if(raw){const o=JSON.parse(raw),d=tkDefault();
+      for(const k in d)if(!Array.isArray(o[k]))o[k]=d[k];
+      return o;}
+  }catch(e){}
+  return tkDefault();
+}
+function tkSave(o){try{localStorage.setItem(TK_KEY,JSON.stringify(o));}catch(e){}}
+let TK_STATE=null;
+function tkRow(id,t,i){
+  return `<li class="tk-row"><span class="tk-i">${i+1}</span><span class="tk-t">${tkEsc(t)}</span>
+    <span class="tk-btns">
+      <button data-mv="${id}|${i}|-1" title="Move up">${icon('keyboard_arrow_up')}</button>
+      <button data-mv="${id}|${i}|1" title="Move down">${icon('keyboard_arrow_down')}</button>
+      <button class="del" data-del="${id}|${i}" title="Delete">${icon('close')}</button>
+    </span></li>`;
+}
+function tkHTML(){
+  TK_STATE=tkLoad();
+  return `
+  <div class="section rise"><div class="section-head"><h2>Micro-services &amp; build to-dos</h2><span class="pill">EDITABLE · ▲▼ REORDER · ADD &amp; DELETE · SAVED IN THIS BROWSER</span><p>Every agent and service from the Old-vs-New boards, broken into build tasks. Your edits persist locally on this machine.</p></div>
+  <div class="section-body"><div id="tkRoot">
+    <div class="tk-bar"><button class="tk-reset" id="tkReset">Reset to default</button></div>
+    ${TK_TEAMS.map(g=>`<div class="tk-team">
+      <div class="tk-team-t">${icon(g.ic)}${g.team}</div>
+      <div class="tk-grid">
+        ${g.svcs.map(s=>`<div class="tk-card" data-svc="${s.id}">
+          <div class="tk-h"><b>${s.n}</b><small>${s.d}</small></div>
+          <ol class="tk-list">${(TK_STATE[s.id]||[]).map((t,i)=>tkRow(s.id,t,i)).join('')}</ol>
+          <div class="tk-add"><input type="text" placeholder="Add a task…" data-add="${s.id}"><button data-addbtn="${s.id}" title="Add">${icon('add')}</button></div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div></div></div>`;
+}
+function tkRefresh(id){
+  const card=document.querySelector(`.tk-card[data-svc="${id}"]`);
+  if(card)card.querySelector('.tk-list').innerHTML=(TK_STATE[id]||[]).map((t,i)=>tkRow(id,t,i)).join('');
+}
+function tkAdd(id){
+  const inp=document.querySelector(`[data-add="${id}"]`);
+  const v=(inp&&inp.value||'').trim();
+  if(!v)return;
+  (TK_STATE[id]=TK_STATE[id]||[]).push(v);
+  inp.value='';
+  tkSave(TK_STATE);
+  tkRefresh(id);
+}
+function wireTasks(){
+  const root=document.getElementById('tkRoot');
+  if(!root)return;
+  root.addEventListener('click',e=>{
+    if(e.target.id==='tkReset'){
+      if(confirm('Reset every list back to the default tasks?')){TK_STATE=tkDefault();tkSave(TK_STATE);render();}
+      return;
+    }
+    const mv=e.target.closest('[data-mv]');
+    if(mv){const[id,i,d]=mv.dataset.mv.split('|');const a=TK_STATE[id]||[];const from=+i,to=from+ +d;
+      if(to<0||to>=a.length)return;
+      [a[from],a[to]]=[a[to],a[from]];tkSave(TK_STATE);tkRefresh(id);return;}
+    const del=e.target.closest('[data-del]');
+    if(del){const[id,i]=del.dataset.del.split('|');(TK_STATE[id]||[]).splice(+i,1);tkSave(TK_STATE);tkRefresh(id);return;}
+    const add=e.target.closest('[data-addbtn]');
+    if(add){tkAdd(add.dataset.addbtn);return;}
+  });
+  root.addEventListener('keydown',e=>{
+    const inp=e.target.closest&&e.target.closest('[data-add]');
+    if(inp&&e.key==='Enter')tkAdd(inp.dataset.add);
+  });
+}
+function aiTeamsHTML(){
+  return `
   <div class="section rise"><div class="section-head"><h2>1 · Build, sell, recycle</h2><span class="pill">CLICK A TEAM · OLD VS NEW</span></div>
   <div class="section-body">
     <div class="orbit-wrap ai-orbit">
@@ -2872,9 +3201,22 @@ function aiView(){
       ${ORBIT.map((d,i)=>`<button class="ai-tab" data-i="${i}"><span class="orb-ic">${icon(d.icon)}</span>${d.t}</button>`).join('')}
     </div>
     <div id="aiTeamPanel"></div>
-  </div></div>`;
+  </div></div>
+  ${platHTML()}`;
+}
+function aiView(){
+  const mode=window.__aimode||'teams';
+  return `
+  ${pageHead('AlphaX · agent-first','AI Native Builder Company','Same business, rebuilt agent-first. AI agents do the work — people review, decide, negotiate, and keep the relationships.')}
+  <div class="co-tabs rise">
+    <button class="co-tab ${mode==='teams'?'active':''}" data-aimode="teams">Old vs New</button>
+    <button class="co-tab ${mode==='tasks'?'active':''}" data-aimode="tasks">Task List</button>
+  </div>
+  ${mode==='teams'?aiTeamsHTML():tkHTML()}`;
 }
 function wireAI(){
+  document.querySelectorAll('[data-aimode]').forEach(b=>b.onclick=()=>{window.__aimode=b.dataset.aimode;render();});
+  if((window.__aimode||'teams')==='tasks'){wireTasks();return;}
   const panel=document.getElementById('aiTeamPanel');
   const hubT=document.getElementById('aiHubT'), hubG=document.getElementById('aiHubG');
   function sel(i){
