@@ -1135,6 +1135,50 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
   .sd-stack{margin-right:0}
   .sd-cap{text-align:left}
 }
+/* ---------- ai — full system design: PM as the information hub ---------- */
+.sysd{display:grid;grid-template-columns:minmax(0,1fr) minmax(74px,132px) 225px minmax(74px,132px) minmax(0,1fr);row-gap:28px;align-items:center}
+.sysd .c1{grid-column:1}.sysd .c2{grid-column:2}.sysd .c4{grid-column:4}.sysd .c5{grid-column:5}
+.sysd .r1{grid-row:1}.sysd .r2{grid-row:2}.sysd .r3{grid-row:3}
+.sysd-t{border:1px solid var(--line);border-radius:11px;background:#fff;box-shadow:var(--shadow);padding:11px 12px;min-width:0}
+.sysd-t>b{display:flex;align-items:center;gap:7px;font:800 12px/1.3 Manrope,Inter,sans-serif;color:var(--ink)}
+.sysd-t>b .material-symbols-outlined{font-size:16px;color:var(--primary)}
+.sysd-ch{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.sysd-ch em{font-style:normal;border:1px solid rgba(14,156,184,.35);background:#f0fafc;color:#0b5d74;border-radius:5px;padding:4px 7px;font:700 9px/1.3 Inter,sans-serif}
+.sysd-hub{grid-column:3;grid-row:1/4;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+  border:2px solid var(--primary);border-radius:14px;background:linear-gradient(180deg,var(--primary-soft),#f2fafc);
+  padding:16px 14px;text-align:center;box-shadow:0 10px 30px rgba(0,67,84,.16)}
+.sysd-hub .material-symbols-outlined{font-size:24px;color:var(--primary)}
+.sysd-hub>b{display:block;font:800 14px/1.25 Manrope,Inter,sans-serif;color:var(--primary);margin-top:5px}
+.sysd-hub>small{display:block;font:800 8.5px/1 Inter,sans-serif;letter-spacing:.14em;color:var(--primary-mid);margin-top:4px}
+.sysd-hub-ch{display:grid;gap:5px;margin-top:11px}
+.sysd-hub-ch span{border:1px solid rgba(0,67,84,.22);border-radius:7px;background:#fff;padding:6px 8px;
+  font:700 9.5px/1.3 Inter,sans-serif;color:var(--primary-dark)}
+.sysd-io{margin-top:11px;border-top:1px dashed rgba(0,67,84,.25);padding-top:9px;font-size:8.5px;line-height:1.6;color:var(--primary-mid);font-weight:700}
+.sysd-l{position:relative;height:2px;background:#9fb0b7;width:calc(100% + 6px);margin-left:-3px}
+.sysd-l.in::after{content:"";position:absolute;right:-1px;top:-3px;border-left:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.sysd-l.out::before{content:"";position:absolute;left:-1px;top:-3px;border-right:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.sysd-l.bi::after{content:"";position:absolute;right:-1px;top:-3px;border-left:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.sysd-l.bi::before{content:"";position:absolute;left:-1px;top:-3px;border-right:6px solid #9fb0b7;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.sysd-l i{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);width:128%;text-align:center;font:700 8.5px/1.3 Inter,sans-serif;font-style:normal;color:var(--text)}
+.sysd-drop{width:2px;height:26px;margin:2px auto;background:repeating-linear-gradient(180deg,var(--primary) 0 5px,transparent 5px 10px);position:relative}
+.sysd-drop::after{content:"";position:absolute;left:-3px;bottom:-1px;border-top:6px solid var(--primary);border-left:4px solid transparent;border-right:4px solid transparent}
+.sysd-band{border:1.5px dashed rgba(0,67,84,.35);border-radius:12px;background:var(--surface);padding:12px 16px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.sysd-band>b{display:flex;align-items:center;gap:8px;font:800 11px/1.2 Manrope,Inter,sans-serif;color:var(--primary);flex:none}
+.sysd-band>b .p-ic{width:14px;height:14px;fill:var(--primary)}
+.sysd-band em{font-style:normal;border:1px solid var(--line);border-radius:999px;background:#fff;padding:5px 10px;
+  font:700 9.5px/1 Inter,sans-serif;color:var(--text)}
+.sysd-band small{flex-basis:100%;text-align:center;font-size:9.5px;color:var(--muted);margin-top:2px}
+@media(max-width:900px){
+  .sysd{grid-template-columns:1fr;row-gap:12px}
+  .sysd>*{grid-column:auto!important;grid-row:auto!important}
+  .sysd-l{display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;margin:0;
+    border:1px dashed #b9c4c9;border-radius:9px;background:#fff;padding:7px 11px}
+  .sysd-l::before{display:none!important}
+  .sysd-l.in::after{content:"↓";position:static;border:0;color:#7d8d94;font:800 12px/1 Inter,sans-serif}
+  .sysd-l.bi::after{content:"⇅";position:static;border:0;color:#7d8d94;font:800 12px/1 Inter,sans-serif}
+  .sysd-l i{position:static;transform:none;width:auto;white-space:normal}
+}
 @media(max-width:1180px){.ai-cmp{grid-template-columns:1fr}.ai-vs-col{padding:10px 0}}
 @media(max-width:860px){
   .ai-orbit{display:none}
@@ -3343,7 +3387,7 @@ const PLATFORMS=[
 ];
 function platHTML(){
   return `
-  <div class="section rise"><div class="section-head"><h2>2 · Platforms in use today</h2><span class="pill">THE CURRENT STACK, TEAM BY TEAM</span><p>What each team already runs on — the starting point the agent-first rebuild plugs into.</p></div>
+  <div class="section rise"><div class="section-head"><h2>3 · Platforms in use today</h2><span class="pill">THE CURRENT STACK, TEAM BY TEAM</span><p>What each team already runs on — the starting point the agent-first rebuild plugs into.</p></div>
   <div class="section-body"><div class="plat">
     ${PLATFORMS.map(g=>`<div class="plat-g">
       <div class="plat-team">${icon(g.ic)}<b>${g.team}</b></div>
@@ -3583,6 +3627,56 @@ function wireTasks(){
     if(inp&&e.key==='Enter')tkAdd(inp.dataset.add);
   });
 }
+/* --- ai: full system design — PM as the information hub --- */
+const SYSD_L=[
+ {ic:'travel_explore', t:'Acquisition', sys:['Sourcing & Analysis Agents','Scoring System','Seller CRM'],
+  lab:'won deal opens a project', dir:'in'},
+ {ic:'account_balance', t:'TC & Loan', sys:['Document Collection Agent','Doc Vault','Loan Quote & Match'],
+  lab:'contract · escrow · loan status', dir:'in'},
+ {ic:'apartment', t:'Development · Design & Permitting', sys:['Entitlement Agent Suite','Permit Agent Suite'],
+  lab:'entitlement & permit milestones', dir:'in'}
+];
+const SYSD_R=[
+ {ic:'construction', t:'Construction', sys:['Procore Vendor Pool','Sage Accounting','Customer Care CRM'],
+  lab:'subcontracts · phase tasks · payments', dir:'bi'},
+ {ic:'sell', t:'Marketing & Sales', sys:['CRM — lead record','Nurture & Convert Engine'],
+  lab:'listing data out · sales status back', dir:'bi'},
+ {ic:'monitoring', t:'Investment & Accounting', sys:['Ramp & Sage','Proforma Engine','Zeebee'],
+  lab:'cashflow · forecast · loans', dir:'bi'}
+];
+function sysdBox(x){
+  return `<div class="sysd-t"><b>${icon(x.ic)}${x.t}</b>
+    <div class="sysd-ch">${x.sys.map(v=>`<em>${v}</em>`).join('')}</div></div>`;
+}
+function sysdHTML(){
+  return `
+  <div class="section rise"><div class="section-head"><h2>2 · One system, one hub</h2><span class="pill">EVERY TEAM SYSTEM WIRED THROUGH PROJECT MANAGEMENT</span><p>Each team runs its own systems — but every task, date, document and dollar lands in Project Management, and that is where everyone reads.</p></div>
+  <div class="section-body">
+    <div class="sysd">
+      ${SYSD_L.map((x,i)=>`<div class="c1 r${i+1}">${sysdBox(x)}</div>
+        <span class="sysd-l ${x.dir} c2 r${i+1}" aria-hidden="true"><i>${x.lab}</i></span>`).join('')}
+      <div class="sysd-hub">
+        ${icon('hub')}<b>Project Management</b><small>INFORMATION CENTER HUB</small>
+        <div class="sysd-hub-ch">
+          <span>Tasks &amp; owners</span>
+          <span>Schedule &amp; milestones</span>
+          <span>Documents &amp; versions</span>
+          <span>Cashflow &amp; budget</span>
+          <span>Notifications &amp; reports</span>
+        </div>
+        <div class="sysd-io">Lark Chat AI report · Lark Workspace 2-way sync · Dropbox document index</div>
+      </div>
+      ${SYSD_R.map((x,i)=>`<span class="sysd-l ${x.dir} c4 r${i+1}" aria-hidden="true"><i>${x.lab}</i></span>
+        <div class="c5 r${i+1}">${sysdBox(x)}</div>`).join('')}
+    </div>
+    <div class="sysd-drop" aria-hidden="true"></div>
+    <div class="sysd-band">
+      <b>${P_ICON}Everyone reads here</b>
+      <em>PM</em><em>Team Leads</em><em>C-level</em><em>Every team member</em>
+      <small>One place to check messages, status and what is next — nobody asks another team where things stand.</small>
+    </div>
+  </div></div>`;
+}
 function aiTeamsHTML(){
   return `
   <div class="section rise"><div class="section-head"><h2>1 · Build, sell, recycle</h2><span class="pill">CLICK A TEAM · OLD VS NEW</span></div>
@@ -3602,6 +3696,7 @@ function aiTeamsHTML(){
     </div>
     <div id="aiTeamPanel"></div>
   </div></div>
+  ${sysdHTML()}
   ${platHTML()}`;
 }
 function aiView(){
