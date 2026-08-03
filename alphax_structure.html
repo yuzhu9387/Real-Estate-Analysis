@@ -932,6 +932,7 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 .tl-b{margin-left:auto;flex:none;font:800 7.5px/1 Inter,sans-serif;letter-spacing:.1em;border-radius:4px;
   padding:4px 6px;color:#fff;background:#c05252}
 .tl-b.decide{background:#9a6700}
+.tl-b.ai{background:#0b7f97}
 .tl-hums{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tl-h{display:flex;align-items:flex-start;gap:9px;border:1px solid rgba(217,140,140,.5);border-radius:9px;
   background:#fff;padding:9px 10px}
@@ -2436,17 +2437,11 @@ function wirePmPage(){
 const AI_TEAMS=[
  {custom:'acq'},
  {custom:'tl'},
- {old:['Zoning & code research','Entitlement tracking','Consultant coordination','Pre-construction scheduling'],
-  agents:['Zoning Research Agent','Entitlement Tracker Agent','Consultant Coordination Agent','Pre-con Schedule Engine'],
-  humans:['Strategy decisions','City meetings','Approve submittals']},
- {old:['Assemble drawing sets','File permit applications','Respond to city comments','Track plan-check status'],
-  agents:['Permit Package Agent','Comment Response Drafter','Plan-check Status Tracker','Code Compliance Checker'],
-  humans:['Design review & stamp','City relationships','Approve responses']},
+ {custom:'dev'},
+ {custom:'dp'},
  {custom:'con'},
  {custom:'ms'},
- {old:['Update proforma by hand','Manual journal entries','Draft investor reports','Reconcile actuals'],
-  agents:['Pro Forma Sync Engine','Journal Entry Agent','Investor Report Generator','Actuals Reconciliation Agent'],
-  humans:['Capital decisions','Approve distributions','Investor relationships']}
+ {custom:'inv'}
 ];
 const P_ICON='<svg viewBox="0 0 24 24" class="p-ic" aria-hidden="true"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>';
 const BOT='<svg class="bot" viewBox="0 0 34 30" aria-hidden="true"><line x1="17" y1="1.5" x2="17" y2="5" stroke="#0e9cb8" stroke-width="1.6"/><circle cx="17" cy="1.9" r="1.7" fill="#22d3ee"/><rect x="4.5" y="5" width="25" height="20" rx="6" fill="#eaf7fa" stroke="#0e9cb8" stroke-width="1.7"/><rect x="0.8" y="12" width="3" height="7" rx="1.5" fill="#0e9cb8"/><rect x="30.2" y="12" width="3" height="7" rx="1.5" fill="#0e9cb8"/><text x="17" y="19.8" text-anchor="middle" font-family="Manrope,Inter,sans-serif" font-size="10.5" font-weight="800" fill="#0b7f97">AI</text></svg>';
@@ -2883,6 +2878,460 @@ function aiTlHTML(){
     <div class="cmp-col">${cmpHeadNew()}${nw}</div>
   </div>`;
 }
+/* --- Development: old approval tree vs new tracked-pipeline architecture --- */
+const DEV_OLD=[
+ {t:'Acquisition & Due Diligence', items:['Remove Contingency','Close Escrow']},
+ {t:'Entitlement', items:['SB330 Preliminary Application','Submit Formal Planning Package','Environmental Clearance','Tentative Map (TMap) Approval','Site Development Permit (SDP) Approval','Entitlement Approval']},
+ {t:'Permit', items:['Tree Removal Permit Approval','Demolition Permit Approval','Grading Permit Approval','On-Site Improvement Permit (Private Street) Approval','Off-Site Improvement Permit (Encroachment) Approval','Final Map Recordation','Building Permit Approval','Truss Permit Approval (Deferred)','Fire Protection Permit Approval (Deferred)','Solar Permit Approval (Deferred)','EV Permit Approval (Deferred)']},
+ {t:'Utility', items:['Water Design Approval','Electrical & Composite Plan Approval']},
+ {t:'Pre-Construction', items:['Interior Design Package','Finalize Bidding & Award Contracts']},
+ {t:'DRE', items:['Pink Approval','Yellow Approval','White Approval']}
+];
+function aiDevHTML(){
+  const old=`<div class="aiold">
+    <div class="cold">
+      <div class="cold-root">Development</div>
+      <div class="cold-fan"></div>
+      <div class="cold-grid">
+        ${DEV_OLD.map(c=>`<div class="cold-c"><b>${c.t}</b>
+          <ol>${c.items.map(i=>`<li>${i}</li>`).join('')}</ol></div>`).join('')}
+      </div>
+      <div class="cold-loose"><b>25 approvals by hand</b><span>submittal dates, city clocks and resubmit deadlines live in spreadsheets and someone's memory — nobody sees the whole pipeline</span></div>
+    </div>
+  </div>`;
+  const nw=`<div class="ainew">
+    <span class="ai-scan" aria-hidden="true"></span>
+    <div class="tl">
+      <div class="dom ai">
+        <div class="dom-t ai">AI runs the work</div>
+        <div class="tl-caps">
+          ${ainAI('Approval Pipeline Tracker','every approval on one board — planned vs actual submittal, city review clock, resubmit deadline, who holds the ball')}
+          ${ainAI('Planning Package Agent','assembles the SB330, formal planning and DRE packages from the project record — collated, not hand-built')}
+          ${ainAI('Consultant Coordination Agent','every consultant deliverable chased to a date — no reminder email written by hand')}
+          ${ainAI('City Watcher','polls portals and inboxes — every status change and comment letter logged the moment it lands')}
+        </div>
+      </div>
+      <span class="tl-dn" aria-hidden="true"><i>feeds every track below</i></span>
+      <div class="tl-tracks">
+        <div class="cn-lane tl-lane"><b>${icon('gavel')}Entitlement<em>agent-tracked · human hearings</em></b>
+          <ol class="tl-steps">
+            <li>SB330 preliminary application</li>
+            <li class="gate">Formal planning package<span class="tl-b decide">APPROVE</span></li>
+            <li>Environmental clearance</li>
+            <li>Tentative Map (TMap) approval</li>
+            <li>Site Development Permit (SDP) approval</li>
+            <li>Entitlement approval</li>
+          </ol>
+        </div>
+        <div class="cn-lane tl-lane"><b>${icon('description')}Permits — 11 approvals<em>every one runs the same tracked loop — plan → file → comments → resubmit → approved</em></b>
+          <ol class="tl-steps">
+            <li>Tree removal · demolition · grading</li>
+            <li>On-site / off-site improvement</li>
+            <li>Final map recordation</li>
+            <li class="gate">Building permit<span class="tl-b ai">TRACKED</span></li>
+            <li>Deferred: truss · fire · solar · EV</li>
+          </ol>
+        </div>
+        <div class="cn-lane tl-lane"><b>${icon('bolt')}Utility & Pre-Construction<em>designs approved · contracts decided</em></b>
+          <ol class="tl-steps">
+            <li>Water design approval</li>
+            <li>Electrical & composite plan approval</li>
+            <li>Interior design package</li>
+            <li class="gate">Finalize bidding & award contracts<span class="tl-b decide">DECIDE</span></li>
+          </ol>
+        </div>
+        <div class="cn-lane tl-lane"><b>${icon('workspace_premium')}DRE<em>packages assembled by agent · filings tracked like permits</em></b>
+          <ol class="tl-steps">
+            <li>Pink approval</li>
+            <li>Yellow approval</li>
+            <li class="gate">White approval<span class="tl-b sign">SIGN</span></li>
+          </ol>
+        </div>
+      </div>
+      <span class="tl-up" aria-hidden="true"><i>strategy, hearings and signatures stay human</i></span>
+      <div class="dom hum">
+        <div class="dom-t hum">${P_ICON}Humans keep</div>
+        <div class="tl-hums">
+          <div class="tl-h">${icon('forum')}<div><b>City meetings & hearings</b><small>Planning counter, hearings and negotiation — a person shows up.</small></div></div>
+          <div class="tl-h">${icon('alt_route')}<div><b>Sequencing & strategy</b><small>What to defer, what to parallel-run, when to push. The tracker informs; a person decides.</small></div></div>
+          <div class="tl-h">${icon('fact_check')}<div><b>Approve every submittal</b><small>Nothing files with the city or DRE until a person clears the package.</small></div></div>
+          <div class="tl-h">${icon('handshake')}<div><b>Consultant relationships</b><small>Contracts and long-term consultant relationships stay human.</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  return `<div class="ai-cmp">
+    <div class="cmp-col">${cmpHeadOld()}${old}</div>
+    <div class="ai-vs-col"><span class="ai-vs">VS</span></div>
+    <div class="cmp-col">${cmpHeadNew()}${nw}</div>
+  </div>
+  ${dpSoftwareHTML('dev')}`;
+}
+/* --- Design & Permitting: old paper loop vs new agent loop with CV plan-check --- */
+const DP_DESIGN=[
+ {t:'Arch Conceptual', items:['Site Strategy','Floor Plan','Elevation Design','Finalized Revit Model']},
+ {t:'Interior Design', items:['ID Package','CD Package']},
+ {t:'Landscape', items:['LD Package','CD Package','Tree Removal Permit']}
+];
+const DP_PERMIT=[
+ {t:'BLDG Permit', items:['BLDG Permit']},
+ {t:'Civil', items:['Demo','Grading','Encroachment','Mapping','Recording']},
+ {t:'Utility', items:['Electric','Gas','Water','Sewer']}
+];
+function aiDpHTML(){
+  const old=`<div class="aiold">
+    <div class="cold">
+      <div class="cold-root">Design</div>
+      <div class="cold-fan"></div>
+      <div class="cold-grid">
+        ${DP_DESIGN.map(c=>`<div class="cold-c"><b>${c.t}</b>
+          <ol>${c.items.map(i=>`<li>${i}</li>`).join('')}</ol></div>`).join('')}
+      </div>
+      <div class="cold-root" style="margin-top:4px">Permitting</div>
+      <div class="cold-fan"></div>
+      <div class="cold-grid">
+        ${DP_PERMIT.map(c=>`<div class="cold-c"><b>${c.t}</b>
+          <ol>${c.items.map(i=>`<li>${i}</li>`).join('')}</ol></div>`).join('')}
+      </div>
+      <div class="cold-loose"><b>Paper loop</b><span>packages assembled sheet by sheet; city comments arrive as PDFs into an inbox; whether every comment was fixed is checked by eye</span></div>
+    </div>
+  </div>`;
+  const nw=`<div class="ainew">
+    <span class="ai-scan" aria-hidden="true"></span>
+    <div class="tl">
+      <div class="dom ai">
+        <div class="dom-t ai">AI runs the work</div>
+        <div class="tl-caps">
+          ${ainAI('Drawing Package Agent','assembles every set — ID, LD, CD, permit — from Revit / CAD exports, checked against the city submittal checklist before it leaves')}
+          ${ainAI('Permit Pipeline Tracker','one record per application — planned vs actual submittal, city review clock, resubmit deadline, live status')}
+          ${ainAI('Comment Intake & Response Drafter','reads the city comment letter into structured items, routes each to its discipline, drafts the response matrix')}
+          ${ainAI('CV Plan-Check Agent','computer vision compares the revised sheets against every open comment — nothing resubmits with an unresolved comment')}
+        </div>
+      </div>
+      <span class="tl-dn" aria-hidden="true"><i>every package and application is one tracked record</i></span>
+      <div class="tl-tracks">
+        <div class="cn-lane tl-lane"><b>${icon('architecture')}Design packages<em>agent-assembled · human-stamped</em></b>
+          <ol class="tl-steps">
+            <li class="gate">Site strategy locked<span class="tl-b decide">DECIDE</span></li>
+            <li>Floor plan & elevation design</li>
+            <li>Finalized Revit model</li>
+            <li>ID · LD · CD packages assembled</li>
+            <li>Submittal checklist + code pre-check</li>
+            <li class="gate">Stamp & seal<span class="tl-b sign">STAMP</span></li>
+          </ol>
+        </div>
+        <div class="cn-lane tl-lane"><b>${icon('description')}Permit lifecycle — every application<em>BLDG · civil: demo, grading, encroachment, mapping, recording · utility: electric, gas, water, sewer · tree removal</em></b>
+          <ol class="tl-steps">
+            <li>Submittal window planned</li>
+            <li>Package filed with the city</li>
+            <li>City review clock tracked</li>
+            <li>Comments parsed & routed</li>
+            <li class="gate">Responses drafted<span class="tl-b decide">APPROVE</span></li>
+            <li class="gate">CV check — every comment resolved?<span class="tl-b ai">VISION</span></li>
+            <li>Resubmit → approved</li>
+            <li>Retro written back to the playbook ↺</li>
+          </ol>
+        </div>
+      </div>
+      <span class="tl-up" aria-hidden="true"><i>nothing reaches the city until a person clears it</i></span>
+      <div class="dom hum">
+        <div class="dom-t hum">${P_ICON}Humans keep</div>
+        <div class="tl-hums">
+          <div class="tl-h">${icon('approval')}<div><b>Stamp & seal</b><small>Licensed professionals stamp every set. Never auto-signed.</small></div></div>
+          <div class="tl-h">${icon('forum')}<div><b>City relationships</b><small>Plan checkers and counter staff — a person keeps the relationship.</small></div></div>
+          <div class="tl-h">${icon('design_services')}<div><b>Design judgment</b><small>Site strategy, layouts and elevations are decisions, not outputs.</small></div></div>
+          <div class="tl-h">${icon('fact_check')}<div><b>Approve responses & resubmittals</b><small>The response matrix and every resubmittal are cleared by the PM.</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  return `<div class="ai-cmp">
+    <div class="cmp-col">${cmpHeadOld()}${old}</div>
+    <div class="ai-vs-col"><span class="ai-vs">VS</span></div>
+    <div class="cmp-col">${cmpHeadNew()}${nw}</div>
+  </div>
+  ${dpSoftwareHTML('dp')}`;
+}
+/* --- shared Permit Ops platform — micro-services and how they connect --- */
+const DP_FEEDS=[
+ {name:'Design Tools', tag:'AUTHORING', ic:'architecture',
+  items:['Revit','AutoCAD','Bluebeam'],
+  use:'Models and sheets are authored here. Exports feed the package agent — the tools stay, the collating work goes.',
+  h:'Architects design; nobody hand-assembles sheet sets into PDFs anymore.'},
+ {name:'City Channels', tag:'EXTERNAL', ic:'account_balance',
+  items:['City portals','Plan-check email','Submittal checklists','Code & ordinances'],
+  use:'Where applications live and comments come from. Watched continuously, not checked when someone remembers.',
+  h:'The watcher reads them; people only see what changed.'}
+];
+function dpSoftwareHTML(team){
+  const sub = team==='dev'
+    ? 'the same platform both teams run on — Development tracks its 25 approvals here'
+    : 'package prep → pipeline tracker → comment loop → human gate — shared with Development';
+  return `<div class="sws">
+    <div class="sws-top">
+      <span class="sws-badge">SYSTEMS</span>
+      <h4 class="sws-h1">Software systems — Permit Ops platform
+        <span>${sub}</span></h4>
+      <div class="sws-legend">
+        <i><span class="sws-key d"></span>DATA SOURCE</i>
+        <i><span class="sws-key a"></span>AI AGENT</i>
+        <i><span class="sws-key g"></span>DECISION</i>
+        <i><span class="sws-key h"></span>HUMAN</i>
+      </div>
+    </div>
+
+    <div class="sws-rail">
+      <div class="sws-col">
+        <div class="sws-cap">DATA SOURCE</div>
+        <div class="sws-grp">${DP_FEEDS.map(f=>swsNode(f,'data')).join('')}</div>
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">PACKAGE PREP</div>
+        ${swsNode({name:'Drawing Package Agent',tag:'AI AGENT',
+          sub:['Sheet-set assembly from Revit / CAD','Submittal checklist gate','Code compliance pre-check'],
+          use:'Builds every ID / LD / CD / permit set and refuses to release an incomplete or non-compliant package.',
+          h:'Designer reviews the set; the licensed pro stamps it.'})}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">PIPELINE TRACKER</div>
+        ${swsNode({name:'Permit Pipeline Tracker',tag:'SYSTEM OF RECORD',
+          sub:['Planned vs actual per application','City review clock & resubmit deadlines','Alerts — what is due, what is late'],
+          use:'One record per application across Development and Design & Permitting — every approval, one board.',
+          h:'The PM reads the board each morning; the board never has to be assembled.'})}
+        ${swsNode({name:'City Portal Watcher',tag:'AI AGENT',
+          use:'Polls portals and inboxes; logs every status change and files every comment letter into the record.',
+          h:'No one refreshes a city portal again.'})}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">COMMENT LOOP</div>
+        ${swsNode({name:'Comment Loop Agents',tag:'AI AGENT',
+          sub:['Comment Intake Parser — letter → items','Discipline router — arch / civil / landscape / MEP','Response Drafter — the response matrix','CV Plan-Check — vision-diff sheets vs comments'],
+          use:'Turns a city comment letter into tracked work, drafts the responses and visually verifies every fix on the revised sheets.',
+          h:'Humans approve every response before it goes back to the city.'})}
+      </div>
+    </div>
+
+    <div class="sws-div"><i>${P_ICON}HUMAN INVOLVED</i><span></span></div>
+
+    <div class="sws-rail2">
+      <div class="sws-col">
+        <div class="sws-cap">GATE</div>
+        <div class="sws-gate">
+          <div class="sws-dia"><b>Every comment resolved?</b></div>
+          <div class="sws-vbr"><i class="sws-lab">NO</i><span class="sws-vline"></span>
+            <div class="sws-end">BACK TO DESIGN</div></div>
+        </div>
+      </div>
+      <span class="sws-ar" aria-hidden="true"><i class="sws-lab yes">YES</i></span>
+      <div class="sws-col">
+        <div class="sws-cap">RESUBMIT</div>
+        ${swsNode({name:'Stamp · Approve · Resubmit',tag:'HUMAN',
+          use:'The licensed pro stamps the revised set; the PM approves the response matrix and the resubmittal goes out.',
+          h:'Permit PM + stamping architect / engineer. Signatures are never automated.'},'hum')}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">GATE</div>
+        <div class="sws-gate"><div class="sws-dia"><b>City approved?</b></div></div>
+      </div>
+      <span class="sws-ar fork" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">OUTCOME</div>
+        <div class="sws-forkwrap">
+          <span class="sws-spine" aria-hidden="true"></span>
+          <div class="sws-outrow"><i class="sws-lab yes">YES</i><span class="sws-hline"></span>
+            <div class="sws-end go">PERMIT ISSUED → CONSTRUCTION</div></div>
+          <div class="sws-outrow"><i class="sws-lab">NO</i><span class="sws-hline"></span>
+            ${swsNode({name:'Next review cycle',tag:'AI AGENT',
+              use:'New comments re-enter the loop — parsed, routed, drafted, CV-checked — with the review clock already running.',
+              h:'The tracker logs the cycle; the retro will count it.'})}</div>
+        </div>
+        <div class="sws-cap">RETRO ↺ EVERY APPROVAL</div>
+        ${swsNode({name:'Retro Agent',tag:'AI AGENT',
+          use:'On approval, writes the cycle report — planned vs actual per stage, review-cycle count, which comment categories keep recurring — and updates the SOP + checklists ↺.',
+          h:'The PM reads the retro; the next application starts from the updated playbook.'})}
+      </div>
+    </div>
+  </div>`;
+}
+/* --- Investment & Accounting: old spreadsheet silo vs new one-ledger architecture --- */
+const INV_OLD=[
+ {t:'Fund Raising', items:['Deck, calls and commitments by hand']},
+ {t:'Proforma Generation', items:['One spreadsheet per project','Updated by hand from memory']},
+ {t:'Investor Management', items:['Reports drafted in docs','Sent one email at a time']},
+ {t:'Asset Management', items:['Tracked in sheets']}
+];
+function aiInvHTML(){
+  const old=`<div class="aiold">
+    <div class="cold">
+      <div class="cold-root">Investment</div>
+      <div class="cold-fan"></div>
+      <div class="cold-grid">
+        ${INV_OLD.map(c=>`<div class="cold-c"><b>${c.t}</b>
+          <ul>${c.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}
+      </div>
+      <div class="cold-root" style="margin-top:4px">Accounting</div>
+      <div class="cold-c plain"><ul>
+        <li>Manual journal entries</li>
+        <li>Reconcile actuals by hand</li>
+        <li>Payments prepared ad hoc</li>
+        <li>Cost summary assembled at month-end</li>
+      </ul></div>
+      <div class="cold-loose"><b>Spreadsheet silo</b><span>the proforma, the books and the investor story live in different files — every report is re-typed from the last one</span></div>
+    </div>
+  </div>`;
+  const nw=`<div class="ainew">
+    <span class="ai-scan" aria-hidden="true"></span>
+    <div class="tl">
+      <div class="dom ai">
+        <div class="dom-t ai">AI runs the work</div>
+        <div class="tl-caps">
+          ${ainAI('Journal Entry Agent','every feed — Procore contracts, Sage, Ramp spend — lands as a journal entry automatically, tagged to project and team')}
+          ${ainAI('Pro Forma Sync Engine','reads the ledger and re-versions the proforma v1 → v2 → … — actuals in, forecast out; no spreadsheet updated by hand')}
+          ${ainAI('Report Generator','monthly budget report and investor report written from the same numbers — published to the investor portal after approval')}
+          ${ainAI('Accounting Support Agent','transaction tracking, P&L and company-structure reports on demand; payment runs prepared on time, cost summary always ready')}
+        </div>
+      </div>
+      <span class="tl-dn" aria-hidden="true"><i>one ledger — both sides read the same truth</i></span>
+      <div class="tl-tracks">
+        <div class="cn-lane tl-lane"><b>${icon('monitoring')}Investment<em>fund raising · proforma · investor management · asset management</em></b>
+          <ol class="tl-steps">
+            <li>Fund-raising pipeline tracked</li>
+            <li>Proforma v1 → v2 versioned from actuals</li>
+            <li class="gate">Monthly budget report<span class="tl-b decide">APPROVE</span></li>
+            <li class="gate">Investor report → investor portal<span class="tl-b decide">APPROVE</span></li>
+            <li>Asset dashboards live from the ledger</li>
+          </ol>
+        </div>
+        <div class="cn-lane tl-lane"><b>${icon('savings')}Accounting<em>Procore · Sage · Ramp feeds — Acq, permit, construction, M&S spend</em></b>
+          <ol class="tl-steps">
+            <li>Feeds → journal entries, auto-tagged</li>
+            <li class="gate">Actuals reconciled nightly<span class="tl-b ai">AI</span></li>
+            <li>Cost summary by project & team</li>
+            <li>Payment run prepared on time</li>
+            <li class="gate">Transaction execution<span class="tl-b">WIRE</span></li>
+          </ol>
+        </div>
+      </div>
+      <span class="tl-up" aria-hidden="true"><i>money moves and reports publish only on a human hand</i></span>
+      <div class="dom hum">
+        <div class="dom-t hum">${P_ICON}Humans keep</div>
+        <div class="tl-hums">
+          <div class="tl-h">${icon('payments')}<div><b>Wire & execute</b><small>Every payment run and transfer is fired by a person. Never automated.</small></div></div>
+          <div class="tl-h">${icon('gavel')}<div><b>Capital decisions</b><small>Raise, allocate, distribute — the engine forecasts; a person decides.</small></div></div>
+          <div class="tl-h">${icon('handshake')}<div><b>Investor relationships</b><small>Calls, commitments and trust stay human.</small></div></div>
+          <div class="tl-h">${icon('fact_check')}<div><b>Approve every report</b><small>Budget and investor reports are cleared before they reach the portal.</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  return `<div class="ai-cmp">
+    <div class="cmp-col">${cmpHeadOld()}${old}</div>
+    <div class="ai-vs-col"><span class="ai-vs">VS</span></div>
+    <div class="cmp-col">${cmpHeadNew()}${nw}</div>
+  </div>
+  ${invSoftwareHTML()}`;
+}
+const INV_FEEDS=[
+ {name:'Team Spend & Contracts', tag:'UPSTREAM', ic:'hub',
+  items:['Acq','Permit','Construction','Marketing & Sales','Contracts'],
+  use:'Every team’s spend and contracts flow in — nothing is typed into the books by hand.',
+  h:'Teams work; the ledger listens.'},
+ {name:'Procore · Sage · Ramp', tag:'SYSTEMS', ic:'database',
+  items:['Procore — contracts','Sage — accounting','Ramp — corporate spend'],
+  use:'The systems where contracts and spend already live. Their entries stream straight through.',
+  h:'No one re-keys an invoice.'}
+];
+function invSoftwareHTML(){
+  return `<div class="sws">
+    <div class="sws-top">
+      <span class="sws-badge">SYSTEMS</span>
+      <h4 class="sws-h1">Software systems — Investment &amp; Accounting
+        <span>feeds → journal entries → proforma engine → reports → human gate</span></h4>
+      <div class="sws-legend">
+        <i><span class="sws-key d"></span>DATA SOURCE</i>
+        <i><span class="sws-key a"></span>AI AGENT</i>
+        <i><span class="sws-key g"></span>DECISION</i>
+        <i><span class="sws-key h"></span>HUMAN</i>
+      </div>
+    </div>
+
+    <div class="sws-rail">
+      <div class="sws-col">
+        <div class="sws-cap">DATA SOURCE</div>
+        <div class="sws-grp">${INV_FEEDS.map(f=>swsNode(f,'data')).join('')}</div>
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">LEDGER</div>
+        ${swsNode({name:'Journal Entries',tag:'SYSTEM OF RECORD',
+          sub:['Auto entry per contract / spend event','Tagged to project · team · cost code','Nightly reconciliation — exception queue'],
+          use:'One ledger both engines read — the single source of truth for actuals.',
+          h:'The accountant reviews exceptions, not entries.'})}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">PROFORMA</div>
+        ${swsNode({name:'Proforma Calculator Engine',tag:'AI AGENT',
+          sub:['Reads actuals from the ledger','Re-versions proforma v1 → v2 → …','Forecast financial statements per project'],
+          use:'Every version is kept — plan-vs-actual drift is visible per project, per month.',
+          h:'The Investment PM overrides assumptions; the math runs itself.'})}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">REPORTS</div>
+        ${swsNode({name:'Report Generator',tag:'AI AGENT',
+          sub:['Monthly budget report','Investor report','P&L · transaction tracking · company structure'],
+          use:'Every report written from the same ledger and proforma — one set of numbers everywhere.',
+          h:'Nothing publishes until a person approves.'})}
+        ${swsNode({name:'Investor Portal',tag:'PORTAL',ic:'database',
+          use:'Approved budget and investor reports publish here — investors self-serve the numbers.',
+          h:'IR answers questions, not report requests.'},'data')}
+      </div>
+    </div>
+
+    <div class="sws-div"><i>${P_ICON}HUMAN INVOLVED</i><span></span></div>
+
+    <div class="sws-rail2">
+      <div class="sws-col">
+        <div class="sws-cap">GATE</div>
+        <div class="sws-gate">
+          <div class="sws-dia"><b>Report approved?</b></div>
+          <div class="sws-vbr"><i class="sws-lab">NO</i><span class="sws-vline"></span>
+            <div class="sws-end">REDRAFT</div></div>
+        </div>
+      </div>
+      <span class="sws-ar" aria-hidden="true"><i class="sws-lab yes">YES</i></span>
+      <div class="sws-col">
+        <div class="sws-cap">PUBLISH &amp; PAY</div>
+        ${swsNode({name:'Approve reports · Execute payments',tag:'HUMAN',
+          use:'Reports are cleared for the portal; payment runs prepared by the agent are wired by a person.',
+          h:'Investment lead + accountant. The WIRE gate is human — always.'},'hum')}
+      </div>
+      <span class="sws-ar" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">GATE</div>
+        <div class="sws-gate"><div class="sws-dia"><b>Project exited?</b></div></div>
+      </div>
+      <span class="sws-ar fork" aria-hidden="true"></span>
+      <div class="sws-col">
+        <div class="sws-cap">OUTCOME</div>
+        <div class="sws-forkwrap">
+          <span class="sws-spine" aria-hidden="true"></span>
+          <div class="sws-outrow"><i class="sws-lab yes">YES</i><span class="sws-hline"></span>
+            <div class="sws-end go">CAPITAL RECYCLED → ACQUISITION</div></div>
+          <div class="sws-outrow"><i class="sws-lab">NO</i><span class="sws-hline"></span>
+            ${swsNode({name:'Next cycle',tag:'AI AGENT',
+              use:'The ledger keeps booking, the proforma keeps re-versioning, next month’s reports draft themselves.',
+              h:'The books never wait for month-end.'})}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
 function aiGenericHTML(t){
   const nw=`<div class="ainew">
     <span class="ai-scan" aria-hidden="true"></span>
@@ -2934,6 +3383,9 @@ function aiTeamPanelHTML(i){
   if(t.custom==='con')return aiConHTML();
   if(t.custom==='ms')return aiMsHTML();
   if(t.custom==='tl')return aiTlHTML();
+  if(t.custom==='dev')return aiDevHTML();
+  if(t.custom==='dp')return aiDpHTML();
+  if(t.custom==='inv')return aiInvHTML();
   return aiGenericHTML(t);
 }
 /* --- projects: integrations around the PM system --- */
@@ -3045,11 +3497,46 @@ const TK_TEAMS=[
     'Match scoring against the project pro forma',
     'Ranked shortlist for the DECIDE gate']}]},
  {team:'Development', ic:'apartment', svcs:[
-  {id:'dev-suite', n:'Entitlement Agent Suite', d:'Zoning, entitlement and pre-construction, run as agents.', t:[
-    'Zoning Research Agent','Entitlement Tracker Agent','Consultant Coordination Agent','Pre-con Schedule Engine']}]},
+  {id:'dev-tracker', n:'Approval Pipeline Tracker', d:'All 25 approvals — entitlement, permit, utility, DRE — on one board.', t:[
+    'One record per approval with planned vs actual submittal dates',
+    'City review clock + resubmit deadline alerts',
+    'Morning digest — what is due, what is late, who holds the ball',
+    'Escalation when a city reply goes overdue']},
+  {id:'dev-package', n:'Planning Package Agent', d:'SB330, formal planning and DRE packages assembled, not collated.', t:[
+    'SB330 preliminary application assembly',
+    'Formal planning package from the project record',
+    'DRE pink / yellow / white package assembly',
+    'Jurisdiction checklist gate before anything files']},
+  {id:'dev-consult', n:'Consultant Coordination Agent', d:'Every consultant deliverable chased to a date.', t:[
+    'Deliverable list per consultant with due dates',
+    'Auto-chase cadence + escalation to the PM',
+    'Received files checked against the deliverable spec']}]},
  {team:'Design & Permitting', ic:'architecture', svcs:[
-  {id:'dp-suite', n:'Permit Agent Suite', d:'Drawing sets to approved permits, run as agents.', t:[
-    'Permit Package Agent','Comment Response Drafter','Plan-check Status Tracker','Code Compliance Checker']}]},
+  {id:'dp-package', n:'Drawing Package Agent', d:'Every set assembled from Revit / CAD and checked before it leaves.', t:[
+    'Sheet-set assembly from Revit / AutoCAD exports',
+    'City submittal checklist completeness gate',
+    'Code compliance pre-check before submittal',
+    'Version-stamped package archive']},
+  {id:'dp-tracker', n:'Permit Pipeline Tracker + City Watcher', d:'One record per application — the shared board with Development.', t:[
+    'Application record — planned vs actual per stage',
+    'City review clock + resubmit deadlines with alerts',
+    'City Portal Watcher — poll portals & inbox, log every change',
+    'File every comment letter into the application record']},
+  {id:'dp-comment', n:'Comment Loop Agents', d:'City comment letters become tracked, routed, drafted work.', t:[
+    'Parse comment letter → structured comment items',
+    'Route each comment to its discipline — arch / civil / landscape / MEP',
+    'Draft the response matrix for human approval',
+    'Track every comment to resolution']},
+  {id:'dp-cv', n:'CV Plan-Check Agent', d:'Computer vision verifies every fix on the sheets before resubmittal.', t:[
+    'Sheet-revision diff — what changed between versions',
+    'Match each open comment to the revised sheet region',
+    'Unresolved-comment list blocks the resubmittal',
+    'Low-confidence matches routed to human review']},
+  {id:'dp-retro', n:'Permit Retro Agent', d:'Every approval ends with a cycle report and an updated playbook.', t:[
+    'Planned vs actual per stage, per application',
+    'Review-cycle count and comment-category stats',
+    'Recurring-comment report across projects',
+    'SOP + checklist auto-update proposals']}]},
  {team:'Construction', ic:'construction', svcs:[
   {id:'con-vendor', n:'Procore Vendor Pool', d:'The subcontractor bench — bid to signed contract.', t:[
     'Vendor bench with license and insurance status',
@@ -3090,8 +3577,25 @@ const TK_TEAMS=[
     'Won / lost / on-hold writes back to the CRM',
     'Campaign aiming from what actually closed']}]},
  {team:'Investment & Accounting', ic:'monitoring', svcs:[
-  {id:'inv-suite', n:'Finance Agent Suite', d:'Books, reports and reconciliation, run as agents.', t:[
-    'Pro Forma Sync Engine','Journal Entry Agent','Investor Report Generator','Actuals Reconciliation Agent']}]},
+  {id:'inv-journal', n:'Journal Entry Agent', d:'Every contract and spend event lands in one ledger, auto-tagged.', t:[
+    'Feed connectors — Procore contracts, Sage, Ramp spend',
+    'Auto journal entry tagged to project · team · cost code',
+    'Nightly actuals reconciliation with an exception queue',
+    'Cost summary by project and team, always current']},
+  {id:'inv-proforma', n:'Pro Forma Sync Engine', d:'The proforma re-versions itself from actuals — v1 → v2 → …', t:[
+    'Read actuals from the journal-entry ledger',
+    'Auto re-version the proforma, every version kept',
+    'Plan-vs-actual drift alerts per project',
+    'Forecast financial statements per project']},
+  {id:'inv-report', n:'Report Generator', d:'Budget, investor and P&L reports from one set of numbers.', t:[
+    'Monthly budget report drafted from the ledger',
+    'Investor report drafted from the same numbers',
+    'P&L, transaction tracking and company-structure reports',
+    'Publish to the investor portal after human approval']},
+  {id:'inv-pay', n:'Payment & Treasury Agent', d:'Payment runs prepared on time — execution stays human.', t:[
+    'Payment runs prepared on time with backup documents',
+    'Due-date watch — nothing paid late, nothing paid twice',
+    'Human WIRE gate — execution is never automated']}]},
  {team:'Project Management Platform', ic:'account_tree', svcs:[
   {id:'pm-lark-ai', n:'Lark Chat AI Reporter', d:'Chat history in, analysed summary report out.', t:[
     'Chat history intake, permissioned per project',
