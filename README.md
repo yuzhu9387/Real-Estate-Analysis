@@ -20,3 +20,6 @@ Welcome to the Real Estate Analysis dashboards and reports. Below are the availa
 - [**AlphaX System Documentation**](https://yuzhu9387.github.io/Real-Estate-Analysis/AlphaX_System_Documentation.html) - AlphaX System documentation
 - [**AlphaX System Demo**](https://yuzhu9387.github.io/Real-Estate-Analysis/alphax-system-demo.html) - AlphaX System demonstration
 - [**AI Native Builder Company**](https://yuzhu9387.github.io/Real-Estate-Analysis/alphax_structure.html#/ai) - AlphaX agent-first structure demo: old vs new per team, platforms in use, and an editable build task list
+
+### 🗺️ Maps
+- [**Santa Clara Public Owned Asset**](https://yuzhu9387.github.io/Real-Estate-Analysis/attom-public-parcels/public_parcels_map.html) - Interactive map of publicly owned parcels in Santa Clara County
